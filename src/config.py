@@ -89,7 +89,7 @@ class Project:
 
     @property
     def manifest_language(self) -> str:
-        return str(self.tags.get("imdf_package", {}).get("manifest", {}).get("language", "vi-VN"))
+        return str(self.tags.get("imdf_package", {}).get("manifest", {}).get("language", "vi"))
 
     def validate_required(self) -> None:
         """Các trường bắt buộc để sinh venue/address (IMDF)."""

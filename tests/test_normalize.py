@@ -92,3 +92,23 @@ def test_t20_corridor_has_no_ref(built, kind):
 def test_short_from_name():
     assert short_from_name("Tầng 1") == "1" and short_from_name("B1") == "B1" and short_from_name("Basement -2") == "-2"
     assert short_from_name("Mái") == "Mái"
+
+
+def test_storey_short_name_override_from_project(root):
+    p = Project(root / "samples" / "project-dxf.yaml")
+    p.inputs[0]["storey"]["short_name"] = "G"
+    res = pipeline.run(p)
+    lv = res.features["level"].sort_values("ordinal")
+    assert json.loads(lv["short_name"].iloc[0]) == {"vi": "G"} and lv["osm_level_ref"].iloc[0] == "G"
+    assert json.loads(lv["short_name"].iloc[1]) == {"vi": "2"}          # tầng không ghi đè giữ nguyên
+
+
+def test_manifest_language_default_is_vi_and_matches_labels(built, tmp_path):
+    import zipfile
+    from src.export.imdf import export_imdf
+
+    z = export_imdf(built["dxf"][1], tmp_path / "m.zip")
+    with zipfile.ZipFile(z) as zf:
+        lang = json.loads(zf.read("manifest.json"))["language"]
+        level = json.loads(zf.read("level.geojson"))["features"][0]["properties"]["name"]
+    assert lang == "vi" and lang in level          # LABELS có mục cho ngôn ngữ mặc định của manifest

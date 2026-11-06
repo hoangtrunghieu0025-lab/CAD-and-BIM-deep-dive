@@ -1,17 +1,17 @@
 ---
 id: TASK-010
-title: "[IN_REVIEW][MAIN] Cài đặt pipeline DXF/IFC → GPKG và test"
+title: "[DONE][MAIN] Cài đặt pipeline DXF/IFC → GPKG và test"
 category: MAIN
 assignees: [claude-laptop]
 created_by: claude-mobile
 created_at: 2026-11-06T09:37:46+07:00
-updated_at: 2026-11-06T15:00:02+07:00
-status: in_review
+updated_at: 2026-11-06T15:15:26+07:00
+status: done
 priority: high
 depends_on: [TASK-001, TASK-007, TASK-008, TASK-009]
 ---
 
-# [IN_REVIEW][MAIN] TASK-010 — Cài đặt pipeline DXF/IFC → GPKG và test
+# [DONE][MAIN] TASK-010 — Cài đặt pipeline DXF/IFC → GPKG và test
 
 ## Mô tả
 Cài đặt theo `docs/cad-to-gpkg-design.md`: đọc DXF/IFC, áp mapping, georeference, chuẩn hoá OSM/IMDF, ghi `.gpkg`, kèm test tự động.
@@ -28,7 +28,7 @@ Cài đặt theo `docs/cad-to-gpkg-design.md`: đọc DXF/IFC, áp mapping, geor
 - [x] `pytest` qua toàn bộ test trong spec
 - [x] `ogrinfo -al -so` liệt kê đủ layer IMDF, CRS đúng
 - [x] Chỗ spec thiếu/sai được báo trong mục Blocker / câu hỏi mở (mobile sẽ cập nhật spec)
-- [ ] Đã push lên `main`
+- [x] Đã push lên `main` (thân mã ở commit b489050; thay đổi N-008 nhỏ chờ chủ dự án push)
 
 ## Phạm vi từng bên
 - **claude-laptop**: toàn bộ; ghi vào `src/`, `tests/`, `requirements.txt`, `samples/out/`.
@@ -40,7 +40,7 @@ Cài đặt theo `docs/cad-to-gpkg-design.md`: đọc DXF/IFC, áp mapping, geor
 ## Tổng quan
 | Bên | Trạng thái | Cập nhật lúc | Ghi chú ngắn |
 |---|---|---|---|
-| claude-laptop | in_review | 2026-11-06T15:00:02+07:00 | cài đặt xong, 60 test qua; chờ mobile rà mục Blocker và chủ dự án push |
+| claude-laptop | done | 2026-11-06T15:15:26+07:00 | áp dụng N-008; 62 test qua; đặt DONE |
 
 ## Nhật ký — claude-mobile
 | Thời điểm (GMT+7) | Trạng thái | Nội dung |
@@ -53,6 +53,7 @@ Cài đặt theo `docs/cad-to-gpkg-design.md`: đọc DXF/IFC, áp mapping, geor
 | 2026-11-06T10:34:56+07:00 | blocked | Chưa bắt đầu. `docs/cad-to-gpkg-design.md` và `config/*.yaml` chưa tồn tại; TASK-007 và TASK-009 đang `todo`. |
 | 2026-11-06T14:47:20+07:00 | in_progress | Hết blocked: TASK-001, 007, 008, 009 đều `DONE`. Bắt đầu đọc spec và cài đặt `src/`, `tests/`. |
 | 2026-11-06T15:00:02+07:00 | in_review | **Cài đặt xong theo `docs/cad-to-gpkg-design.md`.** Mã: `src/` (`config`, `model`, `pipeline`, `cli`, `ingest/`, `cad2bim/`, `extract/`, `normalize/`, `export/`), `src/README.md`; test: `tests/` (**60 test qua**, ~26 s): T1–T15 và T17–T20 tự động; **T16 (QGIS giao diện) để TASK-011**. CLI: `python -m src.cli build|check|imdf` (mã thoát 0/1/2, đã test). Dự án mẫu: `samples/project-dxf.yaml`, `samples/project-ifc.yaml`; kết quả mẫu nhỏ ở `samples/out/` (`sample-dxf.gpkg` 236 KB, `sample-ifc.gpkg` 240 KB, `sample-dxf.imdf.zip` 5,5 KB). **Kết quả**: cả DXF (2 file) và IFC đều ra 1 venue, 1 address, 1 building, 1 footprint, 2 level, 26 unit, 24 opening; `check` ĐẠT 0 lỗi/0 cảnh báo; `ogrinfo -al -so` liệt kê venue/footprint/level/unit/opening (CRS EPSG:4326) + address/building/_meta (attributes); tâm cửa IFC = tâm cửa DXF (T19, ~1 mm); id đều UUID v4 và ổn định giữa các lần chạy; QGIS 3.44.7 (PyQGIS) nạp hợp lệ cả 7 layer, extent quanh Hà Nội, lọc `osm_level='1'` ra 13 unit. Bộ `check` đã được thử âm tính (FK hỏng, unit chồng lấn, opening lệch ranh giới, thiếu venue, category/nhãn/id sai, cột bắt buộc null đều bị bắt). Chưa có gì được push (chờ chủ dự án). |
+| 2026-11-06T15:15:26+07:00 | done | **Áp dụng N-008** của mobile: manifest.language mặc định `vi` (cli `--language`, `config.manifest_language`, `export_imdf`), test T14 sửa theo; hỗ trợ ghi đè `inputs[].storey.short_name` (DXF) + test; thêm test manifest.language có mặt trong khoá LABELS. `short_name_rule: trailing_token` trùng quy tắc đã cài (`short_from_name`). Sinh lại `samples/out/` (manifest `vi`). **62 test qua**; `check` đạt. Mobile đã chốt 9 điểm Blocker (22 giá trị venue, srs_id -1, manifest `vi`, kiểm khe → TASK-015, short_name, `venue.building_name`); điểm 7, 8 chuyển TASK-015. Đặt TASK-010 DONE theo N-008; TASK-011 (kiểm QGIS giao diện) có thể bắt đầu. |
 
 ## Blocker / câu hỏi mở
 Không có blocker. Các điểm **spec thiếu/sai/cần xác nhận** phát hiện khi cài đặt (mobile cập nhật spec nếu đồng ý):

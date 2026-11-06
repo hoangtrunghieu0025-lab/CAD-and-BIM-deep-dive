@@ -20,7 +20,7 @@ def test_t14_package_structure(built, tmp_path, kind):
         assert REQUIRED <= names
         assert names == REQUIRED | {"building.geojson", "footprint.geojson", "level.geojson", "unit.geojson", "opening.geojson"}
         manifest = json.loads(zf.read("manifest.json"))
-        assert manifest["version"] == "1.0.0" and manifest["language"] == "vi-VN"
+        assert manifest["version"] == "1.0.0" and manifest["language"] == "vi"
         assert len(manifest["created"]) == 19 and "+" not in manifest["created"] and not manifest["created"].endswith("Z")
         for n in names - {"manifest.json"}:
             fc = json.loads(zf.read(n))

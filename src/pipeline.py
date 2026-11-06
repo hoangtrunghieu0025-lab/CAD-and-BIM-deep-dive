@@ -45,7 +45,7 @@ def run(project: Project, allow_unreferenced: bool = False) -> BuildResult:
             if "name" not in s or "elevation_m" not in s:
                 raise DataError(f"inputs[{order}].storey cần `name` và `elevation_m`")
             storey = Storey(
-                key=f"dxf:{path.name}", name=str(s["name"]), long_name=str(s.get("long_name") or s["name"]),
+                key=f"dxf:{path.name}", name=str(s.get("short_name") or s["name"]), long_name=str(s.get("long_name") or s["name"]),
                 elevation_m=float(s["elevation_m"]), source_kind="dxf", source_ref=f"dxf-storey|{path.name}",
                 ordinal=s.get("ordinal"), file_order=order * 1000,
             )

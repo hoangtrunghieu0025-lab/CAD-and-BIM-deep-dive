@@ -77,7 +77,7 @@ def main(argv: list[str] | None = None) -> int:
     i = sub.add_parser("imdf", help=".gpkg -> gói IMDF (.zip)")
     i.add_argument("gpkg")
     i.add_argument("--out", required=True)
-    i.add_argument("--language", default="vi-VN")
+    i.add_argument("--language", default="vi", help="manifest.language; cùng tag với khoá LABELS (mặc định vi)")
     i.set_defaults(fn=_imdf)
     args = ap.parse_args(argv)
     try:

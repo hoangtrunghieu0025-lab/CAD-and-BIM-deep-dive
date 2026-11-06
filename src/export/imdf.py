@@ -72,7 +72,7 @@ def _feature_collection(df: pd.DataFrame, table: str) -> dict[str, Any]:
     return {"type": "FeatureCollection", "features": feats}
 
 
-def export_imdf(gpkg: str | Path, zip_path: str | Path, language: str = "vi-VN",
+def export_imdf(gpkg: str | Path, zip_path: str | Path, language: str = "vi",
                 generated_by: str = "cad-and-BIM-deep-dive") -> Path:
     p = Path(gpkg)
     con = sqlite3.connect(p)
