@@ -1,6 +1,6 @@
 # CONTRACT giữa claude-mobile và claude-laptop
 
-Hai agent làm việc trên cùng repo GitHub, giao tiếp **chỉ qua file** trong `mailbox/`.
+Hai agent làm việc trên cùng repo GitHub, phối hợp qua commit trên `main` và các file trong repo (không dùng mailbox); người dùng chuyển yêu cầu giữa hai bên khi cần.
 
 ## 1. Vai trò
 
@@ -10,45 +10,9 @@ Hai agent làm việc trên cùng repo GitHub, giao tiếp **chỉ qua file** tr
 | Nhận việc | Ít code: nghiên cứu, tài liệu, thiết kế mapping/config, viết spec, review, script nhỏ | Nhiều code & việc cần máy thật: cài QGIS/FreeCAD/Bonsai, chạy pipeline với file thật, kiểm tra `.gpkg` trong QGIS, chụp ảnh, tải file/công cụ bị chặn mạng ở cloud |
 | Không làm | Mở GUI (QGIS…), xử lý file CAD/IFC lớn | — (nên nhận việc nặng; việc nghiên cứu thuần giao lại cho mobile nếu quá tải) |
 
-## 2. Mailbox
-
-```
-mailbox/
-├── claude-mobile/    # thư MOBILE GỬI ĐI (chỉ mobile được ghi)
-└── claude-laptop/    # thư LAPTOP GỬI ĐI (chỉ laptop được ghi)
-```
-
-- **Mỗi agent chỉ ghi vào thư mục của mình**; muốn gửi thư cho bên kia thì tạo file mới trong thư mục của mình. Bên kia đọc thư mục đó. Nhờ vậy không bao giờ xung đột git.
-- **Không sửa, không xoá thư đã gửi** (append-only). Cần đính chính thì gửi thư mới, đặt `reply_to`.
-- **Đánh dấu đã đọc**: mỗi agent ghi con trỏ vào file `mailbox/<tên-mình>/_cursor.md` (xem mục 5), không sửa thư của bên kia.
-
-### Tên file
-```
-email-<YYYYMMDD>T<HHMMSS>Z-<tieu-de-ngan>.md
-```
-- Thời điểm theo **UTC** (`date -u +%Y%m%dT%H%M%SZ`).
-- Tiêu đề ngắn: chữ thường không dấu, gạch ngang, tối đa ~5 từ. Ví dụ: `email-20261106T010042Z-kickoff-setup.md`.
-
-### Nội dung thư (bắt buộc có frontmatter)
-```markdown
----
-from: claude-mobile
-to: claude-laptop
-sent_at: 2026-11-06T01:00:42Z
-subject: Tiêu đề đầy đủ
-type: request | response | info | question
-reply_to: <tên file thư đang trả lời, hoặc bỏ trống>
-priority: low | normal | high
----
-
-## Bối cảnh
-## Yêu cầu / Nội dung
-## Đầu vào (inputs)
-## Đầu ra mong đợi (expected_outputs)
-## Tiêu chí hoàn thành (acceptance)
-## Hạn / ghi chú
-```
-Với `type: response`: nêu **kết quả**, đường dẫn file đầu ra, lệnh đã chạy, lỗi nếu có, và ghi rõ `DONE` / `PARTIAL` / `BLOCKED` kèm lý do.
+## 2. Phối hợp
+- Không có mailbox. Kết quả và ghi chú bàn giao đặt trong file ở thư mục được giao (mục 3), mô tả rõ trong commit message.
+- Mỗi bên chỉ ghi vào thư mục/file được giao cho mình; chỉ đọc phần của bên kia.
 
 ## 3. Contract đầu vào – đầu ra giữa hai agent
 
@@ -65,21 +29,13 @@ Với `type: response`: nêu **kết quả**, đường dẫn file đầu ra, l�
 | Kết quả chạy (`.gpkg`, ảnh) | `out/` (git-ignore; chỉ commit file nhỏ có chủ đích, đặt vào `samples/` hoặc `docs/assets/`) |
 
 3. **Tiêu chí hoàn thành kiểm chứng được** (ví dụ: "`ogrinfo -so out/x.gpkg` liệt kê đủ các layer `unit`, `level`, `building`; CRS = EPSG:4326").
-4. **Phản hồi trong thư `response`**: `DONE|PARTIAL|BLOCKED`, danh sách file đã tạo, lệnh đã chạy, kết quả kiểm tra, vấn đề còn mở.
+4. **Báo cáo kết quả (trong file đầu ra hoặc commit message)**: `DONE|PARTIAL|BLOCKED`, danh sách file đã tạo, lệnh đã chạy, kết quả kiểm tra, vấn đề còn mở.
 5. **Không bịa**: kết quả chưa chạy thật thì ghi "chưa kiểm chứng". Các quy tắc độ tin cậy khác theo `CLAUDE.md`.
-6. **Tách việc không chồng chéo**: mỗi thư yêu cầu nêu rõ file nào bên nhận được phép ghi để không đụng việc của bên kia.
+6. **Tách việc không chồng chéo**: mỗi yêu cầu nêu rõ file nào bên nhận được phép ghi để không đụng việc của bên kia.
 
 ## 4. Quy trình git
 - **Chỉ dùng một nhánh `main`**; không tạo nhánh riêng, không tạo pull request. Cả hai agent push thẳng lên `main`.
 - **Trước khi bắt đầu và trước mỗi lần push**: `git pull --rebase origin main`. Nếu push bị từ chối vì remote có commit mới, pull --rebase lại rồi push lại. Không dùng `--force`.
 - **Commit + push ngay** sau khi gửi thư hoặc hoàn thành việc, để bên kia thấy được. Commit nhỏ, thường xuyên.
-- Vì mỗi agent chỉ ghi vào thư mục của mình (mailbox riêng, thư mục được giao trong thư), xung đột rất hiếm; nếu có, giải quyết khi rebase và không ghi đè công việc của bên kia.
-- Commit message nêu rõ thư/nhiệm vụ, ví dụ: `mailbox(mobile): kickoff setup request`.
-
-## 5. Con trỏ đã đọc (`_cursor.md`)
-Mỗi agent giữ file `mailbox/<tên-mình>/_cursor.md` (chỉ mình ghi):
-```
-last_read_from_<tên-bên-kia>: email-20261106T010042Z-kickoff-setup.md
-updated_at: 2026-11-06T01:30:00Z
-```
-Khi bắt đầu phiên làm việc: đọc mọi thư trong thư mục bên kia có tên **lớn hơn** con trỏ (tên file sắp xếp theo thời gian), xử lý theo thứ tự, rồi cập nhật con trỏ.
+- Vì mỗi agent chỉ ghi vào thư mục của mình (thư mục được giao), xung đột rất hiếm; nếu có, giải quyết khi rebase và không ghi đè công việc của bên kia.
+- Commit message nêu rõ nhiệm vụ, ví dụ: `research(mobile): add ifc spatial structure notes`.
