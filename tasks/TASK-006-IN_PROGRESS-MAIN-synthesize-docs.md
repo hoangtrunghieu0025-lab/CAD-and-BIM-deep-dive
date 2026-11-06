@@ -1,17 +1,17 @@
 ---
 id: TASK-006
-title: "[TODO][MAIN] Tổng hợp tài liệu CAD vs BIM và pipeline 3D–7D"
+title: "[IN_PROGRESS][MAIN] Tổng hợp tài liệu CAD vs BIM và pipeline 3D–7D"
 category: MAIN
 assignees: [claude-mobile]
 created_by: claude-mobile
 created_at: 2026-11-06T09:37:46+07:00
-updated_at: 2026-11-06T09:37:46+07:00
-status: todo
+updated_at: 2026-11-06T11:47:58+07:00
+status: in_progress
 priority: normal
 depends_on: [TASK-002, TASK-003, TASK-004]
 ---
 
-# [TODO][MAIN] TASK-006 — Tổng hợp tài liệu CAD vs BIM và pipeline 3D–7D
+# [IN_PROGRESS][MAIN] TASK-006 — Tổng hợp tài liệu CAD vs BIM và pipeline 3D–7D
 
 ## Mô tả
 Đọc `research/01..03` và viết tài liệu tổng hợp, đánh dấu chỗ nguồn mâu thuẫn hoặc chưa xác minh (vai trò `synthesizer`).
@@ -38,11 +38,12 @@ depends_on: [TASK-002, TASK-003, TASK-004]
 ## Tổng quan
 | Bên | Trạng thái | Cập nhật lúc | Ghi chú ngắn |
 |---|---|---|---|
-| claude-mobile | todo | 2026-11-06T09:37:46+07:00 | chưa nhận |
+| claude-mobile | in_progress | 2026-11-06T11:47:58+07:00 | đang tổng hợp |
 
 ## Nhật ký — claude-mobile
 | Thời điểm (GMT+7) | Trạng thái | Nội dung |
 |---|---|---|
+| 2026-11-06T11:47:58+07:00 | in_progress | Bắt đầu tổng hợp bằng agent synthesizer. |
 
 ## Blocker / câu hỏi mở
 -
