@@ -8,7 +8,7 @@ Nội dung repo có thể đã thay đổi từ agent kia. Hãy cập nhật git
 git fetch --all --prune
 git status -sb                      # nhánh hiện tại, có lệch so với remote không?
 git log --oneline HEAD..origin/main # main có commit mới chưa?
-git pull --rebase origin main       # lấy bản mới nhất (hoặc rebase nhánh làm việc của bạn lên main)
+git pull --rebase origin main       # chỉ có nhánh main, làm và push thẳng lên main
 ```
 
 Sau đó **đọc lại** các file dưới đây theo bản mới nhất (nếu đã đọc bản cũ trước khi pull thì bỏ, đọc lại).

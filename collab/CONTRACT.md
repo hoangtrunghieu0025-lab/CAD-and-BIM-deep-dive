@@ -70,10 +70,11 @@ Với `type: response`: nêu **kết quả**, đường dẫn file đầu ra, l�
 6. **Tách việc không chồng chéo**: mỗi thư yêu cầu nêu rõ file nào bên nhận được phép ghi để không đụng việc của bên kia.
 
 ## 4. Quy trình git
-- Làm việc trên nhánh đã được giao; **pull/rebase trước khi bắt đầu** và **commit + push ngay sau khi gửi thư hoặc hoàn thành việc**, để bên kia thấy được.
+- **Chỉ dùng một nhánh `main`**; không tạo nhánh riêng, không tạo pull request. Cả hai agent push thẳng lên `main`.
+- **Trước khi bắt đầu và trước mỗi lần push**: `git pull --rebase origin main`. Nếu push bị từ chối vì remote có commit mới, pull --rebase lại rồi push lại. Không dùng `--force`.
+- **Commit + push ngay** sau khi gửi thư hoặc hoàn thành việc, để bên kia thấy được. Commit nhỏ, thường xuyên.
+- Vì mỗi agent chỉ ghi vào thư mục của mình (mailbox riêng, thư mục được giao trong thư), xung đột rất hiếm; nếu có, giải quyết khi rebase và không ghi đè công việc của bên kia.
 - Commit message nêu rõ thư/nhiệm vụ, ví dụ: `mailbox(mobile): kickoff setup request`.
-- Hai agent có thể ở hai nhánh khác nhau; khi đó bên nhận `git fetch` và đọc `mailbox/<bên-kia>/` từ nhánh của bên gửi, hoặc hai bên thống nhất nhánh chung trong thư đầu tiên.
-- Không push lên nhánh của bên kia nếu không được yêu cầu.
 
 ## 5. Con trỏ đã đọc (`_cursor.md`)
 Mỗi agent giữ file `mailbox/<tên-mình>/_cursor.md` (chỉ mình ghi):
