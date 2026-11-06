@@ -45,7 +45,7 @@
 - **footprint** (3): `aerial`, `ground`, `subterranean`. **restriction** (2): `employeesonly`, `restricted`.
 - **accessibility** (10): `assisted.listening`, `braille`, `hearing`, `hearingloop`, `signlanginterpreter`, `tactilepaving`, `tdd`, `trs`, `volume`, `wheelchair`. **access_control** (8): `badgereader`, `fingerprintreader`, `guard`, `keyaccess`, `outofservice`, `passwordaccess`, `retinascanner`, `voicerecognition`.
 - **relationship** (7): `elevator`, `escalator`, `movingwalkway`, `ramp`, `stairs`, `traversal`, `traversal.path`. **geofence** (8): `concourse`, `geofence`, `paidarea`, `platform`, `postsecurity`, `presecurity`, `terminal`, `underconstruction`.
-- **section** (71), **amenity** (172), **occupant** (≈1100), **venue** (27): xem trang categories (không chép lại vì dài; dự án indoor tối thiểu không dùng).
+- **section** (71), **amenity** (172), **occupant** (≈1100), **venue** (22, **không phải 27** — bản trước đếm nhầm 5 dòng điều hướng của trang web): `airport`, `airport.intl`, `aquarium`, `businesscampus`, `casino`, `communitycenter`, `conventioncenter`, `governmentfacility`, `healthcarefacility`, `hotel`, `museum`, `parkingfacility`, `resort`, `retailstore`, `shoppingcenter`, `stadium`, `stripmall`, `theater`, `themepark`, `trainstation`, `transitstation`, `university` (đọc lại từ trang categories 2026-11-06 trong TASK-010; đã dùng trong `src/export/imdf_vocab.py`). Các nhóm còn lại không chép lại vì dài.
 
 ### Tường — quy tắc gốc (trang `types/unit`)
 - "A network of floor-to-ceiling walls or an integrated system of walls and columns **MUST** be modeled as a `structure` Unit." Để mô tả vật liệu có thể dùng category `brick`, `concrete`, `drywall`, `glass`, `wood`. Cột đứng floor-to-ceiling **MUST** là `column` Unit.

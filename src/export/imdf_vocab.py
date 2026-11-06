@@ -1,0 +1,11 @@
+"""Từ vựng IMDF 1.0.0 dùng để kiểm category (đã xác minh với register.apple.com/resources/imdf/reference/categories, 2026-11-06).
+
+Sinh từ research/04-osm-imdf-tagging/imdf-feature-types.md (TASK-012); `VENUE` chép từ trang categories (22 giá trị).
+"""
+UNIT = frozenset(['auditorium', 'brick', 'classroom', 'column', 'concrete', 'conferenceroom', 'drywall', 'elevator', 'escalator', 'fieldofplay', 'firstaid', 'fitnessroom', 'foodservice', 'footbridge', 'glass', 'huddleroom', 'kitchen', 'laboratory', 'library', 'lobby', 'lounge', 'mailroom', 'mothersroom', 'movietheater', 'movingwalkway', 'nonpublic', 'office', 'opentobelow', 'parking', 'phoneroom', 'platform', 'privatelounge', 'ramp', 'recreation', 'restroom', 'restroom.family', 'restroom.female', 'restroom.female.wheelchair', 'restroom.male', 'restroom.male.wheelchair', 'restroom.transgender', 'restroom.transgender.wheelchair', 'restroom.unisex', 'restroom.unisex.wheelchair', 'restroom.wheelchair', 'road', 'room', 'serverroom', 'shower', 'smokingarea', 'stairs', 'steps', 'storage', 'structure', 'terrace', 'theater', 'unenclosedarea', 'unspecified', 'vegetation', 'waitingroom', 'walkway', 'walkway.island', 'wood'])
+FIXTURE = frozenset(['baggagecarousel', 'boardinggate.desk', 'checkin.desk', 'checkin.kiosk', 'desk', 'equipment', 'furniture', 'immigration.desk', 'inspection.desk', 'obstruction', 'securityequipment', 'stage', 'vegetation', 'wall', 'water'])
+OPENING = frozenset(['automobile', 'bicycle', 'emergencyexit', 'pedestrian', 'pedestrian.principal', 'pedestrian.transit', 'service'])
+BUILDING = frozenset(['parking', 'transit', 'transit.bus', 'transit.train', 'unspecified'])
+LEVEL = frozenset(['arrivals', 'arrivals.domestic', 'arrivals.intl', 'departures', 'departures.domestic', 'departures.intl', 'parking', 'transit', 'unspecified'])
+FOOTPRINT = frozenset({"aerial", "ground", "subterranean"})
+VENUE = frozenset(['airport', 'airport.intl', 'aquarium', 'businesscampus', 'casino', 'communitycenter', 'conventioncenter', 'governmentfacility', 'healthcarefacility', 'hotel', 'museum', 'parkingfacility', 'resort', 'retailstore', 'shoppingcenter', 'stadium', 'stripmall', 'theater', 'themepark', 'trainstation', 'transitstation', 'university'])

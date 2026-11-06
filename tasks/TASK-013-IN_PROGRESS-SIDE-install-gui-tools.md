@@ -5,7 +5,7 @@ category: SIDE
 assignees: [claude-laptop]
 created_by: claude-laptop
 created_at: 2026-11-06T10:37:25+07:00
-updated_at: 2026-11-06T14:15:23+07:00
+updated_at: 2026-11-06T15:02:03+07:00
 status: in_progress
 priority: normal
 depends_on: [TASK-001]
@@ -72,6 +72,8 @@ Tên gói và nguồn dưới đây là gợi ý, chưa xác minh trên máy nà
 | 2026-11-06T12:09:16+07:00 | todo | Theo chủ dự án: gộp phần B — dùng thử Archilogic (kết quả từ TASK-014) vào task này; đổi tiêu đề. Chưa bắt đầu. |
 | 2026-11-06T12:17:25+07:00 | in_progress | Nhận task. Kiểm nguồn cài (chưa cài gì): apt có `librecad` 2.2.0.2 và `blender` 4.0.2 (quá cũ cho Bonsai ≥4.2); không có gói apt `freecad` trên máy này; snap `freecad` stable 1.1 (529MB), snap `blender` có kênh 5.0/stable=5.0.1; Bonsai 0.9.0-post1 (py311) trên extensions.blender.org yêu cầu Blender 4.2.0–5.1.0. `sudo` cần mật khẩu nên chờ chủ dự án chạy. |
 | 2026-11-06T14:15:23+07:00 | in_progress | Phần A (một phần): **LibreCAD 2.2.0.2** (apt) và **Blender 5.0.1** (snap `5.0/stable`) đã cài. **Bonsai 0.9.0-post1** cài bằng dòng lệnh Blender; Blender chạy nền nạp `sample-building.ifc` OK (IFC4, 2 tầng Elevation 0.0/3.0, 26 IfcSpace, 24 IfcDoor, 8 IfcWall). LibreCAD: `dxf2pdf -a` dựng đúng `sample-floor-1.dxf` (ảnh `docs/assets/librecad-sample-floor-1.png`); chưa nhìn trực tiếp GUI/bảng layer. **FreeCAD chưa cài**: lỗi `network is unreachable` lúc tải snap lần đầu; chờ chủ dự án chạy lại `sudo snap install freecad`. Lưu ý: lần tải Bonsai đầu bị cắt (654 KB, sha256 sai) nên bỏ, tải lại 170 MB và kiểm sha256 trước khi cài. Cập nhật `docs/local-env-report.md`. |
+| 2026-11-06T14:47:20+07:00 | in_progress | **Hoãn FreeCAD** theo chủ dự án: snap FreeCAD kéo theo `kf6-core24` 1,74 GB (+ FreeCAD 529 MB), tải qua đường quốc tế chỉ ~0,2–1,2 Mbps (đã tải dở ~179 MB và ~116 MB trong `/var/lib/snapd/snaps/*.partial`). Chạy lại `sudo snap install freecad` khi mạng tốt hơn; Blender+Bonsai đã mở và đọc được `sample-building.ifc` nên phần kiểm IFC bằng GUI đã có. Phần B (Archilogic) vẫn chờ chủ dự án đăng ký tài khoản. |
+| 2026-11-06T15:02:03+07:00 | in_progress | Phần B: chủ dự án đã đăng ký tài khoản Archilogic. Phiên này **không có công cụ trình duyệt** (extension Claude in Chrome chưa kết nối) nên laptop không thao tác trên tài khoản; chủ dự án tự làm các bước trên web theo hướng dẫn, laptop phân tích gói tải về. Tìm thấy qua WebSearch: Archilogic gắn xuất IMDF với quy trình **Microsoft Places** (cần floor plan có georeference, có thể cần Place ID), trang Exporting chung chỉ liệt kê SVG, ảnh, DXF, IFC — nên IMDF có thể không xuất được trên gói Starter hoặc cần bước ánh xạ; ghi nhận như một phát hiện. Chưa có file nào được tải lên hoặc tải về. |
 
 ## Blocker / câu hỏi mở
 - Cần `sudo` để cài; chờ người dùng quyết định cách cài (apt/snap) cho từng công cụ.

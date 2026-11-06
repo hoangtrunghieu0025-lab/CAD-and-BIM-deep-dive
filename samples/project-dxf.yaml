@@ -1,0 +1,13 @@
+# Dự án mẫu 1: hai file DXF (mỗi file một tầng) -> GPKG. Giá trị georeference/địa chỉ chỉ là MINH HOẠ (toà nhà giả định).
+name: sample-building-dxf
+mapping: {layers: ../config/layer_mapping.yaml, tags: ../config/tag_mapping.yaml}
+inputs:
+  - {kind: dxf, file: sample-floor-1.dxf, storey: {name: "1", long_name: "Tầng 1", elevation_m: 0.0}}
+  - {kind: dxf, file: sample-floor-2.dxf, storey: {name: "2", long_name: "Tầng 2", elevation_m: 3.0}}
+georeference:
+  crs: "EPSG:3405"            # VN-2000 / UTM zone 48N (EPSG đã tra bằng pyproj)
+  origin: [588000.0, 2325000.0]   # toạ độ minh hoạ (khoảng Hà Nội), KHÔNG phải vị trí thật
+  rotation_deg: 0.0
+  scale: 1.0
+venue: {name: "Toà nhà mẫu", category: businesscampus, buffer_m: 1.0}   # category chọn tạm cho mẫu (22 giá trị hợp lệ)
+address: {address: "1 Phố Ví Dụ", locality: "Hà Nội", country: "VN"}

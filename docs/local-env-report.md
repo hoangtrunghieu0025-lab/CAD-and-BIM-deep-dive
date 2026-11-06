@@ -11,7 +11,7 @@
 | Python | OK | 3.12.3 | `/usr/bin/python3`; đáp ứng yêu cầu 3.11+ |
 | `gdal-bin` (`ogrinfo`) | OK | GDAL 3.8.4 | gói apt `3.8.4+dfsg-3ubuntu3` |
 | `qgis` | OK | 3.44.7-Solothurn | gói apt `1:3.44.7+40noble`; còn thư viện `libqgis*3.34.4` cũ cài song song |
-| `freecad` / `freecadcmd` | **CHƯA CÀI** | - | Ubuntu 24.04 không có gói apt `freecad` trên máy này; dùng snap `freecad` (kênh stable 1.1, ~529 MB). Lần cài đầu 2026-11-06 lỗi `network is unreachable` khi tải snap; chờ chạy lại `sudo snap install freecad` |
+| `freecad` / `freecadcmd` | **CHƯA CÀI** | - | Ubuntu 24.04 không có gói apt `freecad` trên máy này; dùng snap `freecad` (kênh stable 1.1, ~529 MB). Lần cài đầu 2026-11-06 lỗi `network is unreachable` khi tải snap; **hoãn** (snap kéo thêm `kf6-core24` 1,74 GB, tải chậm); chạy lại `sudo snap install freecad` khi mạng tốt hơn |
 | Blender | OK | 5.0.1 (build 2026-02-06) | snap `blender --classic --channel=5.0/stable` (apt chỉ có 4.0.2, quá cũ cho Bonsai ≥ 4.2; kênh mặc định 5.2.x vượt `blender_version_max` = 5.1.0 của Bonsai) |
 | Bonsai | OK | 0.9.0-post1 (py311) | extension từ extensions.blender.org, sha256 `c6e486d0…` đã kiểm; cài bằng `blender --command extension install-file -r user_default --enable bonsai.zip`. Kiểm chứng: Blender chạy nền nạp `samples/sample-building.ifc` bằng `bpy.ops.bim.load_project`: schema IFC4, 2 tầng (Elevation 0.0 và 3.0), 26 IfcSpace, 24 IfcDoor, 8 IfcWall |
 | `librecad` | OK | 2.2.0.2 | `sudo apt install librecad` (universe). Kiểm chứng: `librecad dxf2pdf -a` xuất `samples/sample-floor-1.dxf` thành PDF; ảnh dựng lại: `docs/assets/librecad-sample-floor-1.png` (12 phòng P101–P112, hành lang, cung cửa, nhãn). Chưa nhìn trực tiếp giao diện/bảng layer của LibreCAD |
