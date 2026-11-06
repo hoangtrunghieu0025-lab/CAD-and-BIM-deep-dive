@@ -155,3 +155,14 @@
 | ezdxf src odafc | https://raw.githubusercontent.com/mozman/ezdxf/master/src/ezdxf/addons/odafc.py | ngoại lệ, chữ ký, VALID_VERSIONS |
 | LibreDWG README | https://raw.githubusercontent.com/LibreDWG/libredwg/master/README | GPLv3+, phiên bản đọc/ghi |
 | Web search: ezdxf dynamic block *U | (kết quả: https://ezdxf.readthedocs.io/en/stable/concepts/blocks.html ; https://github.com/haplokuon/netDxf/issues/324 ; https://blog.draftsperson.net/anonymous-blocks-in-autocad/) | `*U` (nguồn thứ cấp, không mở trực tiếp) |
+| OSM Wiki — Simple Indoor Tagging (wikitext, action=raw) | https://wiki.openstreetmap.org/w/index.php?title=Simple_Indoor_Tagging&action=raw | osm-simple-indoor-tagging, prd-corrections (TASK-012) | 2026-11-06 |
+| OSM Wiki — Tag:highway=elevator (wikitext) | https://wiki.openstreetmap.org/w/index.php?title=Tag:highway%3Delevator&action=raw | osm-simple-indoor-tagging | 2026-11-06 |
+| OSM Wiki — Tag:highway=steps (wikitext) | https://wiki.openstreetmap.org/w/index.php?title=Tag:highway%3Dsteps&action=raw | osm-simple-indoor-tagging | 2026-11-06 |
+| Apple IMDF 1.0.0 — trang gốc (16 trang types/*) | https://register.apple.com/resources/imdf/ | imdf-feature-types, imdf-relations-and-constraints (TASK-012) | 2026-11-06 |
+| Apple IMDF — Categories | https://register.apple.com/resources/imdf/reference/categories | imdf-feature-types | 2026-11-06 |
+| Apple IMDF — Archive/Referential IDs (reference/reference) | https://register.apple.com/resources/imdf/reference/reference | imdf-relations-and-constraints | 2026-11-06 |
+| Apple IMDF — Extensions (manifest ví dụ) | https://register.apple.com/resources/imdf/reference/extensions | imdf-relations-and-constraints | 2026-11-06 |
+| OGC GeoPackage Encoding Standard 1.4 (HTML) | https://www.geopackage.org/spec/ | geopackage-requirements (TASK-012) | 2026-11-06 |
+| buildingSMART IDS — ids.xsd 1.0.0 | https://raw.githubusercontent.com/buildingSMART/IDS/development/Schema/ids.xsd | lod-mvd-ids (TASK-012) | 2026-11-06 |
+| IfcOpenShell 0.9.0.post1 — schema EXPRESS bundled + template Pset (IFC4, IFC4X3_ADD2) | (gói PyPI `ifcopenshell`; kiểm bằng `ifcopenshell_wrapper.schema_by_name`, `util.pset.get_template`) | 02-bim, 03-bim (TASK-012) | 2026-11-06 |
+| pyproj 3.8.0 — CSDL EPSG v12.029 (VN-2000) | (gói PyPI `pyproj`; `pyproj.database.query_crs_info`) | ifc-georeference | 2026-11-06 |

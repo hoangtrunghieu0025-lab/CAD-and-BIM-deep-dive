@@ -2,7 +2,7 @@
 
 - **Câu hỏi nghiên cứu**: Tiến độ được gắn vào cấu kiện 3D thế nào trong IFC và công cụ nào làm việc đó?
 - **Kết luận ngắn**: Mẫu chuẩn IFC là `IfcWorkSchedule` → `IfcTask` (thời gian qua `TaskTime`) → `IfcRelAssignsToProcess` → sản phẩm (IfcProduct). Công cụ: Navisworks TimeLiner, Synchro, MS Project/Primavera P6, IfcOpenShell Ifc4D/Bonsai. Cách nối ở công cụ độc quyền thường bằng selection set/tên, không phải GUID.
-- **Độ tin cậy**: trung bình — cấu trúc entity xác nhận từ trang schema qua kết quả tìm kiếm; mẫu đầy đủ chưa đối chiếu ví dụ chính thức.
+- **Độ tin cậy**: cao cho cấu trúc entity (kiểm bằng schema bundled của `ifcopenshell 0.9.0.post1`, TASK-012); phần công cụ độc quyền (Navisworks, Synchro, P6) vẫn **chưa xác minh**.
 
 ## Chi tiết
 
@@ -10,10 +10,10 @@
 Task (tên, trạng thái, mốc), thời lượng/ngày bắt đầu–kết thúc, lịch làm việc, quan hệ task–cấu kiện (cấu kiện nào được lắp/phá/tạm trong task nào), nhóm WBS.
 
 ### Class IFC
-- `IfcTask` là subtype của `IfcProcess`; có các thuộc tính như Status, WorkMethod, IsMilestone, Priority, TaskTime. Thời lượng (ScheduleDuration) nằm trong TaskTime.
-- `IfcWorkSchedule`: lịch của một work plan, có StartTime, FinishTime (tuỳ chọn); điều khiển tập task/resource qua `IfcRelAssignsToControl`.
+- `IfcTask` ⊂ `IfcProcess`; thuộc tính IFC4/4.3: `Status`, `WorkMethod`, `IsMilestone` (REQUIRED), `Priority`, `TaskTime` (OPTIONAL), `PredefinedType` (**đã xác minh**). `IfcTaskTime` ⊂ `IfcSchedulingTime` gồm `DurationType`, `ScheduleDuration`, `ScheduleStart`, `ScheduleFinish`, `EarlyStart/Finish`, `LateStart/Finish`, `FreeFloat`, `TotalFloat`, `IsCritical`, `StatusTime`, `ActualDuration/Start/Finish`, `RemainingTime`, `Completion` (tất cả OPTIONAL).
+- `IfcWorkSchedule` ⊂ `IfcWorkControl`; `IfcWorkControl` có `CreationDate` (REQUIRED), `StartTime` (**REQUIRED**), `FinishTime` (OPTIONAL), `Duration`, `TotalFloat`, `Creators`, `Purpose` (OPTIONAL); `IfcWorkSchedule.PredefinedType` OPTIONAL. Điều khiển tập task/resource qua `IfcRelAssignsToControl` (`RelatingControl` REQUIRED). **Đã xác minh** (IFC4 và 4.3).
 - `IfcRelAssignsToProcess`: gán một hay nhiều đối tượng (RelatedObjects) vào quá trình (RelatingProcess), có QuantityInProcess tuỳ chọn. Task có inverse `OperatesOn`.
-- Cảnh báo phiên bản: một trang IFC4_2 ghi thuộc tính RelatingProcess "deprecated, gán NIL", trong khi bản IFC4/IFC4.3 khác vẫn hiển thị là dùng bình thường — chưa xác minh; cần kiểm tra theo phiên bản schema đích trước khi viết exporter.
+- Phiên bản: trong schema `IFC4` và `IFC4X3_ADD2` đi kèm ifcopenshell, `IfcRelAssignsToProcess.RelatingProcess` là **REQUIRED** (không deprecated); `QuantityInProcess` OPTIONAL. Nghi vấn "deprecated ở IFC4x2" **chưa xác minh** (schema IFC4x2 không có trong ifcopenshell). Ở IFC2X3 `IfcTask` có `TaskId`, `IsMilestone`, không có `IfcTaskTime` (TaskTime thuộc IFC4+).
 - Mẫu nối "sản phẩm ↔ task" kiểu Navisworks/Synchro không phải IFC thuần.
 
 ### Công cụ
@@ -26,6 +26,16 @@ Input: mô hình 3D (IFC với GlobalId) + tiến độ (MPP/XER/MPX) → xử l
 
 ## Liên quan đến pipeline CAD → BIM → GPKG
 - Có thể xuất bảng `task_assignment(task_id, start, finish, global_id)` cạnh các layer GPKG; QGIS Temporal Controller có thể hiển thị theo thời gian nếu feature có trường thời gian. Đề xuất, chưa kiểm chứng. Không cần cho phạm vi indoor mapping tối thiểu.
+
+## Kết quả xác minh (TASK-012, claude-laptop, 2026-11-06)
+| Khẳng định | Kết quả | Cách kiểm |
+|---|---|---|
+| Chuỗi `IfcWorkSchedule` → `IfcTask` → `IfcTaskTime` → `IfcRelAssignsToProcess` → `IfcProduct` | ĐÚNG về cấu trúc entity | schema IFC4/IFC4X3_ADD2 |
+| `IfcRelAssignsToProcess(RelatingProcess REQ, QuantityInProcess OPT)` | ĐÚNG | schema |
+| Module `ifcopenshell.util.sequence`, `ifcopenshell.util.cost`, `ifcopenshell.api.sequence`, `ifcopenshell.api.cost`, `ifcopenshell.util.date` | TỒN TẠI (import được trong 0.9.0.post1). `api.sequence.recalculate_schedule` cần `networkx` (chưa cài) | `importlib` |
+| Tên "Ifc4D"/"Ifc5D" như gói riêng | CHƯA XÁC MINH (gói `ifc4d`/`ifc5d` riêng không kiểm; chỉ xác nhận các module `api/util.sequence|cost`) | — |
+| Pset cho task: `Pset_TaskCommon`, `Pset_TaskTimeCommon` | **KHÔNG TỒN TẠI** trong template IFC4 lẫn IFC4X3 (mục kiểm tra trong TASK-012); chỉ có `IfcTaskTime` làm thuộc tính | `util.pset.get_template` |
+| Navisworks TimeLiner, Synchro, MS Project/P6 | CHƯA XÁC MINH (phần mềm thương mại) | — |
 
 ## Nguồn
 - [IFC 4.3 — IfcRelAssignsToProcess](https://standards.buildingsmart.org/IFC/RELEASE/IFC4_3/HTML/lexical/IfcRelAssignsToProcess.htm) — truy cập 2026-11-06

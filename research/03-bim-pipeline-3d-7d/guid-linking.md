@@ -2,14 +2,14 @@
 
 - **Câu hỏi nghiên cứu**: GUID là gì, nối 3D với 4D/5D/7D/GIS thế nào, rủi ro mất ổn định?
 - **Kết luận ngắn**: `IfcGloballyUniqueId` là chuỗi 22 ký tự mã hoá số 128-bit, giữ ở `IfcRoot.GlobalId`; làm khoá nối. 4D nối qua `IfcRelAssignsToProcess`, 5D qua `IfcRelAssignsToControl`, 7D/IoT qua bảng ngoài có cột GUID. GUID có thể đổi khi công cụ tạo lại; cần quy ước lưu GUID bền.
-- **Độ tin cậy**: trung bình — định dạng xác nhận từ trang spec; ổn định GUID ở Revit từ blog Autodesk; phần GIS/IMDF là đề xuất.
+- **Độ tin cậy**: cao cho chuyển đổi GUID↔UUID (đã chạy thật bằng `ifcopenshell.guid`, TASK-012); độ ổn định GUID của Revit/Unity và phần GIS/IMDF vẫn trung bình / đề xuất.
 
 ## Chi tiết
 
 ### Định dạng
 - GUID 128-bit, kiểu `IfcGloballyUniqueId`, chuỗi cố định 22 ký tự, bảng 64 ký tự `0-9A-Za-z_$`. Cách mã hoá khác base64 thông dụng: byte đầu chiếm 2 ký tự, các byte sau nhóm 3 byte → 4 ký tự; vì vậy ký tự đầu chỉ là 0–3. Lịch sử: R1.5.1 dùng 20 ký tự (base-85), R2x chuyển 22 ký tự (base64).
-- Thuộc tính `GlobalId` của `IfcRoot` mang kiểu này (theo trang spec là "được tham chiếu bởi IfcRoot"). Mọi entity kế thừa IfcRoot (sản phẩm, quan hệ, task, cost item...) đều có GlobalId. Thư viện `ifcopenshell.guid` chuyển 22-char ↔ UUID: chưa xác minh trong phiên này.
-- IMDF yêu cầu `id` dạng UUID; IFC GUID có thể giải mã sang UUID 128-bit (đề xuất; chi tiết IMDF thuộc agent khác).
+- Thuộc tính `GlobalId` của `IfcRoot` mang kiểu này (theo trang spec là "được tham chiếu bởi IfcRoot"). Mọi entity kế thừa IfcRoot (sản phẩm, quan hệ, task, cost item...) đều có GlobalId. Thư viện `ifcopenshell.guid` chuyển 22-char ↔ UUID: **đã xác minh** — `guid.expand(gid)` trả chuỗi hex **32 ký tự không có dấu gạch**, `uuid.UUID(hex=guid.expand(gid))` cho UUID chuẩn, `guid.compress(hex)` đảo ngược đúng; `guid.new()` sinh GUID mới. Ví dụ: `1TGflo42n9vRyAeKkmV_BN` → `5d429bf2102c49e5bf0aa14bb07fe2d7` → `5d429bf2-102c-49e5-bf0a-a14bb07fe2d7`.
+- IMDF yêu cầu `id` dạng UUID (FEATURE-ID = UUID, **đã xác minh** từ spec IMDF); IFC GUID giải mã được sang UUID 128-bit (cách trên). Lưu ý: UUID suy từ `expand` không nhất thiết là UUID phiên bản 4 hợp lệ về bit version; để UUID chuẩn và ổn định có thể dùng `uuid5(namespace, GlobalId)` (**đã xác minh** `uuid5` cho kết quả ổn định giữa các lần chạy).
 
 ### Cách nối
 | Chiều | Phía "3D" | Phía mở rộng | Khoá nối |
@@ -32,6 +32,14 @@
 ## Liên quan đến pipeline CAD → BIM → GPKG
 - Mỗi layer GPKG nên có cột `global_id` (IFC 22-char) và `id` (UUID) để quay về IFC, nối bảng 4D/5D/7D phi hình học.
 - Cần cấu hình georeference tường minh; nếu IFC thiếu IfcMapConversion thì dùng control points.
+
+## Kết quả xác minh (TASK-012, claude-laptop, 2026-11-06)
+| Khẳng định | Kết quả | Cách kiểm |
+|---|---|---|
+| GlobalId dài 22 ký tự | ĐÚNG (`ifcopenshell.guid.new()` → 22 ký tự) | chạy |
+| Ký tự đầu chỉ 0–3 | KHÔNG KIỂM (mẫu một giá trị bắt đầu `1`) | — |
+| `IfcRelAssignsToProcess` (4D), `IfcRelAssignsToControl` (5D) làm khoá nối | ĐÚNG về entity | schema |
+| Revit giữ GUID qua export, Unity `.meta`, BIM Fit Check | CHƯA XÁC MINH | — |
 
 ## Nguồn
 - [IFC4.1 — IfcGloballyUniqueId](https://standards.buildingsmart.org/IFC/RELEASE/IFC4_1/FINAL/HTML/schema/ifcutilityresource/lexical/ifcgloballyuniqueid.htm) — truy cập 2026-11-06

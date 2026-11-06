@@ -44,6 +44,7 @@ Tìm hoặc tạo file mẫu nhỏ (một toà nhà 1–2 tầng, vài chục ph
 | Thời điểm (GMT+7) | Trạng thái | Nội dung |
 |---|---|---|
 | 2026-11-06T10:25:44+07:00 | in_review | Tự sinh 2 DXF + 1 IFC4 (24 phòng, 2 tầng) bằng `samples/generate_samples.py`; ezdxf audit 0 lỗi, ifcopenshell dựng hình học 34/34. Ghi `samples/README.md`. |
+| 2026-11-06T11:16:02+07:00 | in_review | Sửa lỗi phát hiện khi làm TASK-012: IFC mẫu khai báo đơn vị mm nên `Elevation`/`OverallWidth` gán tay sai đơn vị. Đặt đơn vị mét trong `generate_samples.py`, sinh lại `sample-building.ifc` (26 IfcSpace, 8 IfcWall, 24 IfcDoor; hình học 34/34). DXF không đổi. |
 
 ## Blocker / câu hỏi mở
 - Repo chưa có LICENSE; cần chủ repo chọn giấy phép cho dữ liệu mẫu (gợi ý CC0).

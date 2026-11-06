@@ -2,7 +2,7 @@
 
 - **Câu hỏi nghiên cứu**: Mỗi chiều BIM thêm dữ liệu gì, dùng chuẩn/class IFC và công cụ nào; định nghĩa có thống nhất không?
 - **Kết luận ngắn**: 3D (hình học + thuộc tính), 4D (tiến độ) và 5D (chi phí) khá thống nhất. 6D và 7D KHÔNG thống nhất: 6D vừa được dùng cho "bền vững/năng lượng" vừa cho "FM/vận hành"; 7D có chỗ dùng cho FM, có chỗ cho dữ liệu cảm biến/phân tích. Với dự án này, ta cố định cách dùng (6D = bền vững, 7D = FM, theo `PRIMARY_OBJECTIVE.md`) và ghi rõ đó là quy ước.
-- **Độ tin cậy**: trung bình — định nghĩa lấy từ khảo sát/wiki/blog vendor, không có chuẩn ISO định nghĩa "nD"; chi tiết class IFC chưa đọc toàn văn spec (WebFetch bị chặn, chỉ dùng kết quả tìm kiếm).
+- **Độ tin cậy**: trung bình — định nghĩa nD lấy từ khảo sát/wiki/blog vendor (chưa xác minh lại trong TASK-012); **tên class IFC trong bảng đã được kiểm chứng** bằng schema ifcopenshell (xem các ghi chú 4d/5d/6d/7d và mục cuối).
 
 ## Chi tiết
 
@@ -30,6 +30,11 @@
 ## Liên quan đến pipeline CAD → BIM → GPKG
 - Phần được đưa sang GIS thực tế nhất: hình học 3D→2D footprint theo tầng (`IfcBuildingStorey`, `IfcSpace`), georeference (`IfcMapConversion`/`IfcProjectedCRS`), và thuộc tính 7D (mã tài sản, loại phòng) làm cột thuộc tính trong GPKG/IMDF `unit`/`occupant`/`amenity`.
 - 4D/5D/6D ít có ý nghĩa với indoor mapping; có thể giữ dạng bảng không-hình-học trong GPKG (bảng thuộc tính nối bằng GUID) — đề xuất thiết kế, chưa kiểm chứng.
+
+## Kết quả xác minh (TASK-012, claude-laptop, 2026-11-06)
+- Các class trong bảng chiều → class IFC: `IfcWorkSchedule`, `IfcTask`, `IfcTaskTime`, `IfcRelAssignsToProcess`, `IfcCostSchedule`, `IfcCostItem`, `IfcRelAssignsToControl`, `IfcRelSpaceBoundary`, `IfcZone`, `IfcSystem` **đều tồn tại** (IFC4 và IFC4X3_ADD2). `IfcElementQuantity`/`Qto_*BaseQuantities` tồn tại (Qto có trong template).
+- `Pset_Warranty`, `Pset_ServiceLife`, `Pset_ManufacturerTypeInformation` tồn tại; `Pset_TaskCommon` **không tồn tại**.
+- Khảo sát Charef 2018, định nghĩa 6D/7D (Designing Buildings, Saxon), RDF/Pulse: CHƯA XÁC MINH (không thuộc khả năng kiểm bằng thực nghiệm).
 
 ## Nguồn
 - [Charef et al. — Beyond the third dimension of BIM](https://www.research.lancs.ac.uk/portal/en/publications/beyond-the-third-dimension-of-bim(acfb063d-97af-470c-9068-8ed47b124116)/export.html) — truy cập 2026-11-06

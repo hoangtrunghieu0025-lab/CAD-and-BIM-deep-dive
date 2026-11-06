@@ -78,7 +78,7 @@ def make_ifc(name):
     f = ifcopenshell.api.run("project.create_file", version="IFC4")
     api = ifcopenshell.api
     project = api.run("root.create_entity", f, ifc_class="IfcProject", name="Sample Building")
-    api.run("unit.assign_unit", f)     # mặc định: mét
+    api.run("unit.assign_unit", f, length={"is_metric": True, "raw": "METERS"})  # mét (mặc định của api là mm)
     ctx = api.run("context.add_context", f, context_type="Model")
     body = api.run("context.add_context", f, context_type="Model", context_identifier="Body",
                    target_view="MODEL_VIEW", parent=ctx)

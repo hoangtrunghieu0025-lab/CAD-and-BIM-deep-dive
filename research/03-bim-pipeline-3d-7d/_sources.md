@@ -1,18 +1,12 @@
-# Nguồn bổ sung — TASK-004 (chưa gộp vào research/sources.md)
+# Log nguồn TASK-012 — research/03-bim-pipeline-3d-7d
 
-## Vòng 2 xác minh (2026-11-06)
-Không thêm nguồn mới được xác minh. Toàn bộ WebFetch tới các host dưới đây đều lỗi DNS `getaddrinfo ENOTFOUND` (host chưa nằm trong danh sách mạng được phép của phiên), nên không đối chiếu được trang gốc:
+Cập nhật bởi claude-laptop, 2026-11-06. Thay log vòng 2 của claude-mobile.
 
-| URL đã thử | Mục đích | Kết quả (2026-11-06) |
+| Nguồn | Dùng cho | Trạng thái |
 |---|---|---|
-| https://ifc43-docs.standards.buildingsmart.org/IFC/RELEASE/IFC4x3/HTML/lexical/IfcTask.htm | thuộc tính IfcTask | ENOTFOUND |
-| https://ifc43-docs.standards.buildingsmart.org/IFC/RELEASE/IFC4x3/HTML/lexical/IfcTaskTime.htm | IfcTaskTime | ENOTFOUND |
-| https://ifc43-docs.standards.buildingsmart.org/IFC/RELEASE/IFC4x3/HTML/lexical/IfcRelAssignsToProcess.htm | deprecated RelatingProcess | ENOTFOUND |
-| https://ifc43-docs.standards.buildingsmart.org/IFC/RELEASE/IFC4x3/HTML/lexical/IfcWorkSchedule.htm | IfcWorkSchedule | ENOTFOUND |
-| https://ifc43-docs.standards.buildingsmart.org/IFC/RELEASE/IFC4x3/HTML/lexical/Pset_TaskCommon.htm | Pset_TaskCommon | ENOTFOUND |
-| https://docs.ifcopenshell.org/autoapi/ifcopenshell/guid/index.html | hàm GUID<->UUID | ENOTFOUND |
-| https://standards.buildingsmart.org/IFC/RELEASE/IFC4_3/HTML/lexical/IfcTask.htm | thử host dự phòng | ENOTFOUND |
-
-Các mục chưa thử do cùng nguyên nhân (cùng host): IfcCostSchedule/IfcCostItem/IfcCostValue/IfcAppliedValue, Pset nhiệt 6D, bảng COBie-IFC, ifcopenshell.api.sequence/Ifc4D.
-
-Cần làm: cho phép `ifc43-docs.standards.buildingsmart.org` và `docs.ifcopenshell.org` trong cài đặt mạng của phiên, rồi chạy lại vòng xác minh.
+| `ifcopenshell 0.9.0.post1` schema bundled (`IFC2X3`, `IFC4`, `IFC4X3_ADD2`) | entity, attribute, OPTIONAL/REQUIRED 4D/5D/6D/7D | ĐÃ DÙNG |
+| `ifcopenshell.util.pset.get_template` | Pset/Qto (Warranty, ServiceLife, Manufacturer, Asset, Environmental…) | ĐÃ DÙNG |
+| `ifcopenshell.guid`, `uuid` | GUID↔UUID | ĐÃ CHẠY |
+| `importlib` (ifcopenshell.util.sequence|cost, api.sequence|cost) | module 4D/5D | ĐÃ KIỂM tồn tại |
+| https://ifc43-docs.standards.buildingsmart.org/ | spec IFC | HTTP 403 (chặn bot), không vượt chặn |
+| COBie (NIBS), ISO 19650-3, BIMForum, vendor (Navisworks, Synchro, Tally…) | công cụ/chuẩn thương mại | CHƯA ĐỌC |

@@ -2,7 +2,7 @@
 
 - **Câu hỏi nghiên cứu**: IFC tổ chức cây không gian thế nào, quan hệ nào gắn Space/Door vào tầng, và lấy footprint 2D của `IfcSpace`/`IfcDoor` theo từng tầng ra sao?
 - **Kết luận ngắn**: Cây không gian dựng bằng `IfcRelAggregates` (Project → Site → Building → BuildingStorey → Space); phần tử vật lý (tường, cửa…) gắn vào tầng bằng `IfcRelContainedInSpatialStructure`. Footprint 2D lấy từ representation có `RepresentationIdentifier` = `FootPrint` nếu có, nếu không thì phải tự chiếu/cắt hình học `Body` (đề xuất của dự án, không phải quy định của chuẩn).
-- **Độ tin cậy**: trung bình. Tên class/thuộc tính có nguồn qua kết quả tìm kiếm trích đoạn từ trang spec buildingSMART; không fetch trực tiếp được trang spec (host `*.buildingsmart.org` bị chặn trong môi trường này) nên các chi tiết đánh dấu "chưa xác minh" cần kiểm lại.
+- **Độ tin cậy**: trung bình-cao sau TASK-012: class/thuộc tính/supertype đã kiểm chứng bằng schema EXPRESS đi kèm `ifcopenshell 0.9.0.post1` (IFC4 và IFC4X3_ADD2) và chạy thật trên `samples/sample-building.ifc`. Trang spec buildingSMART vẫn trả HTTP 403 (chặn bot) với `curl`, không đọc được; không vượt chặn. Mục còn lại ghi "chưa xác minh" ở cuối.
 
 ## Chi tiết
 
@@ -14,14 +14,14 @@
 - IFC4: mọi spatial structure element phải được `IfcRelAggregates` với một spatial structure element khác hoặc với `IfcProject`. [S1]
 
 ### 2. IfcSpace
-- `IfcSpace` kế thừa `IfcSpatialStructureElement` (IFC4; trong IFC4.3 thuộc nhánh `IfcSpatialElement` — chưa xác minh chi tiết supertype 4.3). [S2]
+- `IfcSpace` kế thừa `IfcSpatialStructureElement` → `IfcSpatialElement` → `IfcProduct` (**đã xác minh** cả IFC4 và IFC4X3_ADD2; bản cũ ghi 4.3 "thuộc nhánh IfcSpatialElement" chưa chính xác: 4.3 vẫn có `IfcSpatialStructureElement` ở giữa). [S2]
 - Spec: space gắn với một building storey (hoặc với site nếu là không gian ngoài trời) và đóng vai trò container cho các phần tử liên quan. [S2]
 - Thuộc tính: `PredefinedType : OPTIONAL IfcSpaceTypeEnum` (nếu `USERDEFINED` thì `ObjectType` phải có; `ObjectType` thường chứa phân loại chức năng); `ElevationWithFlooring : OPTIONAL IfcLengthMeasure` (cao độ mặt sàn hoàn thiện, tương đối với `IfcBuilding.ElevationOfRefHeight`). [S2]
 - Inverse: `ContainsElements` → `IfcRelContainedInSpatialStructure`; `IsDecomposedBy` → `IfcRelAggregates`. [S2]
 - Tên (`Name`/`LongName`) và số phòng: `Name`/`LongName` là attribute kế thừa của spatial element (chưa xác minh trực tiếp từ spec trong phiên này); `Pset_SpaceCommon` có `IsExternal` (xem `property-sets-and-classification.md`).
 
 ### 3. IfcBuildingStorey
-- Subtype của `IfcSpatialStructureElement`; có attribute `Elevation` (cao độ tầng) — **chưa xác minh** trong phiên này (trang spec không fetch được; thông tin từ kiến thức chung). Cần kiểm lại tại trang `IfcBuildingStorey` của IFC4.3.
+- Subtype của `IfcSpatialStructureElement`; có attribute `Elevation : OPTIONAL IfcLengthMeasure` (**đã xác minh** IFC4 và IFC4X3_ADD2). Vì là OPTIONAL, pipeline phải chịu được `Elevation=None` (suy từ placement của storey).
 - Dùng `Elevation` (và/hoặc `Name`) để suy ra `level.ordinal`/`short_name` của IMDF.
 
 ### 4. Cách lấy footprint 2D của IfcSpace / IfcDoor theo tầng
@@ -29,7 +29,7 @@
 **Bước chung — gom phần tử theo tầng**
 - `IfcSpace`: đi từ `IfcBuildingStorey` qua `IsDecomposedBy` (`IfcRelAggregates`) để lấy các `IfcSpace` con; ngoài ra kiểm tra thêm `ContainsElements` phòng khi file đặt space bằng containment. [S1][S2]
 - `IfcDoor`: là phần tử vật lý, thường gắn tầng bằng `IfcRelContainedInSpatialStructure` (`RelatingStructure` = storey). Cửa nằm trong tường qua `IfcRelFillsElement` với `IfcOpeningElement`. [S2][S5]
-- Trong IfcOpenShell: dùng `ifcopenshell.util.element` (module chứa các hàm lấy quan hệ phổ biến; tên hàm `get_container` chưa xác minh trong tài liệu) hoặc tự duyệt inverse `IsDecomposedBy` / `ContainsElements`. [S6]
+- Trong IfcOpenShell: dùng `ifcopenshell.util.element` (module chứa các hàm lấy quan hệ phổ biến; tên hàm `get_container` chưa xác minh trong tài liệu) hoặc tự duyệt inverse `IsDecomposedBy` / `ContainsElements`. [S6] **Đã xác minh (ifcopenshell 0.9.0)**: `ifcopenshell.util.element.get_container(el)` tồn tại, trả storey cho `IfcDoor` nhưng trả **`None` cho `IfcSpace` được aggregate** vào storey; dùng `get_aggregate(space)` (trả storey) hoặc kiểm cả hai.
 
 **Footprint IfcSpace**
 1. Ưu tiên: tìm trong `Representation.Representations` một `IfcShapeRepresentation` có `RepresentationIdentifier == 'FootPrint'` — spec định nghĩa là "2D Foot print ... projected to ground view". [S3] Dữ liệu thường là curve 2D (`RepresentationType` 'GeometricCurveSet'/'Curve2D' theo implementer agreement CV-2x3-168 cho IFC2x3 — kiểm tra lại cho IFC4/4.3). [S3]
@@ -47,6 +47,19 @@
 - IMDF `level` ← `IfcBuildingStorey`; `unit` ← `IfcSpace` (polygon); `opening` ← `IfcDoor` (LineString); `building` ← `IfcBuilding` (hoặc `IfcFacility`).
 - Khoá ngoại IMDF (`unit.level_id`) lấy từ cây `IfcRelAggregates`/containment; dùng `GlobalId` làm cơ sở sinh UUID ổn định.
 - Khi bước CAD → BIM sinh IFC trung gian: phải tạo đủ `IfcProject`→`IfcSite`→`IfcBuilding`→`IfcBuildingStorey`→`IfcSpace` bằng `IfcRelAggregates` và gắn phần tử bằng `IfcRelContainedInSpatialStructure`.
+
+## Kết quả xác minh (TASK-012, claude-laptop, 2026-11-06)
+| Khẳng định | Kết quả | Cách kiểm |
+|---|---|---|
+| `IfcSpace` → `IfcSpatialStructureElement` → `IfcSpatialElement` (IFC4 và 4.3) | ĐÚNG | `ifcopenshell_wrapper.schema_by_name("IFC4"/"IFC4X3_ADD2")` |
+| `IfcBuilding` → `IfcFacility` → `IfcSpatialStructureElement` trong 4.3; IFC4 không có `IfcFacility` | ĐÚNG | cùng cách |
+| `IfcSpace.PredefinedType` OPTIONAL `IfcSpaceTypeEnum`, `ElevationWithFlooring` OPTIONAL | ĐÚNG; enum **khác nhau**: IFC4 `SPACE,PARKING,GFA,INTERNAL,EXTERNAL,USERDEFINED,NOTDEFINED`; 4.3 thêm `BERTH`, các giá trị còn lại giống IFC4 | schema |
+| `IfcBuildingStorey.Elevation` OPTIONAL `IfcLengthMeasure` | ĐÚNG | schema |
+| `IfcRelAggregates` ⊂ `IfcRelDecomposes`; `IfcRelContainedInSpatialStructure` ⊂ `IfcRelConnects`; `IfcSpatialZone` ⊂ `IfcSpatialElement` | ĐÚNG | schema |
+| `IfcDoor.OverallWidth/OverallHeight` OPTIONAL | ĐÚNG | schema |
+| `get_container(space)` lấy storey | **SAI nếu space được aggregate** (trả None); dùng `get_aggregate` | chạy trên mẫu |
+| Representation `FootPrint` của IfcSpace | CHƯA XÁC MINH: mẫu chỉ có `Body`/`SweptSolid`; `util.representation.get_representation(space,"Plan","FootPrint","GRAPH_VIEW")` trả `None` | chạy trên mẫu |
+| Revit có xuất `FootPrint` hay không, `IfcRelFillsElement`, space nhiều tầng (double-height) | CHƯA XÁC MINH (cần file thật) | — |
 
 ## Nguồn
 - [S1] IFC 4.3 Spatial Decomposition / Spatial Composition (buildingSMART) — https://ifc43-docs.standards.buildingsmart.org/IFC/RELEASE/IFC4x3/HTML/concepts/Object_Composition/Aggregation/Spatial_Decomposition/content.html — truy cập 2026-11-06 (qua WebSearch, không fetch được trực tiếp)

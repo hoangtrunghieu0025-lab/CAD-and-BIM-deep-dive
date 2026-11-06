@@ -2,7 +2,7 @@
 
 - **Câu hỏi nghiên cứu**: Dùng `ifcopenshell` thế nào để lấy hình học (và thuộc tính) từ IFC theo tầng, chuyển thành polygon cho GeoPackage?
 - **Kết luận ngắn**: `ifcopenshell.geom.create_shape` (từng phần tử) hoặc `ifcopenshell.geom.iterator` (đa nhân) trả mesh tam giác (`verts`, `faces`, `edges`); bật `USE_WORLD_COORDS` để có toạ độ thế giới. Footprint 2D = chiếu/cắt mesh bằng `shapely`.
-- **Độ tin cậy**: trung bình — code mẫu lấy từ tài liệu v0.7.0; API mới hơn (v0.8) có thể đổi cách tạo `settings` (chưa xác minh).
+- **Độ tin cậy**: cao sau TASK-012 — mọi đoạn code trong ghi chú đã **chạy thật** trên `ifcopenshell 0.9.0.post1` với `samples/sample-building.ifc` (IFC4). Kết quả ở mục "Kết quả xác minh" cuối file.
 
 ## Chi tiết
 
@@ -39,8 +39,8 @@ if it.initialize():
 ```
 - Nếu không bật `USE_WORLD_COORDS`, đỉnh nằm trong toạ độ cục bộ và cần nhân `shape.transformation.matrix`. [S1]
 - IfcOpenShell tính nội bộ bằng mét; với giá trị đọc thủ công thì nhân `ifcopenshell.util.unit.calculate_unit_scale(f)`. [S1][S4]
-- Có thể chọn một representation cụ thể (vd `FootPrint`) rồi truyền vào `create_shape` cùng settings (mô tả trong docs; ví dụ code chưa xác minh). [S4]
-- `ifcopenshell.util.shape` có các hàm tiện ích (`get_vertices/get_edges/get_faces`, và `get_footprint_area` theo một câu trả lời diễn đàn; chữ ký chưa xác minh). [S1][S3]
+- Có thể chọn một representation cụ thể (vd `FootPrint`) rồi truyền vào `create_shape` cùng settings. **Đã xác minh**: `R.get_representation(el, "Model", "Body", "MODEL_VIEW")` rồi `create_shape(settings, representation)` chạy được (8 đỉnh cho phòng hộp). Với `FootPrint`: `get_representation(el, "Plan", "FootPrint", "GRAPH_VIEW")` trả `None` nếu không có; mẫu của dự án chưa có FootPrint. [S4]
+- `ifcopenshell.util.shape` có các hàm tiện ích (**đã xác minh** tồn tại: `get_vertices`, `get_edges`, `get_faces`, `get_area`, `get_bbox`, `get_extrusions`, `get_bottom_elevation`…). `get_footprint_area(geometry, axis='Z', direction=None) -> float` nhận `shape.geometry` (triangulation); trên phòng 4×5×3 trả `20.0` (bằng `shapely` footprint), `get_area` trả 94.0 (tổng diện tích mặt). [S1][S3]
 
 ### Công thức footprint 2D theo tầng (đề xuất của dự án)
 ```python
@@ -66,6 +66,24 @@ def footprint(shape):
 
 ## Liên quan đến pipeline CAD → BIM → GPKG
 Đây là bước 3 "Extract hình học + thuộc tính": kết hợp (a) cây storey/space/door, (b) Pset, (c) footprint, (d) transform địa lý. Khi sinh IFC từ CAD (bước 2), dùng `ifcopenshell.api` để tạo thực thể (chưa nghiên cứu chi tiết trong ghi chú này).
+
+## Kết quả xác minh (TASK-012, claude-laptop, 2026-11-06)
+Chạy trong venv của dự án, `ifcopenshell 0.9.0.post1`, `samples/sample-building.ifc` (IFC4, 26 `IfcSpace`).
+| Khẳng định / đoạn code | Kết quả |
+|---|---|
+| `settings = ifcopenshell.geom.settings(); settings.set(settings.USE_WORLD_COORDS, True)` | CHẠY ĐƯỢC (API kiểu cũ vẫn dùng được ở 0.9) |
+| `settings.set("use-world-coords", True)` (khoá chuỗi) | CHẠY ĐƯỢC |
+| `ifcopenshell.geom.settings(**{"use-world-coords": True})` | **LỖI** `AttributeError: 'settings' object has no attribute 'use-world-coords'` — không dùng kwargs kiểu này |
+| `create_shape(settings, element)` → `shape.geometry.verts/faces` | ĐÚNG; kết quả là `triangulation_element`, đỉnh theo **mét**, phòng 4×5×3 → bbox (0,0,0)–(4,5,3) |
+| Hàm `footprint(shape)` (union tam giác chiếu XY bằng `shapely`) | CHẠY ĐƯỢC: `Polygon` diện tích 20.0, bounds (0,0,4,5) |
+| `ifcopenshell.geom.iterator(settings, f, cpu_count, include=spaces)` + `initialize/get/next` | ĐÚNG: xử lý đủ 26/26 space |
+| `ifcopenshell.util.unit.calculate_unit_scale(f)` | ĐÚNG; trả `1.0` cho file đơn vị mét và `0.001` cho file đơn vị mm (đã gặp lỗi gán thuộc tính thô sai đơn vị trong chính file mẫu, xem lưu ý dưới) |
+| `ifcopenshell.util.placement.get_local_placement(el.ObjectPlacement)` | ĐÚNG: trả ma trận 4×4 numpy; phòng P101 gốc (0,0,0); `IfcSpace` P109 đặt tại (8,7,0) m |
+| `ifcopenshell.util.element.get_psets(el)` | ĐÚNG: `{'Pset_SpaceCommon': {'Reference': 'P101', 'IsExternal': False, 'id': 131}}` (có khoá `id`) |
+
+**Lưu ý đơn vị (bài học từ file mẫu)**: `ifcopenshell.api` mặc định gán đơn vị **milimét**; hình học tạo bằng `geometry.add_*_representation` được tự đổi, nhưng thuộc tính gán tay (`IfcBuildingStorey.Elevation`, `IfcDoor.OverallWidth`) là giá trị **thô theo đơn vị dự án**. Lỗi này đã được phát hiện và sửa trong `samples/generate_samples.py` (đơn vị mét). Pipeline phải nhân `calculate_unit_scale` với mọi giá trị độ dài đọc thô (Elevation, OverallWidth, …); chỉ `create_shape` mới trả mét.
+
+CHƯA XÁC MINH: hiệu năng iterator trên file lớn; FootPrint thật từ Revit; `IfcConvert --plan` (không dùng).
 
 ## Nguồn
 - [S1] IfcOpenShell geometry_processing.rst v0.7.0 — https://github.com/IfcOpenShell/IfcOpenShell/blob/v0.7.0/src/ifcopenshell-python/docs/ifcopenshell-python/geometry_processing.rst?plain=true — truy cập 2026-11-06

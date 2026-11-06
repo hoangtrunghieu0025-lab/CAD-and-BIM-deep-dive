@@ -2,7 +2,7 @@
 
 - **Câu hỏi nghiên cứu**: Ba khái niệm LOD/LOI (LOIN), MVD và IDS khác nhau thế nào và dùng ra sao để xác định/kiểm tra IFC đầu vào cho pipeline?
 - **Kết luận ngắn**: LOIN (ISO 7817-1) là khung "cần thông tin gì" (hình học + thông tin chữ số); MVD là tập con schema IFC cho một kịch bản trao đổi (gắn với một phiên bản IFC, định dạng mvdXML); IDS là file XML máy đọc được để kiểm tra model có đáp ứng yêu cầu thông tin hay không — phù hợp nhất để kiểm đầu vào của pipeline.
-- **Độ tin cậy**: trung bình — thông tin IDM chưa xác minh; MVD/IDS/LOIN có nguồn nhưng qua trích đoạn tìm kiếm.
+- **Độ tin cậy**: IDS **cao** (đã đọc `ids.xsd` 1.0.0 gốc trên GitHub buildingSMART, TASK-012); MVD/LOIN/IDM vẫn **trung bình** (chưa đọc văn bản gốc; ISO 7817-1 trả phí).
 
 ## Chi tiết
 
@@ -19,13 +19,22 @@
 
 ### IDS (Information Delivery Specification)
 - File XML (schema `ids.xsd` do buildingSMART công bố; phiên bản 1.0) gồm các *specification*, mỗi cái có phần *applicability* (áp dụng cho phần tử nào) và *requirements* (phần tử phải có gì). [S5][S6]
-- Sáu loại facet: `entity`, `attribute`, `classification`, `property`, `material`, `partOf`. Entity facet: IFC Class + Predefined Type; attribute: Name + Value; classification: System + Value; property: property set + name + value. Tên miền giá trị có thể kiểm với bSDD. [S5][S6]
-- Khẳng định "IDS 1.0 chỉ cho một entity facet trong applicability" xuất phát từ một dự án MCP bên thứ ba — chưa xác minh với spec. [S5]
+- Sáu loại facet: `entity`, `attribute`, `classification`, `property`, `material`, `partOf` — **đã xác minh** từ `ids.xsd` (xs:element tương ứng trong `applicabilityType`). Entity facet: IFC Class + Predefined Type; attribute: Name + Value; classification: System + Value (`system` bắt buộc, `value` tuỳ chọn); property: propertySet + baseName + value. Phần tử gốc `<ids>` gồm `info` (có `title` bắt buộc) và `specifications`; mỗi `specification` có `ifcVersion` (bắt buộc, danh sách trong `IFC2X3`, `IFC4`, `IFC4X3_ADD2`), `applicability` và `requirements` (tuỳ chọn). Tên miền giá trị có thể kiểm với bSDD. [S5][S6]
+- Khẳng định "IDS 1.0 chỉ cho một entity facet trong applicability": **ĐÚNG** theo `ids.xsd` 1.0.0 — `applicabilityType` có `entity minOccurs=0` (tối đa 1) cùng các facet khác `maxOccurs=unbounded`; requirements: entity facet không có cardinality. [S5]
 - Công cụ: Solibri IDS Editor; thư viện `ifctester` của IfcOpenShell (chưa xác minh trong phiên này).
 
 ## Liên quan đến pipeline CAD → BIM → GPKG
 - Viết một IDS tối thiểu cho "IFC đủ điều kiện sang indoor GPKG": có `IfcBuildingStorey` (attribute `Name`, `Elevation`), `IfcSpace` (attribute `Name`/`LongName`, Pset `Pset_SpaceCommon`), `IfcDoor`; model có `IfcMapConversion` + `IfcProjectedCRS` (kiểm bằng script, vì IDS tập trung vào property/attribute).
 - Khi tự sinh IFC từ CAD, nhắm tới Reference View (hình học đơn giản) là đủ.
+
+## Kết quả xác minh (TASK-012, claude-laptop, 2026-11-06)
+| Khẳng định | Kết quả | Cách kiểm |
+|---|---|---|
+| IDS có 6 facet: entity, attribute, classification, property, material, partOf | ĐÚNG | `https://raw.githubusercontent.com/buildingSMART/IDS/development/Schema/ids.xsd` (version="1.0.0") |
+| Applicability chỉ có tối đa 1 entity facet | ĐÚNG | cùng XSD |
+| IDS hỗ trợ IFC2X3, IFC4, IFC4X3_ADD2 | ĐÚNG (enum `ifcVersion`) | cùng XSD |
+| Thư viện `ifctester` của IfcOpenShell | CHƯA XÁC MINH (chưa cài trong venv; không có trong `requirements.txt`) | — |
+| LOIN/ISO 7817-1, BIMForum LOD, mvdXML 1.1, IDM | CHƯA XÁC MINH (nguồn trả phí/chưa đọc) | — |
 
 ## Nguồn
 - [S1] BIMplus: ISO 7817 LOIN — https://bimplus.co.uk/new-level-of-information-need-standard-published — truy cập 2026-11-06

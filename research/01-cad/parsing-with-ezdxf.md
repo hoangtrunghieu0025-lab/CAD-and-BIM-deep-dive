@@ -67,6 +67,23 @@ msp = doc.modelspace()
 - Cần test với DXF mẫu nhỏ: (a) phòng khép kín, (b) khe hở ở cửa, (c) INSERT lồng, (d) OCS extrusion −Z, (e) đơn vị mm, (f) MINSERT, (g) MLINE.
 - Ghi vào output: `source_layer`, `source_handle` (`e.dxf.handle`) để truy vết về CAD gốc. Lưu ý: entity ảo từ `virtual_entities()` không có handle và không thuộc layout nào (docstring MLINE; tương tự với INSERT chưa xác minh trực tiếp) → với entity ảo, lưu handle của INSERT cha. Handle không phải ID ổn định giữa các phiên bản bản vẽ (chưa xác minh).
 
+## Kết quả chạy thử trên `samples/sample-floor-1.dxf` (TASK-012 phần C, claude-laptop, 2026-11-06)
+`ezdxf 1.4.5` trong `.venv`; file mẫu: 13 LWPOLYLINE `A-AREA`, 13 TEXT, 12 INSERT `A-DOOR`, 12 LINE + 1 LWPOLYLINE `A-WALL`.
+| Hàm / khẳng định | Kết quả |
+|---|---|
+| `recover.readfile(path)` → `(doc, auditor)` | ĐÚNG; `auditor.has_errors == False`; `doc.units == 6` (mét). `recover.read`, `recover.explore` cũng tồn tại |
+| Query `msp.query('LWPOLYLINE[layer=="A-AREA"]')` | ĐÚNG: 13 kết quả |
+| Query `msp.query('* !LINE')` (loại LINE), `msp.query('INSERT TEXT')` | ĐÚNG: 39 và 25 entity |
+| `layer.is_off()`, `is_frozen()`, `is_locked()` | TỒN TẠI, chạy được (tất cả `False` trong mẫu) |
+| `insert.virtual_entities()` | ĐÚNG: trả `['LINE','ARC']` (nội dung block `DOOR`). Entity ảo **không có handle**: `[None, None]` — xác nhận ghi chú "entity ảo không có handle" |
+| `ezdxf.disassemble.recursive_decompose(entities)` | ĐÚNG: luồng phẳng 24 entity cho 12 INSERT (2 entity mỗi cửa) |
+| `ezdxf.disassemble`: `make_primitive`, `to_primitives`, `to_meshes`, `to_paths`, `to_vertices`, `to_control_vertices`, `Primitive` | TỒN TẠI (đủ tên đã liệt kê); `to_primitives(msp)` ra 52 primitive |
+| `ezdxf.path.make_path(entity).flattening(0.01)` | ĐÚNG: LWPOLYLINE đóng 4 đỉnh → 5 điểm; ARC → 9 điểm (distance 0.01) |
+| `MText.plain_text()` | ĐÚNG: `{\fArial|b1;Phòng}\PA1` → `Phòng⏎A1` (xuống dòng) |
+| `insert.mcount` | TỒN TẠI (`1` cho INSERT thường) |
+
+CHƯA XÁC MINH (mẫu không có): MINSERT thật (`mcount > 1`), OCS extrusion −Z, MLINE, HATCH, SPLINE/ELLIPSE, block lồng nhiều cấp, xref; quy ước layer NCS/AIA, ISO 13567, BS 1192 (nguồn trả phí/chưa tìm nguồn công khai trong phiên này — vẫn giữ nhãn "chưa xác minh" trong `layer-naming-conventions.md`). Các bước làm sạch shapely mục 5 vẫn là đề xuất, chưa chạy trên dữ liệu thật.
+
 ## Nguồn
 (Chi tiết URL và ngày truy cập: xem cả `research/01-cad/_sources.md`.)
 - [ezdxf docs `drawing/recover.rst`](https://raw.githubusercontent.com/mozman/ezdxf/master/docs/source/drawing/recover.rst) — truy cập 2026-11-06 (nguồn của trang https://ezdxf.readthedocs.io/en/stable/drawing/recover.html)

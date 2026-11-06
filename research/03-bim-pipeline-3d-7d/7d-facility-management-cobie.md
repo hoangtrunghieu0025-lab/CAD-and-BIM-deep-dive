@@ -2,7 +2,7 @@
 
 - **Câu hỏi nghiên cứu**: Dữ liệu vận hành/tài sản được bàn giao thế nào (COBie, IFC), nối với CAFM/CMMS và digital twin ra sao?
 - **Kết luận ngắn**: COBie là tập con phi hình học của BIM, định nghĩa như một MVD của IFC và có dạng bảng tính (19 bảng); dùng bàn giao sang CMMS. Digital twin nối BIM với dữ liệu IoT chủ yếu qua khoá ID (GUID). 7D ở đây = FM; một số nguồn định nghĩa khác (xem `dimensions-overview.md`).
-- **Độ tin cậy**: trung bình — COBie khá rõ qua NIBS/NBS; ánh xạ COBie↔IFC chi tiết chỉ lấy từ nguồn thứ cấp; ISO 19650-3 chưa đọc văn bản gốc.
+- **Độ tin cậy**: trung bình — phần Pset/IFC đã kiểm bằng template ifcopenshell (TASK-012); COBie (NIBS), ISO 19650-3 và digital twin vẫn **chưa xác minh** với văn bản gốc.
 
 ## Chi tiết
 
@@ -11,7 +11,7 @@
 - Có COBie v3 (NIBS; bản tóm tắt buildingSMART còn là DRAFT 06/2022). Khác biệt so với v2.4: chưa xác minh.
 - Cấu trúc bảng (slide ĐH Charlotte): 19 bảng, gom nhóm tổng quát, không gian (Level, Zone, SpaceType, Space, Coordinate...) và tài sản (Type, Component, System, Attribute...). Bentley liệt kê bảng bắt buộc: Contact, Facility, Floor, Space, Type, Component; có điều kiện: Zone, Attribute.
 - Ánh xạ sang IFC (nguồn thứ cấp, cần đối chiếu bảng NIBS "COBie V3 IFC"): Facility ↔ IfcBuilding trong IfcProject/IfcSite (IfcFacility có ở IFC4.3 nhưng COBie dùng IfcBuilding); Floor ↔ IfcBuildingStorey; Space ↔ IfcSpace; Zone ↔ IfcZone; Type ↔ các IfcElementType; Component ↔ IfcElement occurrence; System ↔ IfcSystem.
-- Pset liên quan (bảng NIBS): bảo hành → `Pset_Warranty` (WarrantyStartDate, WarrantyGuarantorLabor...); `Pset_ServiceLife.ServiceLifeDuration` ↔ COBie ExpectedLife; `Pset_ManufacturerTypeInformation` cho thông tin nhà sản xuất/model. Tên thuộc tính thay đổi theo phiên bản (vd. WarrantyPeriod đổi kiểu ở IFC4 ADD2).
+- Pset liên quan: `Pset_Warranty` **đã xác minh** (IFC4: `WarrantyIdentifier`, `WarrantyStartDate`, `WarrantyEndDate`, `IsExtendedWarranty`, `WarrantyPeriod`, `WarrantyContent`, `PointOfContact`, `Exclusions`; IFC4.3 **bỏ `WarrantyEndDate`**). Tên `WarrantyGuarantorLabor` trong ghi chú cũ **không có** trong template IFC4/4.3 (có thể là thuộc tính của IFC2X3, chưa kiểm). `Pset_ServiceLife`: `ServiceLifeDuration`, `MeanTimeBetweenFailure`. `Pset_ManufacturerTypeInformation`: `GlobalTradeItemNumber`, `ArticleNumber`, `ModelReference`, `ModelLabel`, `Manufacturer`, `ProductionYear`, `AssemblyPlace` (+ 4.3: `OperationalDocument`, `SafetyDocument`, `PerformanceCertificate`). Có thêm `Pset_Asset`, `Pset_Condition`, `Pset_ProjectOrderMaintenanceWorkOrder`; 4.3 có `Pset_MaintenanceStrategy`, `Pset_MaintenanceTrigger*`. Ánh xạ COBie ↔ Pset cụ thể vẫn CHƯA XÁC MINH (cần bảng NIBS).
 - Anh: Phụ lục quốc gia BS EN ISO 19650-2 (01/2019) nêu thông tin phi hình học nên cấu trúc theo COBie.
 
 ### ISO 19650-3 và AIM
@@ -29,6 +29,13 @@ Theo một nguồn thực hành (thứ cấp): Part 3 quản lý thông tin giai
 ## Liên quan đến pipeline CAD → BIM → GPKG
 - Đây là chiều có nhiều giá trị nhất cho GIS: Space → IMDF `unit`, Floor → `level`, Facility → `building`; Type/Component có thể thành `amenity`/`fixture`/`occupant` hoặc layer riêng (asset points) kèm `asset_id`, `global_id`. COBie Space (tên, mã phòng, diện tích) cung cấp thuộc tính `name`, `ref` OSM. Đề xuất thiết kế — chưa kiểm chứng.
 - COBie Coordinate cho phép đặt vị trí; cách dùng với GPKG chưa xác minh.
+
+## Kết quả xác minh (TASK-012, claude-laptop, 2026-11-06)
+| Khẳng định | Kết quả | Cách kiểm |
+|---|---|---|
+| `IfcZone` ⊂ `IfcSystem` ⊂ `IfcGroup` (IFC4/4.3); `IfcZone.LongName` OPTIONAL | ĐÚNG; ở IFC2X3 `IfcZone` ⊂ `IfcGroup` trực tiếp | schema |
+| `Pset_Warranty`, `Pset_ServiceLife`, `Pset_ManufacturerTypeInformation`, `Pset_Asset` tồn tại | ĐÚNG (property như trên) | template |
+| COBie 19 bảng, v2.4/v3, ánh xạ NIBS, ISO 19650-3/AIM, digital twin (arXiv 2512.12149, Cambridge) | CHƯA XÁC MINH | — |
 
 ## Nguồn
 - [NIBS — COBie v3](https://www.nibs.org/cobie) — truy cập 2026-11-06
