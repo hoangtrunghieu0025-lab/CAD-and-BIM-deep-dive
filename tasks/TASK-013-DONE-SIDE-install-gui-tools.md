@@ -1,17 +1,17 @@
 ---
 id: TASK-013
-title: "[IN_REVIEW][SIDE] Cài FreeCAD, Blender + Bonsai, LibreCAD và dùng thử Archilogic"
+title: "[DONE][SIDE] Cài FreeCAD, Blender + Bonsai, LibreCAD và dùng thử Archilogic"
 category: SIDE
 assignees: [claude-laptop]
 created_by: claude-laptop
 created_at: 2026-11-06T10:37:25+07:00
-updated_at: 2026-11-06T15:23:43+07:00
-status: in_review
+updated_at: 2026-11-06T15:31:38+07:00
+status: done
 priority: normal
 depends_on: [TASK-001]
 ---
 
-# [IN_REVIEW][SIDE] TASK-013 — Cài FreeCAD, Blender + Bonsai, LibreCAD và dùng thử Archilogic
+# [DONE][SIDE] TASK-013 — Cài FreeCAD, Blender + Bonsai, LibreCAD và dùng thử Archilogic
 
 ## Mô tả
 TASK-001 xác nhận ba công cụ GUI sau chưa có trên máy local (Ubuntu 24.04, 16GB RAM, không GPU rời): FreeCAD, Blender + Bonsai (BlenderBIM), LibreCAD. Cài và kiểm chứng để mở được `samples/sample-floor-*.dxf` và `samples/sample-building.ifc` bằng mắt, đối chiếu với kết quả `ezdxf`/`ifcopenshell`. Chưa task nào khác phụ thuộc, nên không chặn pipeline.
@@ -64,7 +64,7 @@ Tên gói và nguồn dưới đây là gợi ý, chưa xác minh trên máy nà
 ## Tổng quan
 | Bên | Trạng thái | Cập nhật lúc | Ghi chú ngắn |
 |---|---|---|---|
-| claude-laptop | in_review | 2026-11-06T15:13:39+07:00 | LibreCAD, Blender, Bonsai xong; FreeCAD hoãn; Archilogic: dừng vì phải trả $329 USD |
+| claude-laptop | done | 2026-11-06T15:31:38+07:00 | chủ dự án đồng ý đóng; FreeCAD chuyển TASK-016, Archilogic không thực hiện (phí $329 USD) |
 
 ## Nhật ký — claude-laptop
 | Thời điểm (GMT+7) | Trạng thái | Nội dung |
@@ -76,6 +76,7 @@ Tên gói và nguồn dưới đây là gợi ý, chưa xác minh trên máy nà
 | 2026-11-06T15:02:03+07:00 | in_progress | Phần B: chủ dự án đã đăng ký tài khoản Archilogic. Phiên này **không có công cụ trình duyệt** (extension Claude in Chrome chưa kết nối) nên laptop không thao tác trên tài khoản; chủ dự án tự làm các bước trên web theo hướng dẫn, laptop phân tích gói tải về. Tìm thấy qua WebSearch: Archilogic gắn xuất IMDF với quy trình **Microsoft Places** (cần floor plan có georeference, có thể cần Place ID), trang Exporting chung chỉ liệt kê SVG, ảnh, DXF, IFC — nên IMDF có thể không xuất được trên gói Starter hoặc cần bước ánh xạ; ghi nhận như một phát hiện. Chưa có file nào được tải lên hoặc tải về. |
 | 2026-11-06T15:13:39+07:00 | in_review | **Phần B dừng, không trả tiền.** Chủ dự án tải `sample-floor-1.dxf` lên Archilogic: trang đặt hàng hiển thị **Order total $329.00 USD** (nút "Process and complete order"); gói Starter không bao gồm chuyển đổi DXF miễn phí. Theo quy tắc của task (không nhập thanh toán, dừng khi phát sinh phí) và quyết định của chủ dự án, **không bấm xử lý đơn**; đã xoá ảnh chụp (chứa thanh tab trình duyệt cá nhân). Kết quả xác minh: (1) phí chuyển đổi DXF = $329 USD/floor plan, hoàn tiền đầy đủ nếu không hài lòng trong 1 ngày làm việc; (2) **chưa xác minh** Starter/đơn hàng này có xuất IMDF hay không (xuất IMDF của Archilogic gắn với quy trình Microsoft Places). Không có file IMDF để đối chiếu; pipeline tự sinh gói IMDF thay thế (TASK-010). Đã cập nhật ghi chú tiền tệ trong `research/05-market-tools/`. Các tiêu chí phần B ghi 'không thực hiện: phát sinh phí'. |
 | 2026-11-06T15:23:43+07:00 | in_review | Dọn tiêu chí theo chủ dự án: tick các mục đã đạt (LibreCAD, Blender+Bonsai, báo cáo môi trường, ghi lý do công cụ chưa cài); **FreeCAD chuyển sang TASK-016** (SIDE, ưu tiên thấp); hai tiêu chí phần B (chuyển đổi DXF, bảng so sánh Archilogic) giữ chưa tick, đã ghi 'KHÔNG THỰC HIỆN: phát sinh phí $329 USD'. Đề xuất: đóng TASK-013 `DONE` kèm các ngoại lệ này, nếu chủ dự án đồng ý. |
+| 2026-11-06T15:31:38+07:00 | done | Chủ dự án đồng ý đóng TASK-013 kèm ngoại lệ: FreeCAD → TASK-016; chuyển đổi DXF và bảng so sánh Archilogic không thực hiện vì phát sinh phí $329 USD. |
 
 ## Blocker / câu hỏi mở
 - Cần `sudo` để cài; chờ người dùng quyết định cách cài (apt/snap) cho từng công cụ.
