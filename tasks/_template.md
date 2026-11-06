@@ -7,6 +7,7 @@ created_at: YYYY-MM-DDTHH:MM:SSZ
 updated_at: YYYY-MM-DDTHH:MM:SSZ
 status: todo                      # todo | in_progress | in_review | blocked | done | cancelled
 priority: normal                  # low | normal | high
+depends_on: []                    # ví dụ: [TASK-002]
 ---
 
 ## Mô tả

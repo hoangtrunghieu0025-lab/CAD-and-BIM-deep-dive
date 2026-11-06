@@ -12,3 +12,9 @@ Dùng mẫu `tasks/_template.md`.
 4. **Trạng thái** (`status` tổng, và trạng thái của từng bên): `todo` → `in_progress` → `in_review` → `done`; ngoài ra `blocked` (kèm lý do, bên chặn) và `cancelled`.
 5. Cập nhật `updated_at` (UTC) mỗi lần sửa; commit + push ngay (`git pull --rebase origin main` trước).
 6. Task `done` thì giữ nguyên file (không xoá) để làm lịch sử.
+
+## Phụ thuộc
+- Trường `depends_on` liệt kê task phải `done` trước khi bắt đầu; chưa xong thì đặt `blocked` và ghi lý do, hoặc làm task khác.
+
+## Danh sách task hiện có
+Xem `ls tasks/`. Mobile: 002–006, 009 (và soạn 007). Laptop: 001, 008, 010, 011 (và thử 007).
