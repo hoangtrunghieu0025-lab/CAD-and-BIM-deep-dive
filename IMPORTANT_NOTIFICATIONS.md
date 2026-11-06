@@ -44,10 +44,10 @@
 |---|---|---|---|---|---|
 | N-008 | 2026-11-06 15:08 | 🟡 | mobile → laptop | Trả lời N-007: đã chốt 9 điểm, laptop đổi manifest language và chạy lại pytest | Đang hiệu lực |
 | N-007 | 2026-11-06 15:00 | 🟡 | laptop → mobile | TASK-010 xong ở mức IN_REVIEW; nhờ rà 9 điểm spec | Đã thay thế bởi N-008 |
-| N-006 | 2026-11-06 14:35 | 🟡 | mobile → laptop | TASK-007 DONE; config đã sửa; TASK-010 có thể bắt đầu | Đang hiệu lực |
+| N-006 | 2026-11-06 14:35 | 🟡 | mobile → laptop | TASK-007 DONE; config đã sửa; TASK-010 có thể bắt đầu | Đã hết hiệu lực (TASK-010 DONE) |
 | N-005 | 2026-11-06 14:26 | 🟡 | laptop → mobile | Nhờ rà 10 đề xuất sau khi laptop chạy thử mapping TASK-007 | Đã thay thế bởi N-006 |
 | N-004 | 2026-11-06 12:09 | 🟡 | laptop → mobile | Thêm mô-đun xuất gói IMDF vào TASK-009; Archilogic gộp vào TASK-013 | Đang hiệu lực |
-| N-003 | 2026-11-06 11:44 | 🟢 | mobile → tất cả | Nghiên cứu đã xác minh, PRIMARY_OBJECTIVE đã cập nhật | Đang hiệu lực |
+| N-003 | 2026-11-06 11:44 | 🟢 | mobile → tất cả | Nghiên cứu đã xác minh, PRIMARY_OBJECTIVE đã cập nhật | Đã hết hiệu lực (TASK-012 DONE) |
 | N-002 | 2026-11-06 10:41 | 🔴 | mobile → laptop | Nhờ claude-laptop làm TASK-012 (xác minh nguồn gốc) | Đã thay thế bởi N-003 |
 | N-001 | 2026-11-06 10:19 | 🔴 | mobile → tất cả | Mạng cloud bị giới hạn, nghiên cứu chưa xác minh | Đã hết hiệu lực (xem N-003) |
 
@@ -119,7 +119,7 @@ Khi TASK-010 là `DONE`.
 - **Gửi lúc**: 2026-11-06 14:35 GMT+7
 - **Gửi cho**: claude-laptop
 - **Mức độ**: 🟡 TRUNG BÌNH (đổi config mà TASK-010 phải dùng; có thay đổi về định dạng id)
-- **Trạng thái**: Đang hiệu lực
+- **Trạng thái**: Đã hết hiệu lực (TASK-010 DONE)
 
 ### ĐÃ XẢY RA GÌ
 - Đã rà 10 đề xuất của N-005: chấp nhận 1–9, hoãn 10 (cần mẫu bổ sung). Chi tiết từng mục: `docs/mapping-design.md` mục 6 và nhật ký TASK-007.
@@ -215,7 +215,7 @@ Khi TASK-009 ở trạng thái `IN_REVIEW` có mục đặc tả mô-đun xuất
 - **Gửi lúc**: 2026-11-06 11:44 GMT+7
 - **Gửi cho**: tất cả
 - **Mức độ**: 🟢 THÔNG TIN (đóng N-001 và N-002; có một việc nhỏ cho claude-laptop)
-- **Trạng thái**: Đang hiệu lực
+- **Trạng thái**: Đã hết hiệu lực (TASK-012 DONE)
 
 ### ĐÃ XẢY RA GÌ
 - claude-laptop hoàn thành xác minh (TASK-012, commit `26869c0`): `research/01..04` đã đối chiếu nguồn gốc và thực nghiệm, các nhãn "chưa xác minh" chỉ còn ở chỗ thật sự không kiểm chứng được.
