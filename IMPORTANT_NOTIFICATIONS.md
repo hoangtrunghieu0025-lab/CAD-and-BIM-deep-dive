@@ -1,20 +1,61 @@
-# ⚠️ IMPORTANT NOTIFICATIONS — THÔNG BÁO QUAN TRỌNG CHO MỌI AGENT
+# ⚠️ IMPORTANT_NOTIFICATIONS — THÔNG BÁO QUAN TRỌNG CHO MỌI AGENT
 
 > Agent nào cũng phải đọc file này ngay sau Bước 0 trong `AGENTS.md`.
+> File có 3 phần tách biệt: **PHẦN 1 – Cách ghi** · **PHẦN 2 – Mục lục** · **PHẦN 3 – Các thông báo** (mới nhất ở trên cùng).
 
-## CÁCH GHI THÔNG BÁO (BẮT BUỘC)
+---
 
-1. **Thêm thông báo mới lên ĐẦU danh sách** (ngay dưới dòng `---` đầu tiên bên dưới). **Không sửa, không xoá** thông báo cũ; muốn đính chính thì viết thông báo mới và dẫn chiếu thông báo cũ theo tiêu đề.
-2. **Dòng tiêu đề** theo đúng mẫu, có **ngày + giờ + phút theo giờ Việt Nam (múi giờ Asia/Ho_Chi_Minh, UTC+7)**:
-   ```
-   ## [YYYY-MM-DD HH:MM GMT+7] <biểu tượng mức độ> TIÊU ĐỀ VIẾT HOA NGẮN GỌN
-   ```
-   Lấy giờ bằng lệnh `TZ=Asia/Ho_Chi_Minh date +"%Y-%m-%d %H:%M"` (đừng đoán giờ; máy cloud chạy giờ UTC nên không dùng `date` trần). Ví dụ: `## [2026-11-06 10:41 GMT+7] 🔴 NHỜ claude-laptop XÁC MINH NGHIÊN CỨU VỚI NGUỒN GỐC (TASK-012)
+# PHẦN 1 — CÁCH GHI THÔNG BÁO (BẮT BUỘC)
+
+1. **Vị trí**: thêm thông báo mới vào **đầu PHẦN 3** (ngay dưới dòng `# PHẦN 3`) và thêm 1 dòng vào bảng PHẦN 2. Không sửa nội dung thông báo cũ. Chỉ được đổi dòng `Trạng thái` của thông báo cũ (ví dụ sang "Đã thay thế bởi N-003").
+2. **Mã thông báo**: `N-001`, `N-002`, … tăng dần, không dùng lại. Mỗi thông báo có đúng **một** mã, và tiêu đề phải nói rõ việc gì (không đặt hai thông báo có tiêu đề gần giống nhau; thông tin cập nhật thì viết thông báo mới nêu "cập nhật N-xxx").
+3. **Dòng tiêu đề**: `## N-<số> · [YYYY-MM-DD HH:MM GMT+7] · <biểu tượng mức độ> TIÊU ĐỀ VIẾT HOA`
+4. **Giờ**: giờ Việt Nam. Lấy bằng `TZ=Asia/Ho_Chi_Minh date +"%Y-%m-%d %H:%M"` (máy cloud chạy giờ UTC; đừng đoán giờ).
+5. **Mức độ**: 🔴 CAO (phải xử lý trước khi làm tiếp) · 🟡 TRUNG BÌNH (nên biết) · 🟢 THÔNG TIN (tham khảo).
+6. **Thân thông báo** gồm đúng các mục sau, theo thứ tự:
+   - Dòng thông tin: `Người gửi` · `Gửi lúc` · `Gửi cho` (`tất cả` / `claude-mobile` / `claude-laptop`) · `Mức độ` · `Trạng thái` (`Đang hiệu lực` / `Đã hết hiệu lực` / `Đã thay thế bởi N-xxx`)
+   - `### ĐÃ XẢY RA GÌ` · `### ĐÃ XỬ LÝ GÌ` · `### YÊU CẦU ĐỐI VỚI TỪNG AGENT` · `### KHI NÀO HẾT HIỆU LỰC`
+7. **Không ghi** email, mật khẩu, token hay thông tin cá nhân.
+8. **Sau khi ghi**: `git pull --rebase origin main` → commit (message bắt đầu bằng `notify:`) → `git push origin main`.
+9. **Khi đọc**: xử lý mọi thông báo 🔴 và 🟡 có `Trạng thái: Đang hiệu lực` trước khi làm task.
+
+**Mẫu để sao chép** (chỉ là mẫu, KHÔNG phải thông báo thật; các giá trị trong `< >` phải thay):
+
+```markdown
+## N-<số> · [<YYYY-MM-DD HH:MM> GMT+7] · <🔴|🟡|🟢> <TIÊU ĐỀ VIẾT HOA>
+
+- **Người gửi**: <claude-mobile|claude-laptop>
+- **Gửi lúc**: <YYYY-MM-DD HH:MM> GMT+7
+- **Gửi cho**: <tất cả|claude-mobile|claude-laptop>
+- **Mức độ**: <🔴|🟡|🟢> <lý do ngắn>
+- **Trạng thái**: Đang hiệu lực
+
+### ĐÃ XẢY RA GÌ
+### ĐÃ XỬ LÝ GÌ
+### YÊU CẦU ĐỐI VỚI TỪNG AGENT
+### KHI NÀO HẾT HIỆU LỰC
+```
+
+---
+
+# PHẦN 2 — MỤC LỤC
+
+| Mã | Giờ (GMT+7) | Mức | Gửi → nhận | Tiêu đề | Trạng thái |
+|---|---|---|---|---|---|
+| N-002 | 2026-11-06 10:41 | 🔴 | mobile → laptop | Nhờ claude-laptop làm TASK-012 (xác minh nguồn gốc) | Đang hiệu lực |
+| N-001 | 2026-11-06 10:19 | 🔴 | mobile → tất cả | Mạng cloud bị giới hạn, nghiên cứu chưa xác minh | Đang hiệu lực (xem N-002) |
+
+---
+
+# PHẦN 3 — CÁC THÔNG BÁO (mới nhất ở trên cùng)
+
+## N-002 · [2026-11-06 10:41 GMT+7] · 🔴 NHỜ claude-laptop LÀM TASK-012: XÁC MINH NGHIÊN CỨU VỚI NGUỒN GỐC
 
 - **Người gửi**: claude-mobile
 - **Gửi lúc**: 2026-11-06 10:41 GMT+7
 - **Gửi cho**: claude-laptop
 - **Mức độ**: 🔴 CAO (chặn TASK-006, 007, 009 vì nghiên cứu chưa xác minh)
+- **Trạng thái**: Đang hiệu lực (cập nhật tiếp theo của N-001)
 
 ### ĐÃ XẢY RA GÌ
 - Đã chạy vòng xác minh thứ hai cho TASK-002…005. Kết quả:
@@ -36,31 +77,18 @@
 - Không sửa `research/02..04` trong lúc claude-laptop làm TASK-012 (tránh xung đột). Chỉ làm TASK-006 phần CAD (đã xác minh tốt hơn) hoặc chờ.
 - Khi TASK-012 `in_review`: rà lại, rồi mới đánh dấu 002–005 `done` và làm TASK-007, 009.
 
-### KHI NÀO THÔNG BÁO NÀY HẾT HIỆU LỰC
+### KHI NÀO HẾT HIỆU LỰC
 Khi TASK-012 ở trạng thái `done` và claude-mobile đăng thông báo mới ghi "ĐÃ XÁC MINH".
 
 ---
 
-## [2026-11-06 10:19 GMT+7] 🔴 MẠNG CỦA CLOUD SESSION BỊ GIỚI HẠN`
-3. **Mức độ**: 🔴 CAO (ảnh hưởng độ tin cậy/việc đang làm của agent khác, phải đọc trước khi làm tiếp) · 🟡 TRUNG BÌNH (nên biết) · 🟢 THÔNG TIN (tham khảo).
-4. **Thân thông báo** có các mục sau, theo thứ tự:
-   - `- **Người gửi**:` `claude-mobile` hoặc `claude-laptop`
-   - `- **Gửi lúc**:` ngày giờ giờ Việt Nam đầy đủ, ví dụ `2026-11-06 10:19 GMT+7`
-   - `- **Gửi cho**:` `tất cả` / `claude-mobile` / `claude-laptop`
-   - `- **Mức độ**:` như mục 3, kèm lý do ngắn
-   - `### ĐÃ XẢY RA GÌ` · `### ĐÃ XỬ LÝ GÌ` · `### YÊU CẦU ĐỐI VỚI TỪNG AGENT` · `### KHI NÀO THÔNG BÁO NÀY HẾT HIỆU LỰC`
-5. **Không ghi** email, mật khẩu, token hay thông tin cá nhân.
-6. Sau khi ghi: `git pull --rebase origin main`, commit (message bắt đầu bằng `notify:`), rồi `git push origin main`.
-7. **Đọc**: xử lý mọi thông báo 🔴 và 🟡 chưa hết hiệu lực trước khi làm task.
-
----
-
-## [2026-11-06 10:19 GMT+7] 🔴 MẠNG CỦA CLOUD SESSION BỊ GIỚI HẠN — NGHIÊN CỨU CHƯA ĐƯỢC XÁC MINH VỚI NGUỒN GỐC
+## N-001 · [2026-11-06 10:19 GMT+7] · 🔴 MẠNG CLOUD CỦA claude-mobile BỊ GIỚI HẠN, NGHIÊN CỨU CHƯA XÁC MINH
 
 - **Người gửi**: claude-mobile
 - **Gửi lúc**: 2026-11-06 10:19 GMT+7
 - **Gửi cho**: tất cả (đặc biệt claude-laptop)
 - **Mức độ**: 🔴 CAO (ảnh hưởng độ tin cậy của toàn bộ `research/`)
+- **Trạng thái**: Đang hiệu lực (xem N-002 để biết việc xác minh đang giao cho ai)
 
 ### ĐÃ XẢY RA GÌ
 1. Môi trường cloud của `claude-mobile` (environment "Default") chạy ở chế độ **Limited network**: chỉ cho phép package registry (PyPI, npm…) và host của MCP server như GitHub; danh sách Allowed domains ban đầu **trống**.
@@ -84,5 +112,5 @@ Khi TASK-012 ở trạng thái `done` và claude-mobile đăng thông báo mới
 - Chạy lại xác minh với nguồn gốc rồi cập nhật `research/`; sau đó mới đánh dấu 002–005 `done` và làm TASK-006, 007, 009.
 - Chưa sửa `PRIMARY_OBJECTIVE.md` (chưa được chủ dự án cho phép).
 
-### KHI NÀO THÔNG BÁO NÀY HẾT HIỆU LỰC
-Khi claude-mobile thêm một thông báo mới phía trên ghi rõ "ĐÃ XÁC MINH" cho 4 thư mục research.
+### KHI NÀO HẾT HIỆU LỰC
+Khi claude-mobile đăng thông báo mới ghi rõ "ĐÃ XÁC MINH" cho 4 thư mục research (dự kiến sau khi TASK-012 xong).
