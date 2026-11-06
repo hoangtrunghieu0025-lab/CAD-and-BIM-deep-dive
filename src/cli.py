@@ -1,4 +1,4 @@
-"""Giao diện dòng lệnh (spec mục 3).
+"""Giao diện dòng lệnh.
 
     python -m src.cli build --project samples/project-dxf.yaml --out out/building.gpkg [--allow-unreferenced]
     python -m src.cli check out/building.gpkg

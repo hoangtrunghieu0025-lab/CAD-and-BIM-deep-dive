@@ -1,8 +1,7 @@
-"""Georeference (spec 6): toạ độ cục bộ (mét) -> EPSG:4326.
+"""Georeference: toạ độ cục bộ (mét) -> EPSG:4326.
 
-Thứ tự ưu tiên: (1) IFC4+ IfcMapConversion + IfcProjectedCRS; (2) `georeference` trong project.yaml;
-(3) control points (chưa cài đặt); (4) IfcSite.RefLatitude/RefLongitude (dự phòng, kèm cảnh báo);
-(5) không có -> lỗi, trừ `--allow-unreferenced`.
+Thứ tự ưu tiên: IfcMapConversion (IFC4+), `georeference` trong project.yaml, IfcSite (dự phòng, kèm cảnh báo);
+không có nguồn nào thì lỗi, trừ khi dùng `--allow-unreferenced`. Control points chưa cài đặt.
 """
 from __future__ import annotations
 
@@ -24,12 +23,11 @@ from ..model import Model
 @dataclass
 class Georef:
     source: str                         # ifc_map_conversion | project | ifc_site | none
-    crs: str | None = None              # CRS chiếu (vd "EPSG:3405"); None nếu không georeference
+    crs: str | None = None              # None = chưa georeference
     e0: float = 0.0
     n0: float = 0.0
     rotation_deg: float = 0.0           # góc quay CCW so với trục Đông (a' = cosθ, b' = sinθ)
     scale: float = 1.0
-    geographic: bool = False            # True nếu crs đã là toạ độ địa lý (không dùng ở các nguồn hiện tại)
 
     @property
     def referenced(self) -> bool:
@@ -38,7 +36,7 @@ class Georef:
     def to_projected(self, geom: BaseGeometry) -> BaseGeometry:
         a = self.scale * math.cos(math.radians(self.rotation_deg))
         b = self.scale * math.sin(math.radians(self.rotation_deg))
-        # E = a·x − b·y + E0 ; N = b·x + a·y + N0   (spec 6.1/6.2)
+        # E = a·x − b·y + E0 ; N = b·x + a·y + N0
         return affine_transform(geom, [a, -b, b, a, self.e0, self.n0])
 
     def to_wgs84(self, geom: BaseGeometry) -> BaseGeometry:
@@ -99,7 +97,6 @@ def from_ifc_map_conversion(ifc_file, unit_scale: float, model: Model, fname: st
 
 
 def from_ifc_site(ifc_file, model: Model, fname: str) -> Georef | None:
-    """Dự phòng độ chính xác thấp: IfcSite.RefLatitude/RefLongitude -> UTM cục bộ, góc quay 0."""
     sites = ifc_file.by_type("IfcSite")
     if not sites or sites[0].RefLatitude is None or sites[0].RefLongitude is None:
         return None
@@ -120,7 +117,6 @@ def from_ifc_site(ifc_file, model: Model, fname: str) -> Georef | None:
 
 def resolve(project_cfg: dict[str, Any] | None, ifc_georef: Georef | None, ifc_site: Georef | None,
             allow_unreferenced: bool, model: Model) -> Georef:
-    """Áp thứ tự ưu tiên của spec mục 6."""
     if ifc_georef is not None:
         return ifc_georef
     if project_cfg:

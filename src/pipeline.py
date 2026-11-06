@@ -1,4 +1,4 @@
-"""Điều phối ingest -> cad2bim/extract -> georeference -> normalize (spec mục 2)."""
+"""Điều phối ingest -> cad2bim/extract -> georeference -> normalize (xem docs/cad-to-gpkg-design.md)."""
 from __future__ import annotations
 
 import datetime as dt

@@ -1,4 +1,4 @@
-"""cad2bim (spec 4.2): áp layer_mapping.yaml lên DXF -> Obj (space, door, wall) có tầng và nhãn."""
+"""Áp layer_mapping.yaml lên DXF: dựng phòng, gán nhãn, dựng cửa."""
 from __future__ import annotations
 
 import math
@@ -49,7 +49,6 @@ def _wcs_xy(e, factor: float) -> list[tuple[float, float]]:
             ocs = OCS(ext)
             return [(v.x * factor, v.y * factor) for v in ocs.points_to_wcs(Vec3(x, y, elev) for x, y in pts)]
         return [(x * factor, y * factor) for x, y in pts]
-    # POLYLINE 2D/3D
     return [(v.x * factor, v.y * factor) for v in e.points()] if hasattr(e, "points") else []
 
 
@@ -66,13 +65,12 @@ def _hatch_polygons(e, factor: float) -> list[Polygon]:
             pts = [(v.x * factor, v.y * factor) for v in sub.flattening(0.01 / max(factor, 1e-9))]
             if len(pts) >= 3:
                 polys.append(Polygon(pts))
-    except Exception:  # noqa: BLE001
+    except Exception:
         return []
     return polys
 
 
 def build(src: DxfSource, storey: Storey, cfg: dict[str, Any], tcfg: dict[str, Any], model: Model) -> None:
-    """Phân loại entity theo layer_mapping, dựng phòng/nhãn/cửa và thêm Obj vào model."""
     fname = src.path.name
     spaces: list[tuple[Polygon, str, str]] = []        # (polygon, handle, layer)
     unclosed: dict[str, list[LineString]] = {}
@@ -122,11 +120,8 @@ def build(src: DxfSource, storey: Storey, cfg: dict[str, Any], tcfg: dict[str, A
             attribs = {a.dxf.tag: a.dxf.text for a in e.attribs}
             model.objs.append(Obj("door", "dxf", f"{fname}|{e.dxf.layer}|{handle}", e.dxf.layer, storey.key,
                                   line, {"width_m": width, "center": c, "attribs": attribs, "psets": {}}))
-        elif rid == "wall":
-            model.count("wall_entities")
-            # tường: mode `simplified` (không xuất hình học); chỉ đếm để báo cáo
 
-    # polyline hở -> thử polygonize (spec 4.2.2)
+    # polyline hở: thử khép bằng polygonize
     for layer, lines in unclosed.items():
         polys = list(polygonize(unary_union(lines)))
         if not polys:
@@ -135,7 +130,7 @@ def build(src: DxfSource, storey: Storey, cfg: dict[str, Any], tcfg: dict[str, A
             spaces.append((p, f"polygonize.{layer}.{k}", layer))
             model.warn(f"{fname}: dựng phòng từ polyline hở bằng polygonize (layer '{layer}')")
 
-    # gán nhãn vào polygon chứa điểm chèn (chọn polygon nhỏ nhất nếu lồng nhau)
+    # nhãn gán vào polygon chứa điểm chèn; nếu lồng nhau chọn polygon nhỏ nhất
     label_of: dict[int, str] = {}
     for text, pt, _h in labels:
         inside = [i for i, (poly, _, _) in enumerate(spaces) if poly.contains(pt)]
@@ -162,9 +157,7 @@ def build(src: DxfSource, storey: Storey, cfg: dict[str, Any], tcfg: dict[str, A
         text = label_of.get(i)
         props: dict[str, Any] = {"label": text, "ref": None, "name": None}
         if text:
-            if ref_re.fullmatch(text):
-                props["ref"] = text                      # spec 4.2.6: khớp ref_pattern -> ref
-            else:
-                props["name"] = text                     # ngược lại -> name
+            # khớp ref_pattern thì là mã phòng (ref), ngược lại là tên (name)
+            props["ref" if ref_re.fullmatch(text) else "name"] = text
         model.objs.append(Obj("space", "dxf", f"{fname}|{layer}|{handle}", layer, storey.key, poly, props))
         model.count("spaces")

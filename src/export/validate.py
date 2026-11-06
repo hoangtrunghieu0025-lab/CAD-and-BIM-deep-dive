@@ -1,4 +1,4 @@
-"""validate (spec mục 9): kiểm cấu trúc GPKG (A) và dữ liệu IMDF (B). Kết quả là `Report`."""
+"""Kiểm .gpkg: cấu trúc GeoPackage (A) và ràng buộc dữ liệu IMDF (B). Kết quả là `Report`."""
 from __future__ import annotations
 
 import json
@@ -17,8 +17,8 @@ from shapely.ops import unary_union
 from ..normalize.ids import UUID_V4_RE
 from . import imdf_vocab as V
 
-TOL_M = 1e-3          # dung sai chiều dài (m)
-TOL_AREA = 1e-3       # dung sai diện tích (m²)
+TOL_M = 1e-3          # mét
+TOL_AREA = 1e-3       # m²
 
 GEOM_TABLES = ("venue", "footprint", "level", "unit", "opening", "fixture", "detail")
 ATTR_TABLES = ("address", "building", "_meta")
@@ -43,7 +43,7 @@ CATEGORY_VOCAB = {"unit": V.UNIT, "opening": V.OPENING, "level": V.LEVEL, "build
 
 @dataclass
 class Finding:
-    level: str            # error | warn
+    level: str
     code: str
     message: str
 
@@ -84,11 +84,13 @@ def _null(v: Any) -> bool:
     return v is None or (isinstance(v, float) and pd.isna(v)) or (isinstance(v, str) and v == "")
 
 
-# --------------------------------------------------------------------------- A
 def check_structure(path: Path, rep: Report) -> dict[str, str]:
     """Trả {bảng: data_type}."""
     con = sqlite3.connect(path)
-    q = lambda s: con.execute(s).fetchall()  # noqa: E731
+
+    def q(sql: str):
+        return con.execute(sql).fetchall()
+
     try:
         if q("PRAGMA application_id")[0][0] != 0x47504B47:
             rep.error("A1", "application_id khác 0x47504B47")
@@ -138,12 +140,6 @@ def check_structure(path: Path, rep: Report) -> dict[str, str]:
         return {t: v[0] for t, v in contents.items()}
     finally:
         con.close()
-    # ogrinfo -al -so được chạy riêng trong test (T10)
-
-
-# --------------------------------------------------------------------------- B
-def _read(path: Path, layer: str, geom: bool) -> pd.DataFrame:
-    return pyogrio.read_dataframe(str(path), layer=layer) if geom else pyogrio.read_dataframe(str(path), layer=layer)
 
 
 def check_data(path: Path, tables: dict[str, str], rep: Report, language: str = "vi") -> dict[str, pd.DataFrame]:
@@ -151,7 +147,7 @@ def check_data(path: Path, tables: dict[str, str], rep: Report, language: str = 
     for t in tables:
         if t == "_meta":
             continue
-        dfs[t] = _read(path, t, t in GEOM_TABLES)
+        dfs[t] = pyogrio.read_dataframe(str(path), layer=t)
     for must in ("venue", "address"):
         if must not in dfs or len(dfs[must]) == 0:
             rep.error("B-pkg", f"thiếu bảng/dòng bắt buộc `{must}`")
@@ -174,7 +170,6 @@ def check_data(path: Path, tables: dict[str, str], rep: Report, language: str = 
             rep.error("B3", f"{t}: feature_type không khớp tên bảng")
     rep.passed("B3")
 
-    # hình học: hợp lệ, không rỗng, đúng kiểu; building/address không geometry
     for t in GEOM_TABLES:
         if t not in dfs:
             continue
@@ -188,7 +183,6 @@ def check_data(path: Path, tables: dict[str, str], rep: Report, language: str = 
                 rep.error("B2", f"{t}[{i}]: kiểu {geom.geom_type}, cần {sorted(EXPECT_GEOM_TYPE[t])}")
     rep.passed("B2")
 
-    # cột bắt buộc không null
     for t, cols in REQUIRED_COLS.items():
         if t not in dfs:
             continue
@@ -199,7 +193,6 @@ def check_data(path: Path, tables: dict[str, str], rep: Report, language: str = 
                 rep.error("B5", f"{t}.{c}: có giá trị null (bắt buộc)")
     rep.passed("B5")
 
-    # category hợp lệ
     for t, vocab in CATEGORY_VOCAB.items():
         if t in dfs and "category" in dfs[t]:
             for v in dfs[t]["category"].dropna().unique():
@@ -207,7 +200,6 @@ def check_data(path: Path, tables: dict[str, str], rep: Report, language: str = 
                     rep.error("B6", f"{t}.category='{v}' không thuộc từ vựng IMDF")
     rep.passed("B6")
 
-    # LABELS: object có mục cho ngôn ngữ mặc định; nhãn tầng viết hoa, NFC
     for t, cols in {"venue": ["name"], "level": ["name", "short_name"], "unit": ["name"], "building": ["name"]}.items():
         if t not in dfs:
             continue
@@ -226,7 +218,6 @@ def check_data(path: Path, tables: dict[str, str], rep: Report, language: str = 
                         rep.error("B-lab", f"level.{c} không phải chữ hoa NFC: {txt!r}")
     rep.passed("B-lab")
 
-    # khoá ngoại
     ids = {t: set(df["id"]) for t, df in dfs.items() if "id" in df}
     def fk(table: str, col: str, target: str, is_list: bool = False) -> None:
         if table not in dfs or col not in dfs[table]:
@@ -244,7 +235,6 @@ def check_data(path: Path, tables: dict[str, str], rep: Report, language: str = 
     fk("venue", "address_id", "address"); fk("building", "address_id", "address")
     rep.passed("B4")
 
-    # hình học ở hệ mét
     geoms = {t: dfs[t] for t in ("venue", "footprint", "level", "unit", "opening") if t in dfs and len(dfs[t])}
     if {"venue", "level", "unit"} <= set(geoms):
         _spatial(geoms, rep)
@@ -252,6 +242,7 @@ def check_data(path: Path, tables: dict[str, str], rep: Report, language: str = 
 
 
 def _to_metric(g: gpd.GeoDataFrame, crs) -> gpd.GeoDataFrame:
+    """4326 -> UTM để đo khoảng cách và diện tích theo mét."""
     if g.crs is not None and g.crs.is_geographic:
         return g.to_crs(crs)
     return g
@@ -281,7 +272,6 @@ def _spatial(geoms: dict[str, gpd.GeoDataFrame], rep: Report) -> None:
         if holes:
             rep.warn("B-geo", f"level {lid}: có {holes} lỗ/khe bên trong (kiểm tra khe giữa các unit)")
     rep.passed("B-geo")
-    # opening nằm trên ranh giới unit cùng tầng
     if "opening" in m:
         for _, row in m["opening"].iterrows():
             g = row.geometry
@@ -293,7 +283,6 @@ def _spatial(geoms: dict[str, gpd.GeoDataFrame], rep: Report) -> None:
             if bnd is None or not bnd.buffer(TOL_M).covers(g):
                 rep.error("B-open", f"opening {row['id']}: không nằm trên ranh giới unit cùng tầng")
     rep.passed("B-open")
-    # mọi feature nằm trong venue
     vg = m["venue"].geometry.iloc[0].buffer(TOL_M)
     for t in ("footprint", "level", "unit", "opening"):
         if t in m and not all(vg.covers(g) for g in m[t].geometry):

@@ -1,8 +1,6 @@
-"""export_imdf (spec mục 7): .gpkg -> gói IMDF `<tên>.imdf.zip` (manifest.json + *.geojson).
+"""Xuất .gpkg thành gói IMDF (`manifest.json` + `*.geojson`, nén zip).
 
-Manifest (đã xác minh, register.apple.com/resources/imdf/manifest): bắt buộc `version` ("1.0.0"),
-`created` (DATE-TIME không múi giờ), `language`; tuỳ chọn `generated_by`, `extensions`.
-Bắt buộc có `manifest.json`, `address.geojson`, `venue.geojson` (đúng một Venue).
+Bắt buộc có `manifest.json`, `address.geojson` và `venue.geojson` (đúng một Venue).
 """
 from __future__ import annotations
 

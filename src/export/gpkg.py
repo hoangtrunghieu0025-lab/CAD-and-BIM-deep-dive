@@ -1,9 +1,7 @@
-"""export_gpkg (spec 4.5, mục 5): ghi .gpkg — mỗi IMDF feature type một bảng.
+"""Ghi .gpkg, mỗi IMDF feature type một bảng.
 
-- Bảng có geometry: GeoDataFrame, CRS EPSG:4326, kiểu geometry đồng nhất (Polygon / MultiPolygon...).
-- Bảng KHÔNG geometry (`address`, `building`, `_meta`): DataFrame thường -> `data_type='attributes'`.
-  (Không dùng GeoDataFrame geometry=[None]: sẽ thành bảng `features`.)
-- Mỗi bảng: `fid` (PK, GDAL tự sinh) + `id` UNIQUE (index) + `feature_type`.
+Bảng không geometry (`address`, `building`, `_meta`) phải ghi từ DataFrame thường để thành `attributes`;
+GeoDataFrame có `geometry=[None]` sẽ thành bảng `features`.
 """
 from __future__ import annotations
 
@@ -41,8 +39,11 @@ def _to_multi(p):
 
 
 def _set_local_srs(path: Path, tables: list[str]) -> None:
-    """Không có georeference: GDAL ghi SRS tuỳ chỉnh 99999; spec mục 6.5 yêu cầu srs_id=-1 (undefined Cartesian).
-    Vá cả metadata lẫn header GeoPackageBinary (byte 4..8 = srs_id, thứ tự byte theo bit 0 của flags). Gọi khi KHÔNG có RTree."""
+    """Không georeference: GDAL ghi SRS tuỳ chỉnh 99999, nhưng cần srs_id = -1 (undefined Cartesian).
+
+    Vá metadata và header GeoPackageBinary của từng geometry (byte 4..8 là srs_id, thứ tự byte theo bit 0 của
+    flags). Chỉ làm được khi không có RTree, vì trigger của RTree chặn việc cập nhật cột geometry.
+    """
     con = sqlite3.connect(path)
     try:
         for t in tables:

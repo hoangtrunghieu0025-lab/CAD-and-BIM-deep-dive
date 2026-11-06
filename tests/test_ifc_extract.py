@@ -47,3 +47,17 @@ def test_ifc_door_center_source_is_flagged_when_only_placement(built):
     res, _, _ = built["ifc"]
     assert all(o.props["center_source"] == "placement_with_anchor" for o in res.model.objs if o.type == "door")
     assert any("placement" in w for w in res.model.warnings)
+
+
+def test_union_xy_reports_dropped_pieces():
+    from src.extract.ifc import _union_xy
+
+    # hai hình vuông rời nhau (mỗi hình 2 tam giác): giữ hình lớn hơn, báo bỏ 1 mảnh
+    big = [(0, 0, 0), (4, 0, 0), (4, 4, 0), (0, 4, 0)]
+    small = [(10, 0, 0), (11, 0, 0), (11, 1, 0), (10, 1, 0)]
+    v = np.array(big + small, dtype=float)
+    f = np.array([[0, 1, 2], [0, 2, 3], [4, 5, 6], [4, 6, 7]])
+    poly, dropped = _union_xy(v, f)
+    assert dropped == 1 and poly.area == pytest.approx(16.0)
+    single, none = _union_xy(v[:4], f[:2])
+    assert none == 0 and single.area == pytest.approx(16.0)

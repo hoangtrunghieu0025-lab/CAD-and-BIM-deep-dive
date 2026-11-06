@@ -1,4 +1,4 @@
-"""extract — IFC (spec 4.3): tầng, footprint phòng, đoạn cửa, thuộc tính."""
+"""Trích tầng, footprint phòng và đoạn cửa từ IFC."""
 from __future__ import annotations
 
 from typing import Any
@@ -24,25 +24,27 @@ def _settings():
 
 
 def _shape_xy(settings, element_or_rep) -> tuple[np.ndarray, np.ndarray] | None:
-    """(verts Nx3 mét, faces Mx3) của một element/representation; None nếu không dựng được."""
     try:
         sh = ifcopenshell.geom.create_shape(settings, element_or_rep)
-    except Exception:  # noqa: BLE001
+    except Exception:
         return None
     v = np.array(sh.geometry.verts).reshape(-1, 3)
     f = np.array(sh.geometry.faces).reshape(-1, 3)
     return (v, f) if len(v) and len(f) else None
 
 
-def _union_xy(v: np.ndarray, f: np.ndarray) -> Polygon | None:
+def _union_xy(v: np.ndarray, f: np.ndarray) -> tuple[Polygon | None, int]:
+    """Hợp các tam giác chiếu xuống XY. Trả (polygon, số mảnh rời bị bỏ)."""
     tris = [Polygon(v[i][:, :2]) for i in f]
     tris = [t for t in tris if t.area > 1e-9]
     if not tris:
-        return None
+        return None, 0
     u = unary_union(tris).simplify(1e-9)
+    dropped = 0
     if u.geom_type == "MultiPolygon":
-        u = max(u.geoms, key=lambda g: g.area)       # phòng gồm nhiều mảnh rời: lấy mảnh lớn nhất (+ cảnh báo ở nơi gọi)
-    return u if u.geom_type == "Polygon" and not u.is_empty else None
+        dropped = len(u.geoms) - 1
+        u = max(u.geoms, key=lambda g: g.area)       # chỉ giữ mảnh lớn nhất; nơi gọi sẽ cảnh báo
+    return (u, dropped) if u.geom_type == "Polygon" and not u.is_empty else (None, 0)
 
 
 def storey_of(el) -> Any:
@@ -62,7 +64,6 @@ def extract(src: IfcSource, model: Model, door_cfg: dict[str, Any], file_order: 
     fname = src.path.name
     settings = _settings()
 
-    # --- toà nhà
     b = f.by_type("IfcBuilding")
     if b:
         model.building.name = model.building.name or b[0].LongName or b[0].Name
@@ -70,7 +71,6 @@ def extract(src: IfcSource, model: Model, door_cfg: dict[str, Any], file_order: 
     else:
         model.warn(f"{fname}: không có IfcBuilding")
 
-    # --- tầng (Elevation là OPTIONAL: placement Z, rồi thứ tự file)
     storey_by_id: dict[int, Storey] = {}
     for k, s in enumerate(f.by_type("IfcBuildingStorey")):
         elev = s.Elevation * sc if s.Elevation is not None else None
@@ -78,7 +78,7 @@ def extract(src: IfcSource, model: Model, door_cfg: dict[str, Any], file_order: 
             try:
                 elev = float(P.get_local_placement(s.ObjectPlacement)[2][3]) * 1.0
                 model.warn(f"{fname}: tầng '{s.Name}' thiếu Elevation, dùng Z của placement")
-            except Exception:  # noqa: BLE001
+            except Exception:
                 elev = None
                 model.warn(f"{fname}: tầng '{s.Name}' thiếu Elevation và placement; xếp theo thứ tự file")
         from ..normalize.ids import short_from_name
@@ -93,26 +93,27 @@ def extract(src: IfcSource, model: Model, door_cfg: dict[str, Any], file_order: 
     if not storey_by_id:
         model.warn(f"{fname}: không có IfcBuildingStorey")
 
-    # --- phòng
     n_sp = 0
     for sp in f.by_type("IfcSpace"):
         st_el = storey_of(sp)
         if st_el is None or st_el.id() not in storey_by_id:
             model.warn(f"{fname}: IfcSpace '{sp.Name}' không thuộc tầng nào; bỏ qua")
             continue
-        poly = None
+        poly, dropped = None, 0
         rep = R.get_representation(sp, "Plan", "FootPrint", "GRAPH_VIEW")
         if rep is not None:
             xy = _shape_xy(settings, rep)
             if xy:
-                poly = _union_xy(*xy)
-        if poly is None:                                       # dự phòng: chiếu Body xuống XY
+                poly, dropped = _union_xy(*xy)
+        if poly is None:                                       # không có FootPrint: chiếu Body xuống XY
             xy = _shape_xy(settings, sp)
             if xy:
-                poly = _union_xy(*xy)
+                poly, dropped = _union_xy(*xy)
         if poly is None:
             model.warn(f"{fname}: IfcSpace '{sp.Name}' không dựng được footprint; bỏ qua")
             continue
+        if dropped:
+            model.warn(f"{fname}: IfcSpace '{sp.Name}' gồm {dropped + 1} mảnh rời; chỉ giữ mảnh lớn nhất")
         if not poly.is_valid:
             poly = make_valid(poly)
             if poly.geom_type != "Polygon":
@@ -126,7 +127,6 @@ def extract(src: IfcSource, model: Model, door_cfg: dict[str, Any], file_order: 
         n_sp += 1
     model.count("ifc:IfcSpace", n_sp)
 
-    # --- cửa
     ifc_cfg = door_cfg.get("ifc", {})
     anchor = ifc_cfg.get("placement_anchor", "start")
     fallback_w = float(door_cfg.get("width_fallback_m", 0.9))
@@ -150,9 +150,9 @@ def extract(src: IfcSource, model: Model, door_cfg: dict[str, Any], file_order: 
 
 
 def door_line(src: IfcSource, door_el, anchor: str, fallback_w: float, settings=None) -> tuple[LineString, str]:
-    """Đoạn cửa (spec 4.3): tâm theo thứ tự opening_element_geometry -> door_body_bbox -> placement_with_anchor.
+    """Đoạn cửa và nguồn tâm. Tâm lấy theo thứ tự: hình học IfcOpeningElement, bbox thân cửa, placement + anchor.
 
-    Trả (LineString, nguồn_tâm). Hướng = trục X cục bộ của placement; bề rộng = OverallWidth -> bề rộng hình học -> dự phòng.
+    Hướng là trục X của placement; bề rộng là OverallWidth, nếu thiếu thì bề rộng hình học, rồi giá trị dự phòng.
     """
     sc = src.unit_scale
     settings = settings or _settings()
@@ -163,7 +163,6 @@ def door_line(src: IfcSource, door_el, anchor: str, fallback_w: float, settings=
     ux, uy = ux / n, uy / n
     width = door_el.OverallWidth * sc if door_el.OverallWidth else None
 
-    # 1) hình học IfcOpeningElement mà cửa lấp
     for rel in getattr(door_el, "FillsVoids", None) or []:
         opening = rel.RelatingOpeningElement
         if opening is not None and opening.Representation is not None:
@@ -171,13 +170,11 @@ def door_line(src: IfcSource, door_el, anchor: str, fallback_w: float, settings=
             if xy:
                 c, w = _bbox_center_width(xy[0], ux, uy)
                 return _line(c, ux, uy, width or w), "opening_element_geometry"
-    # 2) bbox thân cửa
     if door_el.Representation is not None:
         xy = _shape_xy(settings, door_el)
         if xy:
             c, w = _bbox_center_width(xy[0], ux, uy)
             return _line(c, ux, uy, width or w), "door_body_bbox"
-    # 3) placement + anchor
     w = width or fallback_w
     if anchor == "start":
         c = (ox + ux * w / 2, oy + uy * w / 2)

@@ -1,4 +1,4 @@
-"""normalize (spec 4.4): Obj -> các bảng IMDF (kèm cột tag OSM `osm_*`) theo tag_mapping.yaml."""
+"""Obj -> các bảng IMDF kèm cột tag OSM (`osm_*`), theo tag_mapping.yaml."""
 from __future__ import annotations
 
 import json
@@ -23,9 +23,8 @@ def jdump(v: Any) -> str | None:
     return None if v is None else json.dumps(v, ensure_ascii=False, separators=(",", ":"))
 
 
-# --------------------------------------------------------------------------- tầng
 def assign_storey_indices(model: Model, tcfg: dict[str, Any]) -> list[Storey]:
-    """spec 4.2.5: sắp theo cao độ; tầng có |cao độ| nhỏ nhất = 0 (ghi đè bằng `ground_storey`)."""
+    """Sắp tầng theo cao độ; tầng có |cao độ| nhỏ nhất là 0 (ghi đè bằng `ground_storey`)."""
     rule = tcfg["object_types"]["storey"].get("index_rule", {})
     known = sorted([s for s in model.storeys if s.elevation_m is not None], key=lambda s: (s.elevation_m, s.file_order))
     unknown = sorted([s for s in model.storeys if s.elevation_m is None], key=lambda s: s.file_order)
@@ -47,7 +46,6 @@ def assign_storey_indices(model: Model, tcfg: dict[str, Any]) -> list[Storey]:
     return ordered
 
 
-# --------------------------------------------------------------------------- luật
 def _texts(obj: Obj) -> list[str]:
     out = []
     for k in ("name", "long_name", "label"):
@@ -103,7 +101,6 @@ def _split_osm(osm: dict[str, Any], extra: dict[str, Any]) -> dict[str, Any]:
     return cols
 
 
-# --------------------------------------------------------------------------- chính
 def to_features(model: Model, project: Project, georef: Georef) -> dict[str, pd.DataFrame]:
     tcfg = project.tags
     ns = project.namespace
@@ -122,7 +119,6 @@ def to_features(model: Model, project: Project, georef: Georef) -> dict[str, pd.
     rows: dict[str, list[dict[str, Any]]] = {k: [] for k in ("unit", "opening", "level", "footprint")}
     geoms: dict[str, list[Any]] = {k: [] for k in rows}
 
-    # --- unit
     unit_by_storey: dict[str, list[Any]] = {}
     for o in model.objs:
         if o.type != "space" or o.storey_key not in storey_by_key:
@@ -154,7 +150,6 @@ def to_features(model: Model, project: Project, georef: Georef) -> dict[str, pd.
         geoms["unit"].append(o.geometry)
         unit_by_storey.setdefault(o.storey_key, []).append(o.geometry)
 
-    # --- opening
     for o in model.objs:
         if o.type != "door" or o.storey_key not in storey_by_key:
             continue
@@ -173,7 +168,6 @@ def to_features(model: Model, project: Project, georef: Georef) -> dict[str, pd.
         rows["opening"].append(row)
         geoms["opening"].append(o.geometry)
 
-    # --- level + footprint
     lvl_polys: dict[str, Any] = {}
     for st in storeys:
         polys = unit_by_storey.get(st.key)
@@ -206,7 +200,6 @@ def to_features(model: Model, project: Project, georef: Georef) -> dict[str, pd.
     })
     geoms["footprint"].append(foot)
 
-    # --- venue / address / building
     buffer_m = float(project.venue.get("buffer_m", tcfg.get("imdf_package", {}).get("venue", {}).get("buffer_m", 1.0)))
     venue_geom_local = unary_union([foot] + list(lvl_polys.values())).buffer(buffer_m, join_style=2)
     mins = [s.index for s in storeys if s.key in lvl_polys]

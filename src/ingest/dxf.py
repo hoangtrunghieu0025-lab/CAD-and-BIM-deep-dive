@@ -1,4 +1,4 @@
-"""Ingest DXF (spec 4.1): ezdxf.readfile, thất bại -> ezdxf.recover.readfile; chuẩn hoá đơn vị về mét."""
+"""Đọc DXF (thất bại thì thử ezdxf.recover) và chuẩn hoá đơn vị về mét."""
 from __future__ import annotations
 
 import hashlib
@@ -31,12 +31,6 @@ class DxfSource:
         return self.doc.modelspace()
 
 
-def to_metres(value: float, unit_code: int, fallback_unit: str = "m") -> float:
-    """Đổi độ dài sang mét. Mã đơn vị không hỗ trợ (0 unitless, 8, 9, 21-24, ...) -> dùng fallback_unit."""
-    f = unit_factor(unit_code, fallback_unit)[0]
-    return value * f
-
-
 def unit_factor(unit_code: int, fallback_unit: str = "m") -> tuple[float, str | None]:
     """Trả (hệ số -> mét, cảnh báo|None)."""
     if unit_code in _UNIT_TO_M:
@@ -63,7 +57,7 @@ def load_dxf(path: str | Path, fallback_unit: str = "m") -> DxfSource:
     except (IOError, ezdxf.DXFStructureError, UnicodeDecodeError):
         try:
             doc, auditor = recover.readfile(str(p))
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:
             raise DataError(f"không đọc được DXF {p.name}: {e}") from e
         warnings.append(f"{p.name}: đọc bằng ezdxf.recover ({len(auditor.errors)} lỗi, {len(auditor.fixes)} sửa)")
     factor, w = unit_factor(doc.units, fallback_unit)

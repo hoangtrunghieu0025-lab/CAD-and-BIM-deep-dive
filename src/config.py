@@ -1,7 +1,4 @@
-"""Đọc cấu hình mapping và project.yaml (spec mục 3).
-
-Lỗi cấu hình ném `ConfigError` -> CLI trả mã thoát 2.
-"""
+"""Đọc project.yaml và hai file mapping. Lỗi cấu hình ném `ConfigError` (CLI trả mã thoát 2)."""
 from __future__ import annotations
 
 import re
@@ -75,7 +72,6 @@ class Project:
     def input_path(self, inp: dict[str, Any]) -> Path:
         return self._resolve(inp["file"])
 
-    # --- truy cập tiện lợi -------------------------------------------------
     @property
     def namespace(self) -> str:
         ns = self.tags.get("defaults", {}).get("ids", {}).get("namespace")
@@ -92,7 +88,6 @@ class Project:
         return str(self.tags.get("imdf_package", {}).get("manifest", {}).get("language", "vi"))
 
     def validate_required(self) -> None:
-        """Các trường bắt buộc để sinh venue/address (IMDF)."""
         miss = []
         if not self.venue.get("name"):
             miss.append("venue.name")

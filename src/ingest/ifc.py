@@ -1,4 +1,4 @@
-"""Ingest IFC (spec 4.1): ifcopenshell.open + hệ số đơn vị chiều dài."""
+"""Đọc IFC và hệ số đơn vị chiều dài."""
 from __future__ import annotations
 
 import hashlib
@@ -29,10 +29,10 @@ def load_ifc(path: str | Path) -> IfcSource:
         raise DataError(f"không thấy file IFC: {p}")
     try:
         f = ifcopenshell.open(str(p))
-    except Exception as e:  # noqa: BLE001
+    except Exception as e:
         raise DataError(f"không đọc được IFC {p.name}: {e}") from e
     try:
         scale = float(ifcopenshell.util.unit.calculate_unit_scale(f))
-    except Exception as e:  # noqa: BLE001
+    except Exception as e:
         raise DataError(f"không xác định được đơn vị chiều dài của {p.name}: {e}") from e
     return IfcSource(p, f, scale, hashlib.sha256(p.read_bytes()).hexdigest())
