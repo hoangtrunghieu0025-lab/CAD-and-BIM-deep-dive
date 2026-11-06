@@ -1,17 +1,17 @@
 ---
 id: TASK-009
-title: "[IN_REVIEW][MAIN] Viết spec thiết kế pipeline CAD → BIM → GPKG"
+title: "[DONE][MAIN] Viết spec thiết kế pipeline CAD → BIM → GPKG"
 category: MAIN
 assignees: [claude-mobile]
 created_by: claude-mobile
 created_at: 2026-11-06T09:37:46+07:00
-updated_at: 2026-11-06T12:16:49+07:00
-status: in_review
+updated_at: 2026-11-06T14:43:20+07:00
+status: done
 priority: high
 depends_on: [TASK-005, TASK-007]
 ---
 
-# [IN_REVIEW][MAIN] TASK-009 — Viết spec thiết kế pipeline CAD → BIM → GPKG
+# [DONE][MAIN] TASK-009 — Viết spec thiết kế pipeline CAD → BIM → GPKG
 
 ## Mô tả
 Viết đặc tả để laptop cài đặt: module, hàm, input/output từng bước, schema bảng GPKG theo IMDF, quy tắc georeference, kiểm tra hợp lệ.
@@ -39,10 +39,10 @@ Spec mô-đun này phải nêu:
 - `docs/cad-to-gpkg-design.md`: sơ đồ, giao diện CLI (`input → output.gpkg`), schema từng layer, danh sách kiểm tra (CRS, hình học hợp lệ, quan hệ khoá ngoại)
 
 ## Tiêu chí hoàn thành (acceptance)
-- [ ] Mỗi bước nêu rõ input, output, lỗi có thể gặp
-- [ ] Có danh sách test mà TASK-010 phải qua
-- [ ] Có mục đặc tả mô-đun xuất gói IMDF (đầu vào, cấu trúc ZIP, chuyển đổi, kiểm tra, test) như phần "Bổ sung phạm vi"
-- [ ] Đã push lên `main`
+- [x] Mỗi bước nêu rõ input, output, lỗi có thể gặp
+- [x] Có danh sách test mà TASK-010 phải qua
+- [x] Có mục đặc tả mô-đun xuất gói IMDF (đầu vào, cấu trúc ZIP, chuyển đổi, kiểm tra, test) như phần "Bổ sung phạm vi"
+- [x] Đã push lên `main`
 
 ## Phạm vi từng bên
 - **claude-mobile**: toàn bộ; chỉ ghi vào `docs/cad-to-gpkg-design.md` (gồm cả mô-đun xuất gói IMDF).
@@ -54,12 +54,13 @@ Spec mô-đun này phải nêu:
 ## Tổng quan
 | Bên | Trạng thái | Cập nhật lúc | Ghi chú ngắn |
 |---|---|---|---|
-| claude-mobile | in_review | 2026-11-06T12:16:49+07:00 | spec xong, chờ chủ dự án/laptop duyệt |
+| claude-mobile | done | 2026-11-06T14:43:20+07:00 | spec dùng được, chủ dự án đồng ý |
 
 ## Nhật ký — claude-mobile
 | Thời điểm (GMT+7) | Trạng thái | Nội dung |
 |---|---|---|
 | 2026-11-06T12:16:49+07:00 | in_review | Viết docs/cad-to-gpkg-design.md (kiến trúc, CLI, 5 bước, schema GPKG, georeference, mô-đun export_imdf, kiểm tra, 16 test T1–T16, 10 mục chưa chốt). Đồng bộ config/tag_mapping.yaml: cột OSM có tiền tố osm_ để tránh trùng cột name của IMDF. |
+| 2026-11-06T14:43:20+07:00 | done | Chủ dự án đồng ý đặt DONE. Spec đã đồng bộ với kết quả TASK-007 (stable_v4, nhãn LABELS, tâm cửa, test T17–T20). Mục 11 còn các điểm chưa chốt; laptop ghi vào Blocker của TASK-010 nếu spec thiếu/sai. |
 
 ## Blocker / câu hỏi mở
 -
