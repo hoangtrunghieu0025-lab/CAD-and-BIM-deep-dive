@@ -62,7 +62,7 @@
 - IfcSpace → `unit` (+ `level_id`), IfcBuildingStorey → `level` (`ordinal`, `name`, `short_name` bắt buộc), IfcBuilding → `building` (geometry null) + `footprint` (đường bao, `building_ids`), IfcDoor → `opening` (LineString = bề rộng cửa, `level_id` bắt buộc), IfcStair/IfcTransportElement → `unit` category `stairs`/`elevator`/`escalator`.
 - `venue` và `address` là **bắt buộc** trong gói (xem `imdf-relations-and-constraints.md`): pipeline phải sinh `venue` (polygon bao tất cả feature) và ít nhất một `address` kể cả khi IFC thiếu → cần config/giá trị mặc định.
 - `level.name` và `level.short_name` bắt buộc → lấy từ `IfcBuildingStorey.Name`/`LongName`.
-- `id` UUID: dùng UUID ổn định (uuid5 từ `IfcGloballyUniqueId` đã kiểm chứng, xem `research/02-bim/ifc-spatial-structure.md`).
+- `id` UUID: spec yêu cầu "RFC 4122 §4.4 compliant **version 4** UUID" (`reference/type_designators`, đọc 2026-11-06). `uuid5` ổn định nhưng có version nibble = 5 → **không đúng chuẩn**; dùng UUID dạng v4 sinh xác định (`stable_v4`, xem `docs/cad-to-gpkg-design.md`). Cập nhật 2026-11-06 (claude-mobile) sau khi rà N-005.
 - Feature geometry null (building, occupant, address, relationship thường): ghi thành bảng `attributes` trong GPKG bằng `pyogrio.write_dataframe(DataFrame thường)` (đã kiểm chứng, xem `geopackage-requirements.md`).
 
 ## Nguồn

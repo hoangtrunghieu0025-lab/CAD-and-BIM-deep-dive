@@ -14,11 +14,17 @@ version: 1
 # ---------------- Mặc định chung ----------------
 defaults:
   ids:
-    scheme: uuid5                    # id IMDF = uuid5(namespace, IfcGloballyUniqueId hoặc "layer|handle" với CAD) -> ổn định giữa các lần chạy
-    namespace: null                  # TODO(dự án): chọn 1 UUID cố định cho dự án và ghi ở đây   (src: IMDF, IFC/ifc-spatial-structure.md)
+    scheme: stable_v4                # IMDF: id/UUID PHẢI là "RFC 4122 section 4.4 compliant version 4 UUID" (src: IMDF reference/type_designators — đã xác minh).
+                                     # uuid5 có version nibble = 5 nên KHÔNG đúng chuẩn -> dùng UUID dạng v4 sinh XÁC ĐỊNH:
+                                     # 16 byte đầu của sha256(namespace + source_ref), rồi đặt version = 4 và variant = 10xx (hợp lệ về định dạng, ổn định giữa các lần chạy)
+    namespace: "1498893a-1864-4700-bbd1-ba00f8396214"   # UUID cố định của dự án (sinh một lần, KHÔNG đổi; đổi thì mọi id đổi)
   crs:
     target: "EPSG:4326"              # PRIMARY_OBJECTIVE mục 3.3 bước 5; CRS nguồn lấy từ IfcMapConversion/IfcProjectedCRS hoặc control points (IFC4+)
-  language: vi                       # ngôn ngữ cho name/short_name (LABELS); định dạng LABELS chi tiết chưa xác minh
+  language: vi                       # = manifest.language; LABELS PHẢI có mục cho ngôn ngữ mặc định này (src: IMDF reference/type_designators — đã xác minh)
+  labels:                            # LABELS = JSON object {LANGUAGE-TAG: chuỗi}, ví dụ {"vi": "TẦNG 1"} (src: IMDF type_designators)
+    unicode_normalization: NFC       # chuẩn hoá NFC trước khi so khớp regex hoặc ghi nhãn (dấu tiếng Việt có thể ở dạng NFD)
+    level_case: upper                # spec level: "Labels MUST NOT contain mixed case characters" -> chọn 1 kiểu chữ thống nhất cho nhãn tầng.
+                                     # Cách hiểu "mixed case" CHƯA xác minh (ý định có thể là không trộn hoa/thường); chọn upper là lựa chọn an toàn của dự án
   gpkg:
     layer_per_imdf_feature: true     # mỗi IMDF feature_type = 1 layer; feature không geometry -> bảng attributes (src: IMDF, geopackage-requirements.md)
     osm_column_prefix: osm_            # tiền tố để không đụng cột IMDF (đặc biệt `name`: IMDF là LABELS JSON, OSM là chuỗi)
@@ -49,6 +55,18 @@ object_types:
 
   storey:
     ifc: IfcBuildingStorey
+    index_rule:                                # cách chọn `storey_index` (OSM `level`, IMDF `ordinal`)
+      ground: min_abs_elevation                # tầng có |Elevation| nhỏ nhất = 0; tầng trên 1,2…; tầng dưới -1,-2… theo thứ hạng cao độ
+      ground_storey: null                      # ghi đè bằng tên tầng khi tầng hầm/thiếu Elevation làm sai quy tắc trên
+      missing_elevation: placement_z_then_file_order   # Elevation là OPTIONAL: lấy từ placement Z, nếu không có thì theo thứ tự file + cảnh báo
+    dxf_source:                                # DXF không có cây tầng: lấy từ project.yaml (inputs[].storey), KHÔNG suy từ tên file
+      name: "{storey.name}"                    # -> level:ref và nguồn của short_name
+      long_name: "{storey.long_name}"          # -> IMDF level.name (sau chuẩn hoá level_case)
+      elevation_m: "{storey.elevation_m}"      # -> sắp xếp, tính storey_index
+      ordinal: null                            # null = dùng storey_index; có giá trị thì ghi đè
+    label_rule:                                # IMDF level.name / short_name
+      name: "{long_name_or_name | level_case}" # ví dụ "TẦNG 1"
+      short_name: "{storey_name | level_case}" # ngắn, ví dụ "1", "B1" (lấy từ tên tầng/level:ref, không lấy tên dài)
     osm:                                       # tầng KHÔNG có feature riêng trong SIT: gắn tag `level` lên mọi phần tử (src: SIT)
       level: "{storey_index}"                  # số vật lý: 0 = mặt đất, -1 = hầm đầu tiên; sinh theo thứ tự Elevation, KHÔNG ép bằng ordinal IMDF
       level:ref: "{storey_name}"               # nhãn như hiển thị trong toà nhà (1, 2, B1…)
@@ -60,8 +78,8 @@ object_types:
         category: unspecified                  # trong 9 giá trị hợp lệ của level
         outdoor: false
         ordinal: "{storey_index}"              # integer; map riêng khỏi OSM `level`
-        name: "{storey_long_name_or_name}"     # BẮT BUỘC (LABELS)
-        short_name: "{storey_name}"            # BẮT BUỘC (LABELS)
+        name: "{label:level.name}"             # BẮT BUỘC (LABELS), theo storey.label_rule
+        short_name: "{label:level.short_name}"  # BẮT BUỘC (LABELS), theo storey.label_rule
         building_ids: ["{building_id}"]
     status: verified
 
@@ -87,12 +105,16 @@ object_types:
       order: [FootPrint, Body_projection]
     rules:                                     # khớp đầu tiên thắng; so khớp trên IfcSpace.Name / LongName, DXF: text nhãn
       - id: corridor
-        when: {name_regex: '(?i)\b(h[aà]nh\s*lang|corridor|hallway)\b'}
+        when:
+          any_of:
+            - {ifc_object_type_regex: '(?i)^corridor$'}                              # ghi đè rõ ràng nếu IFC khai báo (ObjectType)
+            - {name_regex: '(?i)^\s*(h[aà]nh\s*lang|corridor|hallway)\b'}     # neo ở ĐẦU tên: 'Tuyến hành lang kỹ thuật' không khớp (sau NFC)
         osm: {indoor: corridor}
+        osm_omit: [ref]                         # IfcSpace.Name của hành lang thường là mã kỹ thuật (HL100): không gán ref
         imdf: {feature_type: unit, category: walkway}
         status: verified                       # src: SIT (indoor=corridor), IMDF (category walkway có trong 63 giá trị unit); regex là lựa chọn của dự án
       - id: restroom
-        when: {name_regex: '(?i)\b(wc|v[eệ]\s*sinh|toilet|restroom)\b'}
+        when: {name_regex: '(?i)^\s*(wc|v[eệ]\s*sinh|toilet|restroom)\b'}   # neo ở đầu tên, áp dụng sau NFC
         osm: {indoor: room}                    # giá trị room=* cho nhà vệ sinh CHƯA tra (Key:room chưa đọc) -> không gán room=*
         imdf: {feature_type: unit, category: restroom}
         status: unverified
@@ -105,7 +127,8 @@ object_types:
       level: "{storey_index}"                  # bắt buộc trên mọi phần tử indoor
       level:ref: "{storey_name}"
       name: "{long_name_or_name}"
-      ref: "{space_name}"                      # mã phòng, ví dụ P101
+      ref: "{space_name}"                      # mã phòng, ví dụ P101; chỉ gán khi khớp ref_pattern (mục dưới)
+      ref_pattern: '^[A-Za-z]{1,3}\d{1,4}$'   # P101 -> ref; nếu không khớp thì dùng làm name. Lựa chọn của dự án, chỉnh theo bản vẽ thật
     imdf_common:
       level_id: "{level_id}"
       name: "{long_name_or_name}"
@@ -116,9 +139,17 @@ object_types:
 
   door:
     ifc: IfcDoor                               # gắn tầng qua IfcRelContainedInSpatialStructure (get_container) — khác IfcSpace
-    geometry_source:
-      order: [opening_extent, OverallWidth_at_placement]
+    geometry_source:                           # TÂM và HƯỚNG của đoạn LineString opening (osm: node tại tâm cửa)
+      ifc:
+        center_order: [opening_element_geometry, door_body_bbox, placement_with_anchor]   # ưu tiên hình học thật; placement chỉ là dự phòng
+        placement_anchor: start                # dự phòng: placement nằm ở ĐẦU cửa (mẫu laptop); `center` nếu placement đã ở giữa. CHƯA xác minh quy ước IFC chung
+        direction: placement_local_x           # trục X cục bộ của placement
+      dxf:
+        center: insert_point                   # INSERT đặt ở TÂM cửa (mẫu)
+        direction: insert_rotation             # theo góc quay INSERT
+        width_source: block_line_length        # bề rộng = độ dài LINE trong block `DOOR` (đã nhân scale của INSERT)
       width_fallback_m: 0.9                    # OverallWidth là OPTIONAL (src: IFC/ifc-spatial-structure.md); 0.9 là mặc định của dự án
+      validate: opening_on_unit_boundary       # phép kiểm KHÔNG phân biệt được lệch dọc theo tường => thêm test kiểm tâm (spec T-door-center)
     rules:
       - id: building-entrance
         when: {pset: {Pset_DoorCommon.IsExternal: true}}

@@ -37,8 +37,8 @@ Nguồn: [guid-linking](../research/03-bim-pipeline-3d-7d/guid-linking.md).
 |---|---|
 | Định dạng | `IfcGloballyUniqueId` 22 ký tự, thuộc tính `IfcRoot.GlobalId` |
 | Sang UUID | `uuid.UUID(hex=ifcopenshell.guid.expand(gid))`; ngược lại `guid.compress` |
-| ID cho IMDF | IMDF cần UUID; UUID từ `expand` không đảm bảo bit version v4; `uuid5(namespace, GlobalId)` cho kết quả ổn định |
-| CAD không có GUID | Phải sinh ID ổn định (ví dụ `uuid5` từ dự án + layer + handle — đề xuất) |
+| ID cho IMDF | IMDF cần UUID; UUID từ `expand` không đảm bảo bit version v4; `stable_v4(namespace, GlobalId)` (UUID v4 sinh xác định, xem `docs/cad-to-gpkg-design.md`) cho kết quả ổn định |
+| CAD không có GUID | Phải sinh ID ổn định (ví dụ `stable_v4` từ dự án + layer + handle — đề xuất) |
 
 ## 3. Hình học vs phi hình học
 

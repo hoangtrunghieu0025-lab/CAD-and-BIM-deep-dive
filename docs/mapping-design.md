@@ -56,11 +56,28 @@ Nguồn: [osm-simple-indoor-tagging](../research/04-osm-imdf-tagging/osm-simple-
 - **`venue.category`** chưa chọn: phải là 1 trong 27 giá trị của IMDF `reference/categories` (research chưa chép lại).
 - **`IfcTransportElement` ELEVATOR**: tên class/enum và ánh xạ chưa kiểm trong schema.
 - **`door=*`, `room=*`**: các giá trị hợp lệ chưa đọc (`Key:door`, `Key:room`); config chỉ dùng `door=yes` (loại chưa rõ, đã xác minh) và không gán `room=*`.
-- **Dạng LABELS** của `name`/`short_name` (IMDF) chưa xác minh chi tiết.
+- **LABELS và Manifest** đã xác minh ([type_designators](https://register.apple.com/resources/imdf/reference/type_designators), [manifest](https://register.apple.com/resources/imdf/manifest)); còn mở cách hiểu "Labels MUST not contain mixed case characters" (đã chọn viết hoa).
 - **Ngưỡng**: `buffer_m: 1.0` cho venue và `width_fallback_m: 0.9` là lựa chọn dự án.
 - **Cần laptop**: chạy thử mapping trên `samples/*.ifc` (IfcSpace, IfcDoor, IfcWall, quy tắc corridor theo `LongName`) và ghi kết quả vào nhật ký TASK-007.
 
-## 6. Kiểm tra đã làm (claude-mobile)
+## 6. Xử lý 10 đề xuất của claude-laptop sau khi chạy thử (N-005)
+
+Laptop chạy thử trên `samples/` (DXF: 13 phòng gồm 12 `default-room` + 1 `corridor`, 12/12 opening nằm trên ranh giới unit; IFC: 26 `IfcSpace`, 24 `IfcDoor`, 2 level, hợp unit khớp đường bao 24×12) và đưa 10 đề xuất. Cách xử lý:
+
+| # | Đề xuất | Quyết định | Nơi thay đổi |
+|---|---|---|---|
+| 1 | `level.name`/`short_name`: spec cấm "mixed case" | **Chấp nhận.** Nhãn tầng viết hoa toàn bộ; `short_name` ngắn từ tên tầng ("1", "B1"), `name` từ `long_name`. LABELS là `{"vi": "…"}` (đã xác minh). Cách hiểu "mixed case" vẫn chưa xác minh | `defaults.labels`, `storey.label_rule` |
+| 2 | Vị trí cửa IFC vs DXF lệch 0,45 m | **Chấp nhận.** Tâm lấy từ hình học opening → bbox cửa → placement + `placement_anchor`; hướng theo trục X; thêm test kiểm tâm (phép kiểm "trên ranh giới" không đủ) | `door.geometry_source`, spec T19 |
+| 3 | `namespace` còn `null` | **Đã chốt** một UUID cố định. Phát hiện thêm: IMDF yêu cầu id là **UUID v4**, `uuid5` không đúng → đổi sang `stable_v4` | `defaults.ids` |
+| 4 | Chọn tầng 0 (`storey_index`) | **Chấp nhận.** Tầng có \|Elevation\| nhỏ nhất = 0, ghi đè bằng `ground_storey`; thiếu Elevation → placement Z → thứ tự file + cảnh báo | `storey.index_rule` |
+| 5 | Tầng cho DXF | **Chấp nhận.** Lấy từ `project.yaml` (`inputs[].storey`), không suy từ tên file | `storey.dxf_source`, spec §3 |
+| 6 | Regex mã phòng | **Chấp nhận.** `ref_pattern: ^[A-Za-z]{1,3}\d{1,4}$`; không khớp thì làm `name` (lựa chọn dự án) | `space.osm_common.ref_pattern` |
+| 7 | Opening từ DXF | **Chấp nhận.** Tâm = điểm chèn, hướng = góc quay INSERT, bề rộng = độ dài LINE trong block `DOOR` | `door.geometry_source.dxf`, spec §4.2 |
+| 8 | Regex tên phòng (NFD, false positive) | **Chấp nhận.** Chuẩn hoá NFC trước khi so khớp; neo ở đầu tên; cho phép ghi đè bằng `IfcSpace.ObjectType` | `defaults.labels`, `space.rules` |
+| 9 | `ref` cho corridor | **Chấp nhận.** Corridor không gán `ref` (`osm_omit: [ref]`) | `space.rules[corridor]` |
+| 10 | Ca chưa kiểm được trên mẫu | **Ghi nhận, hoãn.** Cần mẫu bổ sung (tường dày, `IfcStair`, thang máy, `IfcWindow`, Pset cửa, IFC2X3, ATTRIB trên INSERT, layer tiếng Việt, georeference). Giữ nhãn `unverified` trong config | spec §11; việc của laptop sau TASK-007 |
+
+## 7. Kiểm tra đã làm (claude-mobile)
 
 Chạy `layer_mapping.yaml` trên `samples/sample-floor-1.dxf` (ezdxf, schema DXF, `$INSUNITS = 6`): mọi entity đều khớp đúng rule, không có entity nào `UNMATCHED`:
 

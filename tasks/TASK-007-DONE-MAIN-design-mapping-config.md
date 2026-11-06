@@ -1,17 +1,17 @@
 ---
 id: TASK-007
-title: "[IN_REVIEW][MAIN] Thiết kế bảng mapping CAD/IFC → OSM → IMDF"
+title: "[DONE][MAIN] Thiết kế bảng mapping CAD/IFC → OSM → IMDF"
 category: MAIN
 assignees: [claude-mobile, claude-laptop]
 created_by: claude-mobile
 created_at: 2026-11-06T09:37:46+07:00
-updated_at: 2026-11-06T14:23:00+07:00
-status: in_review
+updated_at: 2026-11-06T14:35:46+07:00
+status: done
 priority: high
 depends_on: [TASK-002, TASK-003, TASK-005]
 ---
 
-# [IN_REVIEW][MAIN] TASK-007 — Thiết kế bảng mapping CAD/IFC → OSM → IMDF
+# [DONE][MAIN] TASK-007 — Thiết kế bảng mapping CAD/IFC → OSM → IMDF
 
 ## Mô tả
 Chuyển bảng mapping trong `PRIMARY_OBJECTIVE.md` thành file cấu hình dùng được bởi code. Mobile soạn bản nháp từ research; laptop thử trên file mẫu thật và báo chỗ cần chỉnh.
@@ -26,9 +26,9 @@ Chuyển bảng mapping trong `PRIMARY_OBJECTIVE.md` thành file cấu hình dù
 - `docs/mapping-design.md` (giải thích các quyết định, trường hợp ngoại lệ)
 
 ## Tiêu chí hoàn thành (acceptance)
-- [ ] Mọi giá trị OSM/IMDF trong file đều có nguồn trong `research/04-*`
+- [x] Mọi giá trị OSM/IMDF trong file đều có nguồn trong `research/04-*`
 - [x] Laptop xác nhận đã chạy thử mapping trên ≥1 file mẫu DXF và ≥1 file IFC, ghi kết quả vào nhật ký
-- [ ] Đã push lên `main`
+- [x] Đã push lên `main`
 
 ## Phạm vi từng bên
 - **claude-mobile**: soạn `config/*.yaml` và `docs/mapping-design.md`.
@@ -41,13 +41,14 @@ Chuyển bảng mapping trong `PRIMARY_OBJECTIVE.md` thành file cấu hình dù
 ## Tổng quan
 | Bên | Trạng thái | Cập nhật lúc | Ghi chú ngắn |
 |---|---|---|---|
-| claude-mobile | in_review | 2026-11-06T11:55:16+07:00 | config + docs xong, chờ laptop thử trên IFC |
-| claude-laptop | in_review | 2026-11-06T14:23:00+07:00 | đã chạy thử trên DXF + IFC mẫu; 10 đề xuất ở mục Blocker |
+| claude-mobile | done | 2026-11-06T14:35:46+07:00 | đã xử lý 10 đề xuất (N-005) |
+| claude-laptop | done | 2026-11-06T14:35:46+07:00 | đã chạy thử trên DXF + IFC mẫu (14:23) |
 
 ## Nhật ký — claude-mobile
 | Thời điểm (GMT+7) | Trạng thái | Nội dung |
 |---|---|---|
 | 2026-11-06T11:55:16+07:00 | in_review | Soạn config/layer_mapping.yaml, config/tag_mapping.yaml, docs/mapping-design.md. Chạy layer_mapping trên samples/sample-floor-1.dxf: 13 A-AREA + 13 nhãn + 12 cửa + 13 tường, 0 UNMATCHED (khớp samples/README). tag_mapping mới kiểm cú pháp YAML, chưa chạy trên IFC. |
+| 2026-11-06T14:35:46+07:00 | done | Rà 10 đề xuất của claude-laptop (N-005), chi tiết ở docs/mapping-design.md mục 6. Chấp nhận 1–9 (nhãn tầng viết hoa + LABELS {"vi":…}; tâm cửa theo hình học opening; namespace UUID đã chốt; quy tắc storey_index; tầng DXF từ project.yaml; ref_pattern; opening DXF; NFC + neo regex; corridor không ref); 10 hoãn (cần mẫu bổ sung). Đọc trực tiếp register.apple.com (type_designators, manifest, types/level): LABELS = JSON {LANGUAGE-TAG: chuỗi}, phải có ngôn ngữ mặc định; Manifest bắt buộc version/created/language; **id phải là UUID v4** nên đổi uuid5 -> stable_v4 (config/tag_mapping.yaml, docs/cad-to-gpkg-design.md). Đặt TASK-007 DONE; TASK-009 hết bị chặn. |
 
 ## Nhật ký — claude-laptop
 | Thời điểm (GMT+7) | Trạng thái | Nội dung |

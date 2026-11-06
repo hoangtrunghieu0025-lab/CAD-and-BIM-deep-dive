@@ -78,7 +78,9 @@ Ref: [parsing-with-ezdxf](../research/01-cad/parsing-with-ezdxf.md), [coordinate
 2. `space`: polyline kín → `Polygon`; hở → thử `shapely.ops.polygonize` từ các LINE cùng layer; vẫn không khép → cảnh báo, bỏ đối tượng.
 3. `space_label`: gán text vào polygon phòng chứa điểm chèn (`shapely.contains`); text nằm ngoài mọi phòng → cảnh báo.
 4. `door`: INSERT block `DOOR` → điểm chèn + góc quay + thuộc tính từ ATTRIB gắn vào INSERT (giá trị nằm ở ATTRIB, không ở ATTDEF). Đoạn đóng của cửa dựng ở bước 4.4.
-5. Tầng: lấy từ `project.yaml` (`storey`), không suy từ nét vẽ.
+5. Tầng: lấy từ `project.yaml` (`inputs[].storey`: `name`, `long_name`, `elevation_m`, tuỳ chọn `ordinal`), không suy từ tên file hay nét vẽ. `storey_index` xếp theo cao độ, tầng có |cao độ| nhỏ nhất = 0 (cấu hình `ground_storey` để ghi đè). Nhãn tầng: xem `tag_mapping.yaml` → `storey.label_rule`.
+6. Mã phòng: text khớp `ref_pattern` (mặc định `^[A-Za-z]{1,3}\d{1,4}$`) → `ref`; ngược lại → `name`. Hành lang không gán `ref`.
+7. Opening từ DXF: tâm = điểm chèn INSERT, hướng = góc quay INSERT, bề rộng = độ dài LINE trong block `DOOR` (đã nhân scale), dự phòng `width_fallback_m`.
 Ref: [layers-blocks-xref](../research/01-cad/layers-blocks-xref.md), [layer-naming-conventions](../research/01-cad/layer-naming-conventions.md).
 
 ### 4.3 `extract` — IFC
@@ -87,13 +89,13 @@ Ref: [layers-blocks-xref](../research/01-cad/layers-blocks-xref.md), [layer-nami
 | Tầng của `IfcSpace` | `ifcopenshell.util.element.get_aggregate` (**không** `get_container`: trả `None` khi space được aggregate) |
 | Tầng của `IfcDoor`, `IfcWall` | `get_container` (qua `IfcRelContainedInSpatialStructure`) |
 | Footprint phòng | ưu tiên representation `FootPrint`; không có → `ifcopenshell.geom` với `USE_WORLD_COORDS`, chiếu `Body` xuống XY, `shapely.unary_union` → `Polygon` (phòng 4×5 m → diện tích 20,0) |
-| Cửa → `LineString` | đoạn thẳng dài bằng bề rộng cửa, đặt tại vị trí/hướng cửa; bề rộng = `OverallWidth` → bề rộng opening → `width_fallback_m` |
+| Cửa → `LineString` | đoạn thẳng dài bằng bề rộng cửa. **Tâm**: hình học `IfcOpeningElement` (qua `IfcRelFillsElement`) → bbox thân cửa → placement + `placement_anchor` (`start`/`center`, dự phòng; lệch 0,45 m trên mẫu nếu coi placement là tâm). **Hướng**: trục X cục bộ. **Bề rộng**: `OverallWidth` → bề rộng opening → `width_fallback_m` |
 | Thuộc tính | `get_psets` (ví dụ `Pset_DoorCommon.IsExternal`, `FireExit`; `Pset_SpaceCommon.Reference`) |
 Ref: [ifc-spatial-structure](../research/02-bim/ifc-spatial-structure.md), [property-sets-and-classification](../research/02-bim/property-sets-and-classification.md).
 
 ### 4.4 `normalize`
 - Áp `tag_mapping.yaml`: với mỗi `Obj`, tìm `object_types.<type>`, duyệt `rules` (khớp đầu tiên thắng), sinh **một dòng** gồm thuộc tính IMDF và cột tag OSM.
-- `id` = `uuid5(namespace_dự_án, source_ref)`, ổn định giữa các lần chạy.
+- `id` = `stable_v4(namespace_dự_án, source_ref)`: lấy 16 byte đầu của `sha256(namespace + source_ref)`, đặt version = 4 và variant `10xx`. IMDF yêu cầu id là "RFC 4122 §4.4 compliant version 4 UUID" ([nguồn](https://register.apple.com/resources/imdf/reference/type_designators), đọc 2026-11-06); `uuid5` có version = 5 nên không dùng. Ổn định giữa các lần chạy.
 - Khoá ngoại: `unit.level_id`, `opening.level_id`, `level.building_ids`, `footprint.building_ids`.
 - `level`: `storey_index` theo thứ tự cao độ (mặt đất = 0), `ordinal` map riêng.
 - `venue`: polygon bao `footprint` + `buffer_m`; `address`, `manifest` từ `project.yaml`.
@@ -137,7 +139,7 @@ CRS mọi bảng có geometry: `EPSG:4326` (GeoJSON/IMDF dùng WGS84). Bảng kh
 | `detail` | LineString | **`level_id`** | (tuỳ chọn) |
 | `_meta` | *không* | `pipeline_version`, `created`, `source_files` (JSON), `crs_source`, `warnings` (JSON) | — |
 
-Ghi chú: danh sách cột lấy từ [imdf-feature-types](../research/04-osm-imdf-tagging/imdf-feature-types.md) (đọc trang gốc register.apple.com); `venue.category` và định dạng chi tiết của LABELS chưa xác minh (mục 11). `display_point` lưu GeoJSON Point dạng text.
+Ghi chú: danh sách cột lấy từ [imdf-feature-types](../research/04-osm-imdf-tagging/imdf-feature-types.md) (đọc trang gốc register.apple.com). **LABELS** đã xác minh ([type_designators](https://register.apple.com/resources/imdf/reference/type_designators), 2026-11-06): JSON object `{LANGUAGE-TAG: chuỗi}`, không trùng tag, **phải có mục cho ngôn ngữ mặc định** của manifest (ví dụ `{"vi": "TẦNG 1"}`). Với `level.name`/`short_name` spec ghi "Labels MUST not contain mixed case characters": dự án chọn viết hoa toàn bộ (cách hiểu chưa xác minh). `venue.category` chưa chọn (mục 11). `display_point` lưu GeoJSON Point dạng text.
 
 ## 6. Quy tắc georeference
 
@@ -156,12 +158,12 @@ CRS gợi ý cho Việt Nam (đã tra bằng CSDL EPSG qua `pyproj`): `EPSG:4756
 
 - **Vào**: `.gpkg` do pipeline tạo (mục 5). **Ra**: `<tên>.imdf.zip` gồm `manifest.json` (bắt buộc), `address.geojson` (bắt buộc), `venue.geojson` (bắt buộc, đúng một Venue) và các `*.geojson` tuỳ chọn (`building`, `footprint`, `level`, `unit`, `opening`, `fixture`, `detail`, …).
 - **Chuyển đổi mỗi dòng → GeoJSON Feature**: `{"id": <id>, "type": "Feature", "feature_type": <feature_type>, "geometry": <geometry hoặc null>, "properties": {…}}`; bỏ `fid`, `source_*`, `osm_*`; cột JSON text → object/mảng; bảng `attributes` → `geometry: null`; `building`, `address` không có geometry.
-- **Manifest**: các khoá `version` (`"1.0.0"`), `created` (ISO date-time, không múi giờ), `language`, `generated_by`, `extensions`. Chỉ có ví dụ trong spec, **định nghĩa đầy đủ chưa có**, nên coi là suy từ ví dụ.
+- **Manifest** (đã xác minh, [manifest](https://register.apple.com/resources/imdf/manifest), 2026-11-06): bắt buộc `version` (hiện chỉ cho phép `"1.0.0"`), `created` (DATE-TIME, không múi giờ, ví dụ `2020-09-09T12:34:56`), `language` (LANGUAGE-TAG, ví dụ `vi-VN`); tuỳ chọn `generated_by` (null hoặc chuỗi) và `extensions` (null hoặc mảng). File phải tên `manifest.json`.
 - **Từ chối** khi: thiếu venue/address, `crs_source='none'`, ràng buộc ở mục 9 loại B không đạt.
 - **Đối chiếu**: gói do Archilogic sinh từ DXF mẫu (nếu có) và validator cộng đồng `IMDFrnt` (chưa đánh giá). Ref: [imdf-relations-and-constraints](../research/04-osm-imdf-tagging/imdf-relations-and-constraints.md).
 
 ## 8. Thứ tự xử lý và tính tái lập
-- Cùng đầu vào + cấu hình + `namespace` → cùng `id` (uuid5) và cùng nội dung GPKG (trừ `_meta.created`).
+- Cùng đầu vào + cấu hình + `namespace` → cùng `id` (`stable_v4`) và cùng nội dung GPKG (trừ `_meta.created`).
 - Mỗi lần chạy ghi `_meta.source_files` kèm băm (hash) file nguồn.
 
 ## 9. Kiểm tra hợp lệ (`check`)
@@ -190,14 +192,18 @@ CRS gợi ý cho Việt Nam (đã tra bằng CSDL EPSG qua `pyproj`): `EPSG:4756
 | T14 | `export_imdf` | ZIP có đúng 3 file bắt buộc, mỗi `*.geojson` là `FeatureCollection`, `id` UUID, `feature_type` khớp tên file |
 | T15 | `export_imdf` từ chối | thiếu venue hoặc `crs_source='none'` → lỗi rõ ràng |
 | T16 | QGIS (thủ công, TASK-011) | các layer load đúng CRS/vị trí, lọc theo `level_id` |
+| T17 | Nhãn tầng | `level.name`/`short_name` là JSON `{"vi": …}`, viết hoa, `short_name` ngắn ("1", "2"); NFC |
+| T18 | `id` | mọi `id` khớp regex UUID v4 (`^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$`) |
+| T19 | Tâm cửa | tâm LineString opening của IFC và DXF trùng nhau trong 1e-3 m trên cùng một phòng (phép kiểm "nằm trên ranh giới" không phát hiện lệch dọc tường) |
+| T20 | Tên phòng | `Hành lang` ở dạng NFD vẫn ra `corridor`; `Tuyến hành lang kỹ thuật` **không** ra `corridor`; corridor không có `osm_ref` |
 
 ## 11. Chưa chốt / rủi ro
 
 | # | Vấn đề | Việc cần làm |
 |---|---|---|
 | 1 | `venue.category` chưa chọn (27 giá trị của IMDF `reference/categories`) | tra rồi chọn; điền vào `project.yaml` |
-| 2 | Dạng LABELS chi tiết (`{"vi": "…"}`?) và định nghĩa Manifest object chưa xác minh | đọc trang `reference` IMDF; nếu lệch thì sửa mục 5 và 7 |
-| 3 | Cột OSM của `tag_mapping.yaml` chưa có tiền tố `osm_` | đã đồng bộ ở lần commit này (xem `defaults.gpkg.osm_columns`) |
+| 2 | ~~Dạng LABELS và Manifest~~ **đã xác minh** (mục 5, 7). Còn mở: cách hiểu "Labels MUST not contain mixed case characters" | chọn viết hoa; xác nhận bằng validator/Apple nếu có |
+| 3 | Cột OSM đã có tiền tố `osm_`; `namespace` UUID đã chốt trong `tag_mapping.yaml` | xong |
 | 4 | `IfcTransportElement` ELEVATOR chưa kiểm trong schema | laptop thử trên IFC có thang máy |
 | 5 | Footprint từ `Body`: file Revit thật có `FootPrint` không; space nhiều tầng | cần file thật |
 | 6 | `Scale ≠ 1` và đơn vị mô hình khác mét trong `IfcMapConversion` chưa kiểm | thêm test khi có mẫu |
