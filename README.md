@@ -2,14 +2,12 @@
 
 Dự án xây bộ chuyển đổi rule-based từ CAD (DXF/DWG) và BIM (IFC) sang GeoPackage, chuẩn hoá theo OSM Simple Indoor Tagging và IMDF, mở được trong QGIS. Tệp này hướng dẫn cách đọc các file và thư mục.
 
-## Nên đọc theo thứ tự
+## Nên đọc 
 
 1. PRIMARY_OBJECTIVE.md: mục tiêu và phạm vi của dự án.
-2. docs/cad-vs-bim.md: khác nhau giữa CAD (DXF, hình học thuần) và BIM (IFC, có ngữ nghĩa).
-3. docs/cad-to-gpkg-design.md: thiết kế pipeline từ đầu vào đến GPKG và gói IMDF.
-4. docs/mapping-design.md và config/: cách ánh xạ layer/class sang tag OSM và IMDF.
-5. src/README.md: cách chạy pipeline; sau đó đọc code trong src/.
-6. reports/: các báo cáo tóm tắt cho mentor, mới nhất xếp cuối theo tên file.
+2. src/README.md: cách chạy pipeline; sau đó đọc code trong src/.
+3. reports/: các báo cáo tóm tắt cho mentor, mới nhất xếp cuối theo tên file.
+4. docs/: kiến thức nghiên cứu được.
 
 ## Thư mục và file ở gốc
 
