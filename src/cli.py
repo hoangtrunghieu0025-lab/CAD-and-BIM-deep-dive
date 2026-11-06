@@ -39,7 +39,7 @@ def _build(args: argparse.Namespace) -> int:
         "gpkg": str(out), "tables": {k: len(v) for k, v in res.features.items()},
         "counts": res.model.counts, "unmatched": [
             {"layer": l, "entity_type": e, "count": n} for (l, e), n in sorted(res.model.unmatched.items())],
-        "warnings": res.model.warnings, "georeference": res.georef.describe(),
+        "warnings": res.model.warnings, "gaps_m2": res.model.gaps, "georeference": res.georef.describe(),
     }
     (out_dir / "build_report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"đã ghi {out} — " + ", ".join(f"{k}={v}" for k, v in report["tables"].items()))

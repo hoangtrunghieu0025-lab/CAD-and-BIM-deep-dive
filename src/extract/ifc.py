@@ -1,4 +1,4 @@
-"""Trích tầng, footprint phòng và đoạn cửa từ IFC."""
+"""Trích tầng, footprint phòng, cầu thang/thang máy/cột/tường/nội thất và đoạn cửa từ IFC."""
 from __future__ import annotations
 
 from typing import Any
@@ -45,6 +45,32 @@ def _union_xy(v: np.ndarray, f: np.ndarray) -> tuple[Polygon | None, int]:
         dropped = len(u.geoms) - 1
         u = max(u.geoms, key=lambda g: g.area)       # chỉ giữ mảnh lớn nhất; nơi gọi sẽ cảnh báo
     return (u, dropped) if u.geom_type == "Polygon" and not u.is_empty else (None, 0)
+
+
+def _footprint(settings, el) -> tuple[Polygon | None, int]:
+    """Footprint XY của phần tử; nếu chính nó không có hình học thì hợp footprint các phần tử con (vd IfcStairFlight)."""
+    xy = _shape_xy(settings, el)
+    if xy:
+        return _union_xy(*xy)
+    polys, dropped = [], 0
+    for part in E.get_parts(el):
+        xy = _shape_xy(settings, part)
+        if xy:
+            p, d = _union_xy(*xy)
+            if p is not None:
+                polys.append(p)
+                dropped += d
+    if not polys:
+        return None, 0
+    u = unary_union(polys)
+    if u.geom_type == "MultiPolygon":
+        dropped += len(u.geoms) - 1
+        u = max(u.geoms, key=lambda g: g.area)
+    return u, dropped
+
+
+# class IFC dựng thành vùng (Polygon) và loại đối tượng tương ứng trong tag_mapping.yaml
+AREA_CLASSES = (("IfcStair", "stair"), ("IfcColumn", "column"), ("IfcWall", "wall"), ("IfcFurnishingElement", "fixture"))   # IfcFurnishingElement có ở cả IFC2X3 và IFC4
 
 
 def storey_of(el) -> Any:
@@ -143,10 +169,33 @@ def extract(src: IfcSource, model: Model, door_cfg: dict[str, Any], file_order: 
         model.objs.append(Obj(
             "door", "ifc", d.GlobalId, "IfcDoor", storey_by_id[st_el.id()].key, line,
             {"name": d.Name, "psets": E.get_psets(d), "center_source": center_src,
-             "width_m": line.length, "attribs": {}},
+             "width_m": line.length, "attribs": {}, "op_type": getattr(d, "OperationType", None)},
         ))
     model.count("ifc:IfcDoor", n_door)
-    model.count("ifc:IfcWall", len(f.by_type("IfcWall")))
+
+    candidates = [(el.is_a(), typ, el) for cls, typ in AREA_CLASSES for el in f.by_type(cls)]
+    for el in f.by_type("IfcTransportElement"):
+        kind = getattr(el, "PredefinedType", None) or getattr(el, "OperationType", None)   # IFC2X3 dùng OperationType
+        if kind == "ELEVATOR":
+            candidates.append(("IfcTransportElement", "elevator", el))
+        else:
+            model.count(f"ifc:skipped:IfcTransportElement.{kind}")
+            model.warn(f"{fname}: IfcTransportElement '{el.Name}' ({kind}) chưa được ánh xạ; bỏ qua")
+    for cls, typ, el in candidates:
+        st_el = storey_of(el)
+        if st_el is None or st_el.id() not in storey_by_id:
+            model.warn(f"{fname}: {cls} '{el.Name}' không thuộc tầng nào; bỏ qua")
+            continue
+        poly, dropped = _footprint(settings, el)
+        if poly is None:
+            model.warn(f"{fname}: {cls} '{el.Name}' không dựng được footprint; bỏ qua")
+            continue
+        if dropped:
+            model.warn(f"{fname}: {cls} '{el.Name}' gồm {dropped + 1} mảnh rời; chỉ giữ mảnh lớn nhất")
+        model.objs.append(Obj(typ, "ifc", el.GlobalId, cls, storey_by_id[st_el.id()].key, poly,
+                              {"name": el.Name, "psets": E.get_psets(el)}))
+        model.count(f"ifc:{cls}")
+    model.count("ifc:IfcWindow", len(f.by_type("IfcWindow")))      # cửa sổ: IMDF không có feature tương ứng, chỉ đếm
 
 
 def door_line(src: IfcSource, door_el, anchor: str, fallback_w: float, settings=None) -> tuple[LineString, str]:

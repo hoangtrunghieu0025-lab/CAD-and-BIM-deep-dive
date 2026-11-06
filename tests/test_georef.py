@@ -67,3 +67,61 @@ def test_ifc_georef_takes_priority_over_project(root):
     ifc = gr.Georef("ifc_map_conversion", "EPSG:3406", 1.0, 2.0)
     out = gr.resolve({"crs": "EPSG:3405", "origin": [0, 0]}, ifc, None, False, Model())
     assert out.source == "ifc_map_conversion"
+
+
+# ------------------------------------------------------------------ control points (TASK-015, mục e)
+def _cps(rot_deg, scale, e0, n0, pts, noise=None):
+    a, b = scale * math.cos(math.radians(rot_deg)), scale * math.sin(math.radians(rot_deg))
+    out = []
+    for k, (x, y) in enumerate(pts):
+        dx, dy = (noise[k] if noise else (0.0, 0.0))
+        out.append({"local": [x, y], "world": [e0 + a * x - b * y + dx, n0 + b * x + a * y + dy]})
+    return out
+
+
+def test_e_control_points_recover_similarity_transform():
+    g = gr.from_control_points({"crs": "EPSG:3405", "control_points": _cps(30, 1.0, 1000, 2000, [(0, 0), (10, 0), (10, 5)])})
+    assert (g.e0, g.n0, g.rotation_deg, g.scale) == pytest.approx((1000.0, 2000.0, 30.0, 1.0), abs=1e-9)
+    assert g.residual_m == pytest.approx(0.0, abs=1e-9)
+    p = g.to_projected(Point(10, 5))
+    ref = _cps(30, 1.0, 1000, 2000, [(10, 5)])[0]["world"]
+    assert (p.x, p.y) == pytest.approx(tuple(ref))
+
+
+def test_e_two_points_are_enough_and_scale_is_estimated():
+    g = gr.from_control_points({"crs": "EPSG:3405", "control_points": _cps(-15, 1.001, 5.0, 7.0, [(0, 0), (100, 0)])})
+    assert g.scale == pytest.approx(1.001, abs=1e-9) and g.rotation_deg == pytest.approx(-15.0, abs=1e-9)
+
+
+def test_e_noisy_points_report_residual_and_warn(root):
+    noise = [(0.2, 0.0), (-0.2, 0.0), (0.0, 0.2), (0.0, -0.2)]
+    cps = _cps(0, 1.0, 588000, 2325000, [(0, 0), (24, 0), (24, 12), (0, 12)], noise)
+    g = gr.from_control_points({"crs": "EPSG:3405", "control_points": cps})
+    assert 0.1 < g.residual_m < 0.4
+    m = Model()
+    gr.resolve({"crs": "EPSG:3405", "control_points": cps}, None, None, False, m)
+    assert any("sai số khớp" in w for w in m.warnings)
+
+
+@pytest.mark.parametrize("cfg,match", [
+    ({"crs": "EPSG:3405", "control_points": [{"local": [0, 0], "world": [1, 1]}]}, "ít nhất 2"),
+    ({"crs": "EPSG:3405", "control_points": [{"local": [1, 1], "world": [1, 1]}, {"local": [1, 1], "world": [5, 5]}]}, "trùng"),
+    ({"crs": "EPSG:3405", "control_points": [{"local": [0, 0], "world": [1, 1]}, {"local": [5, 5], "world": [1, 1]}]}, "trùng"),
+    ({"crs": "EPSG:3405", "control_points": [{"local": [0, 0]}, {"local": [1, 1], "world": [2, 2]}]}, "không hợp lệ"),
+    ({"control_points": [{"local": [0, 0], "world": [1, 1]}, {"local": [1, 0], "world": [2, 1]}]}, "crs"),
+])
+def test_e_bad_control_points_are_data_errors(cfg, match):
+    with pytest.raises(DataError, match=match):
+        gr.from_control_points(cfg)
+
+
+def test_e_pipeline_with_control_points_equals_origin_form(root):
+    """project.yaml dùng control points (suy ra từ gốc + góc) cho cùng toạ độ như dạng origin/rotation."""
+    base = pipeline.run(Project(root / "samples" / "project-dxf.yaml"))
+    p = Project(root / "samples" / "project-dxf.yaml")
+    cps = _cps(0.0, 1.0, 588000.0, 2325000.0, [(0, 0), (24, 0), (24, 12)])
+    p.georeference = {"crs": "EPSG:3405", "control_points": cps}
+    res = pipeline.run(p)
+    assert res.georef.source == "control_points"
+    a, b = base.features["unit"].geometry, res.features["unit"].geometry
+    assert all(x.equals_exact(y, 1e-9) for x, y in zip(a, b))

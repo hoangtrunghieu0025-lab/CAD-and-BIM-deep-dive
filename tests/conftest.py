@@ -33,3 +33,17 @@ def built(tmp_path_factory):
         write_gpkg(res.features, gpkg, res.meta)
         out[kind] = (res, gpkg, project)
     return out
+
+
+@pytest.fixture(scope="session")
+def built_ext(tmp_path_factory):
+    """Các mẫu bổ sung (TASK-015): ext-ifc, ext-dxf (wall_mode structure) và ifc2x3."""
+    out = {}
+    base = tmp_path_factory.mktemp("built_ext")
+    for kind in ("ext-ifc", "ext-dxf", "ifc2x3"):
+        project = Project(SAMPLES / f"project-{kind}.yaml")
+        res = pipeline.run(project)
+        gpkg = base / f"{kind}.gpkg"
+        write_gpkg(res.features, gpkg, res.meta)
+        out[kind] = (res, gpkg, project)
+    return out

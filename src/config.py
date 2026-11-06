@@ -80,6 +80,15 @@ class Project:
         return str(ns)
 
     @property
+    def wall_mode(self) -> str:
+        """`simplified` (không xuất tường) hoặc `structure` (xuất mạng tường thành unit `structure`)."""
+        mode = (self.raw.get("options") or {}).get("wall_mode") \
+            or self.tags["object_types"]["wall"]["imdf"].get("mode", "simplified")
+        if mode not in ("simplified", "structure"):
+            raise ConfigError(f"wall_mode '{mode}' không hợp lệ (simplified | structure)")
+        return mode
+
+    @property
     def language(self) -> str:
         return str(self.tags.get("defaults", {}).get("language", "vi"))
 

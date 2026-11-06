@@ -211,6 +211,18 @@ object_types:
     imdf: null                                 # IMDF không có feature cho cửa sổ -> không xuất
     status: unverified
 
+  fixture:                                     # TASK-015: tài sản di động/bán cố định (IMDF fixture), không phải tường kết cấu
+    ifc: IfcFurniture
+    osm: null
+    imdf: {feature_type: fixture, category: furniture}   # 'furniture' có trong 15 category fixture (src: IMDF)
+    status: unverified                         # chọn category theo class IFC là lựa chọn của dự án
+
+  detail:                                      # TASK-015: nét chi tiết (IMDF detail, LineString, chỉ có level_id)
+    ifc: null
+    osm: null
+    imdf: {feature_type: detail}
+    status: unverified
+
 # ---------------- Thứ tự sinh layer GPKG ----------------
 export_order: [venue, address, building, footprint, level, unit, opening, fixture, detail]
 # Feature không geometry (address, building, occupant, relationship) -> bảng attributes (pyogrio.write_dataframe với DataFrame thường)

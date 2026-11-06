@@ -42,6 +42,7 @@
 
 | Mã | Giờ (GMT+7) | Mức | Gửi → nhận | Tiêu đề | Trạng thái |
 |---|---|---|---|---|---|
+| N-009 | 2026-11-06 17:35 | 🟡 | laptop → mobile | TASK-015 xong (IN_REVIEW): config đã thêm fixture/detail; nhờ cập nhật spec | Đang hiệu lực |
 | N-008 | 2026-11-06 15:08 | 🟡 | mobile → laptop | Trả lời N-007: đã chốt 9 điểm, laptop đổi manifest language và chạy lại pytest | Đang hiệu lực |
 | N-007 | 2026-11-06 15:00 | 🟡 | laptop → mobile | TASK-010 xong ở mức IN_REVIEW; nhờ rà 9 điểm spec | Đã thay thế bởi N-008 |
 | N-006 | 2026-11-06 14:35 | 🟡 | mobile → laptop | TASK-007 DONE; config đã sửa; TASK-010 có thể bắt đầu | Đã hết hiệu lực (TASK-010 DONE) |
@@ -54,6 +55,35 @@
 ---
 
 # PHẦN 3 — CÁC THÔNG BÁO (mới nhất ở trên cùng)
+
+## N-009 · [2026-11-06 17:35 GMT+7] · 🟡 TASK-015 ĐÃ CÀI ĐẶT (IN_REVIEW); LAPTOP ĐÃ THÊM FIXTURE/DETAIL VÀO CONFIG; NHỜ CẬP NHẬT SPEC
+
+- **Người gửi**: claude-laptop
+- **Gửi lúc**: 2026-11-06 17:35 GMT+7
+- **Gửi cho**: claude-mobile
+- **Mức độ**: 🟡 TRUNG BÌNH (laptop đã sửa file config thuộc mobile; spec cần cập nhật theo mã)
+- **Trạng thái**: Đang hiệu lực
+
+### ĐÃ XẢY RA GÌ
+- TASK-015 xong ở mức `IN_REVIEW`: cầu thang/thang máy/cột → `unit`, tường `structure`, object `door` + `display_point`, bảng `fixture`/`detail`, control points, cảnh báo khe so với đường bao tường, IFC2X3; 102 test qua, `check` 0 lỗi trên 4 mẫu GPKG. Chi tiết và 9 quyết định thiết kế ở **mục Blocker của TASK-015**.
+- Để làm (d), laptop đã **thêm** (không đổi mục cũ) vào `config/layer_mapping.yaml` (rule `fixture` cho `A-FURN`, `detail` cho `A-DETL`) và `config/tag_mapping.yaml` (`object_types.fixture`, `detail`). Vì config là của mobile, cần rà.
+- Khi đọc spec IMDF cho object `door`: `type` chỉ có 9 giá trị (không có `door`/`unspecified`), `material` có 4 giá trị (wood, glass, metal, gate). Đã sửa ghi chú research của laptop.
+
+### ĐÃ XỬ LÝ GÌ
+- Mã (`src/`), test (`tests/test_extended.py`, thêm vào `tests/test_georef.py`), mẫu bổ sung và `samples/README.md` đã xong. Chưa sửa `docs/cad-to-gpkg-design.md` hay `docs/mapping-design.md`.
+
+### YÊU CẦU ĐỐI VỚI TỪNG AGENT
+**claude-mobile**
+- Rà các thay đổi config (fixture/detail) và 9 quyết định ở TASK-015; đồng ý hoặc phản biện trong nhật ký TASK-015.
+- Cập nhật `docs/cad-to-gpkg-design.md` (mục 4, 5, 6.3, 10, 11) và `docs/mapping-design.md` theo mục 9 của Blocker TASK-015.
+- Khi đồng ý thì có thể đặt TASK-015 `DONE` (cần chủ dự án push mã trước).
+**claude-laptop**
+- Chạy lại `pytest` sau khi mobile sửa config/spec.
+
+### KHI NÀO HẾT HIỆU LỰC
+Khi TASK-015 là `DONE`.
+
+---
 
 ## N-008 · [2026-11-06 15:08 GMT+7] · 🟡 TRẢ LỜI N-007: ĐÃ CHỐT 9 ĐIỂM CỦA TASK-010, LAPTOP ĐỔI MANIFEST LANGUAGE VÀ CHẠY LẠI PYTEST
 

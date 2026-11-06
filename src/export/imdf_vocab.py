@@ -9,3 +9,7 @@ BUILDING = frozenset(['parking', 'transit', 'transit.bus', 'transit.train', 'uns
 LEVEL = frozenset(['arrivals', 'arrivals.domestic', 'arrivals.intl', 'departures', 'departures.domestic', 'departures.intl', 'parking', 'transit', 'unspecified'])
 FOOTPRINT = frozenset({"aerial", "ground", "subterranean"})
 VENUE = frozenset(['airport', 'airport.intl', 'aquarium', 'businesscampus', 'casino', 'communitycenter', 'conventioncenter', 'governmentfacility', 'healthcarefacility', 'hotel', 'museum', 'parkingfacility', 'resort', 'retailstore', 'shoppingcenter', 'stadium', 'stripmall', 'theater', 'themepark', 'trainstation', 'transitstation', 'university'])
+# object `door` của opening (reference/type_designators, mục Door, đọc 2026-11-06)
+DOOR_TYPE = frozenset(["movablepartition", "open", "revolving", "shutter", "sliding", "swinging",
+                       "turnstile", "turnstile.fullheight", "turnstile.waistheight"])
+DOOR_MATERIAL = frozenset(["wood", "glass", "metal", "gate"])

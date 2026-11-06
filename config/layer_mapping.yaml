@@ -84,6 +84,18 @@ rules:
     ifc: IfcStair
     status: unverified
 
+  - id: fixture
+    pattern: '^A-FURN(-.*)?$'    # nội thất cố định/bán cố định (TASK-015); tên layer theo gợi ý NCS/AIA, chưa đối chiếu chuẩn gốc
+    entity_types: [LWPOLYLINE, HATCH]
+    type: fixture
+    ifc: IfcFurniture
+    status: example
+  - id: detail
+    pattern: '^A-DETL(-.*)?$'    # nét chi tiết (TASK-015); chưa đối chiếu chuẩn gốc
+    entity_types: [LINE, LWPOLYLINE]
+    type: detail
+    status: example
+
 ignore:                          # layer không mang thông tin không gian
   - '^DEFPOINTS$'                # ezdxf coi là tên đặc biệt (research/01-cad/layer-naming-conventions.md)
   - '^A-ANNO-.*$'                # chú thích; không dùng cho indoor mapping (gợi ý, chưa xác minh)

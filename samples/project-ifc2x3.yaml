@@ -1,0 +1,8 @@
+# TASK-015: IFC2X3 (không có IfcMapConversion nên bắt buộc dùng georeference của project).
+name: sample-ifc2x3
+mapping: {layers: ../config/layer_mapping.yaml, tags: ../config/tag_mapping.yaml}
+inputs:
+  - {kind: ifc, file: sample-building-ifc2x3.ifc}
+georeference: {crs: "EPSG:3405", origin: [588000.0, 2325000.0], rotation_deg: 0.0, scale: 1.0}
+venue: {name: "Toà nhà IFC2X3", category: businesscampus}
+address: {address: "1 Phố Ví Dụ", locality: "Hà Nội", country: "VN"}

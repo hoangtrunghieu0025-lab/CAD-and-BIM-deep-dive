@@ -218,6 +218,14 @@ def check_data(path: Path, tables: dict[str, str], rep: Report, language: str = 
                         rep.error("B-lab", f"level.{c} không phải chữ hoa NFC: {txt!r}")
     rep.passed("B-lab")
 
+    if "opening" in dfs and "door" in dfs["opening"]:
+        for v in dfs["opening"]["door"].dropna():
+            d = json.loads(v)
+            if (d.get("type") not in (None, *V.DOOR_TYPE) or d.get("material") not in (None, *V.DOOR_MATERIAL)
+                    or d.get("automatic") not in (None, True, False)):
+                rep.error("B-door", f"opening.door không hợp lệ theo IMDF: {v}")
+    rep.passed("B-door")
+
     ids = {t: set(df["id"]) for t, df in dfs.items() if "id" in df}
     def fk(table: str, col: str, target: str, is_list: bool = False) -> None:
         if table not in dfs or col not in dfs[table]:
@@ -235,7 +243,8 @@ def check_data(path: Path, tables: dict[str, str], rep: Report, language: str = 
     fk("venue", "address_id", "address"); fk("building", "address_id", "address")
     rep.passed("B4")
 
-    geoms = {t: dfs[t] for t in ("venue", "footprint", "level", "unit", "opening") if t in dfs and len(dfs[t])}
+    geoms = {t: dfs[t] for t in ("venue", "footprint", "level", "unit", "opening", "fixture", "detail")
+             if t in dfs and len(dfs[t])}
     if {"venue", "level", "unit"} <= set(geoms):
         _spatial(geoms, rep)
     return dfs
@@ -284,7 +293,7 @@ def _spatial(geoms: dict[str, gpd.GeoDataFrame], rep: Report) -> None:
                 rep.error("B-open", f"opening {row['id']}: không nằm trên ranh giới unit cùng tầng")
     rep.passed("B-open")
     vg = m["venue"].geometry.iloc[0].buffer(TOL_M)
-    for t in ("footprint", "level", "unit", "opening"):
+    for t in ("footprint", "level", "unit", "opening", "fixture", "detail"):
         if t in m and not all(vg.covers(g) for g in m[t].geometry):
             rep.error("B-venue", f"có feature `{t}` nằm ngoài venue")
     rep.passed("B-venue")

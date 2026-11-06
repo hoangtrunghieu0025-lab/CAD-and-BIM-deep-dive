@@ -6,7 +6,7 @@ Cài đặt theo `docs/cad-to-gpkg-design.md` (TASK-010). Chạy từ gốc repo
 .venv/bin/python -m src.cli build --project samples/project-dxf.yaml --out out/building.gpkg   # DXF (mỗi file một tầng) hoặc IFC
 .venv/bin/python -m src.cli check out/building.gpkg                                          # kiểm tra mục 9 của spec
 .venv/bin/python -m src.cli imdf  out/building.gpkg --out out/building.imdf.zip              # gói IMDF (manifest.json + *.geojson)
-.venv/bin/python -m pytest                                                                   # toàn bộ test (T1–T15, T17–T20)
+.venv/bin/python -m pytest                                                                   # toàn bộ test (T1–T15, T17–T20 và TASK-015)
 ```
 
 Mã thoát: `0` ổn · `1` lỗi dữ liệu · `2` lỗi cấu hình. `build` ghi thêm `unmatched_layers.csv` và `build_report.json` cạnh `.gpkg`.
@@ -20,4 +20,7 @@ Mã thoát: `0` ổn · `1` lỗi dữ liệu · `2` lỗi cấu hình. `build` 
 | `export/` | ghi GPKG, kiểm hợp lệ (`validate.py`), xuất gói IMDF |
 
 Dữ liệu mẫu: `samples/project-dxf.yaml`, `samples/project-ifc.yaml` (toạ độ georeference và địa chỉ chỉ là minh hoạ). Kết quả mẫu: `samples/out/`.
-Chưa cài đặt: control points (spec 6.3), `fixture`/`detail`, cầu thang/thang máy/cột/cửa sổ từ IFC, GPKG nhiều toà nhà.
+Đã cài đặt (TASK-015): cầu thang/thang máy/cột → `unit` (phần đè bị trừ khỏi unit phòng), tường `structure`
+(`options.wall_mode` trong project.yaml), object `door` (type/automatic/material), `display_point`, `fixture`/`detail`,
+control points (`georeference.control_points`), cảnh báo khe so với đường bao tường, IFC2X3.
+Chưa cài đặt: thang máy từ DXF, thang cuốn, `IfcWindow` (chỉ đếm), GPKG nhiều toà nhà.

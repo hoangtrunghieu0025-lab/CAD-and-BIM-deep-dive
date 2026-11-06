@@ -40,3 +40,16 @@ Tái tạo: `.venv/bin/python samples/generate_samples.py`
 - `ezdxf.readfile` + `audit()`: 0 lỗi, cả 2 DXF.
 - `ifcopenshell.open` đọc được; `ifcopenshell.geom.create_shape` thành công 34/34 phần tử có hình học.
 - `ogrinfo -so -al samples/sample-floor-1.dxf` đọc được, 51 feature.
+
+
+## Mẫu bổ sung (TASK-015)
+Sinh bằng `.venv/bin/python samples/generate_samples_extended.py` (tự dựng, không dùng dữ liệu bên thứ ba). Mặt bằng 1 tầng 24 × 12 m, **tường dày 0,2 m** đặt trên trục lưới (nên giữa các phòng có khe 0,2 m), toạ độ cục bộ mét, không CRS.
+
+| File | Nội dung |
+|---|---|
+| `sample-building-extended.ifc` | IFC4: 10 phòng + hành lang (`IfcSpace`), 16 `IfcWall` có hình học, `IfcStair`, `IfcTransportElement` (ELEVATOR), `IfcColumn`, 3 `IfcFurniture`, 2 `IfcWindow`, 10 `IfcDoor` (có `OperationType`; `Pset_DoorCommon`: `IsExternal`, `FireExit`, `HasDrive`; một cửa lấp `IfcOpeningElement`, tám cửa có thân, một cửa chỉ có placement) |
+| `sample-building-ifc2x3.ifc` | IFC2X3 tối thiểu: 2 phòng, hành lang, 2 cửa; không có `IfcMapConversion` |
+| `sample-floor-extended.dxf` | DXF: tường dày (polygon kín trên `A-WALL`), phòng `A-AREA`/`A-AREA-IDEN`, cầu thang `A-STRS`, cột `A-COLS`, cửa sổ `A-GLAZ` (LINE), nội thất `A-FURN`, nét chi tiết `A-DETL`, 10 cửa là INSERT (4 cái có ATTRIB `TYPE`/`AUTOMATIC`/`MATERIAL`). Ô thang máy là phòng thường (DXF chưa có quy tắc thang máy) |
+| `project-ext-ifc.yaml`, `project-ext-dxf.yaml`, `project-ifc2x3.yaml` | dự án chạy các mẫu trên; hai dự án đầu dùng `options.wall_mode: structure` |
+
+Kết quả mẫu: `samples/out/sample-ext-ifc.gpkg`, `samples/out/sample-ext-dxf.gpkg`. Với `wall_mode: simplified` pipeline cảnh báo khe 33,52 m² (phần tường); với `structure` khe bằng 0.

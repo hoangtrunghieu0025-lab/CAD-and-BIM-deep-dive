@@ -1,7 +1,7 @@
 """Georeference: toạ độ cục bộ (mét) -> EPSG:4326.
 
-Thứ tự ưu tiên: IfcMapConversion (IFC4+), `georeference` trong project.yaml, IfcSite (dự phòng, kèm cảnh báo);
-không có nguồn nào thì lỗi, trừ khi dùng `--allow-unreferenced`. Control points chưa cài đặt.
+Thứ tự ưu tiên: IfcMapConversion (IFC4+), `georeference` trong project.yaml (gốc + góc quay + tỉ lệ, hoặc
+control points), IfcSite (dự phòng, kèm cảnh báo); không có nguồn nào thì lỗi, trừ khi dùng `--allow-unreferenced`.
 """
 from __future__ import annotations
 
@@ -28,6 +28,7 @@ class Georef:
     n0: float = 0.0
     rotation_deg: float = 0.0           # góc quay CCW so với trục Đông (a' = cosθ, b' = sinθ)
     scale: float = 1.0
+    residual_m: float | None = None     # control points: sai số lớn nhất của phép khớp (m)
 
     @property
     def referenced(self) -> bool:
@@ -48,13 +49,43 @@ class Georef:
 
     def describe(self) -> dict[str, Any]:
         return {"source": self.source, "crs": self.crs, "e0": self.e0, "n0": self.n0,
-                "rotation_deg": self.rotation_deg, "scale": self.scale}
+                "rotation_deg": self.rotation_deg, "scale": self.scale, "residual_m": self.residual_m}
 
 
 NONE = Georef("none")
 
 
+def from_control_points(cfg: dict[str, Any]) -> Georef:
+    """Phép đồng dạng (tịnh tiến + quay + tỉ lệ) khớp bình phương tối thiểu từ >= 2 cặp điểm local <-> thế giới.
+
+    Dùng số phức: world = a·local + b, với a = scale·e^{iθ}. `control_points: [{local: [x, y], world: [E, N]}, ...]`.
+    """
+    if "crs" not in cfg:
+        raise DataError("georeference trong project.yaml thiếu `crs`")
+    pts = cfg["control_points"]
+    if not isinstance(pts, list) or len(pts) < 2:
+        raise DataError("control_points cần ít nhất 2 cặp điểm")
+    try:
+        z = np.array([complex(float(p["local"][0]), float(p["local"][1])) for p in pts])
+        w = np.array([complex(float(p["world"][0]), float(p["world"][1])) for p in pts])
+    except (KeyError, TypeError, ValueError, IndexError) as e:
+        raise DataError(f"control_points không hợp lệ (cần local: [x, y] và world: [E, N]): {e}") from e
+    dz = z - z.mean()
+    denom = float((np.abs(dz) ** 2).sum())
+    if denom < 1e-12:
+        raise DataError("control_points: các điểm local trùng nhau")
+    a = (np.conj(dz) * (w - w.mean())).sum() / denom
+    b = w.mean() - a * z.mean()
+    if abs(a) < 1e-12:
+        raise DataError("control_points: các điểm world trùng nhau")
+    residual = float(np.abs(a * z + b - w).max())
+    return Georef("control_points", str(cfg["crs"]), float(b.real), float(b.imag),
+                  float(np.degrees(np.angle(a))), float(abs(a)), residual)
+
+
 def from_project(cfg: dict[str, Any]) -> Georef:
+    if cfg.get("control_points"):
+        return from_control_points(cfg)
     for k in ("crs", "origin"):
         if k not in cfg:
             raise DataError(f"georeference trong project.yaml thiếu `{k}`")
@@ -121,8 +152,8 @@ def resolve(project_cfg: dict[str, Any] | None, ifc_georef: Georef | None, ifc_s
         return ifc_georef
     if project_cfg:
         g = from_project(project_cfg)
-        if project_cfg.get("control_points"):
-            model.warn("control_points chưa được cài đặt; bỏ qua")
+        if g.residual_m is not None and g.residual_m > 0.1:
+            model.warn(f"control points: sai số khớp lớn nhất {g.residual_m:.3f} m (> 0,1 m); kiểm tra lại các điểm")
         return g
     if ifc_site is not None:
         return ifc_site

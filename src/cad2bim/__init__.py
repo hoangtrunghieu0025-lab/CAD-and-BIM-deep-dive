@@ -70,6 +70,22 @@ def _hatch_polygons(e, factor: float) -> list[Polygon]:
     return polys
 
 
+# polygon kín trên layer tường có bề ngang nhỏ nhất <= ngưỡng này là thân tường; lớn hơn là đường bao toà nhà
+WALL_MAX_THICKNESS = 1.0
+
+
+def _closed_polygons(e, factor: float) -> list[Polygon]:
+    if e.dxftype() == "HATCH":
+        return _hatch_polygons(e, factor)
+    pts = _wcs_xy(e, factor)
+    return [Polygon(pts)] if len(pts) >= 3 and _is_closed(e) else []
+
+
+def _short_side(poly: Polygon) -> float:
+    c = list(poly.minimum_rotated_rectangle.exterior.coords)
+    return min(math.dist(c[0], c[1]), math.dist(c[1], c[2]))
+
+
 def build(src: DxfSource, storey: Storey, cfg: dict[str, Any], tcfg: dict[str, Any], model: Model) -> None:
     fname = src.path.name
     spaces: list[tuple[Polygon, str, str]] = []        # (polygon, handle, layer)
@@ -120,6 +136,26 @@ def build(src: DxfSource, storey: Storey, cfg: dict[str, Any], tcfg: dict[str, A
             attribs = {a.dxf.tag: a.dxf.text for a in e.attribs}
             model.objs.append(Obj("door", "dxf", f"{fname}|{e.dxf.layer}|{handle}", e.dxf.layer, storey.key,
                                   line, {"width_m": width, "center": c, "attribs": attribs, "psets": {}}))
+        else:
+            typ = rule.get("type")
+            ref = f"{fname}|{e.dxf.layer}|{handle}"
+            if typ in ("stair", "column", "fixture", "wall"):
+                polys = _closed_polygons(e, src.factor)
+                if not polys:
+                    if typ != "wall":                  # tường vẽ bằng LINE/polyline hở không có độ dày: chỉ đếm
+                        model.warn(f"{fname}: {typ} trên layer '{e.dxf.layer}' ({et}) không phải vùng kín; bỏ qua")
+                    continue
+                for k, poly in enumerate(polys):
+                    kind_ = typ
+                    if typ == "wall" and _short_side(poly) > WALL_MAX_THICKNESS:
+                        kind_ = "outline"              # polygon lớn trên layer tường: đường bao, không phải thân tường
+                    model.objs.append(Obj(kind_, "dxf", ref if len(polys) == 1 else f"{ref}.{k}", e.dxf.layer,
+                                          storey.key, poly, {"name": None, "psets": {}}))
+            elif typ == "detail":
+                pts = [(e.dxf.start.x * src.factor, e.dxf.start.y * src.factor),
+                       (e.dxf.end.x * src.factor, e.dxf.end.y * src.factor)] if et == "LINE" else _wcs_xy(e, src.factor)
+                if len(pts) >= 2:
+                    model.objs.append(Obj("detail", "dxf", ref, e.dxf.layer, storey.key, LineString(pts), {"psets": {}}))
 
     # polyline hở: thử khép bằng polygonize
     for layer, lines in unclosed.items():

@@ -46,6 +46,7 @@ class Model:
     unmatched: dict[tuple[str, str], int] = field(default_factory=dict)   # (layer, entity_type) -> số lượng
     counts: dict[str, int] = field(default_factory=dict)
     source_files: list[dict[str, str]] = field(default_factory=list)
+    gaps: dict[str, float] = field(default_factory=dict)       # key tầng -> diện tích khe (m²) so với đường bao tường
 
     def warn(self, msg: str) -> None:
         if msg not in self.warnings:
