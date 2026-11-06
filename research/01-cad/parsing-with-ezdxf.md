@@ -1,8 +1,9 @@
 # Parse và làm sạch DXF bằng ezdxf (+ shapely)
 
 - **Câu hỏi nghiên cứu**: Quy trình đọc DXF bền vững, trích hình học, và làm sạch để dựng polygon phòng/tường là gì? Hạn chế ngữ nghĩa của CAD ảnh hưởng thế nào?
-- **Kết luận ngắn** (2–4 dòng): Dùng `ezdxf.recover.readfile` (tự sửa + audit) rồi duyệt model space theo layer, phân rã INSERT bằng `virtual_entities()`/`disassemble`, chuyển OCS→WCS, xấp xỉ cung/spline bằng flattening, rồi làm sạch bằng shapely (`unary_union`, `polygonize`, `make_valid`, buffer nhỏ). CAD thiếu quan hệ nên ngữ nghĩa phải suy ra từ layer/block/text và kiểm chứng.
-- **Độ tin cậy**: trung bình — API ezdxf lấy từ tài liệu (qua tìm kiếm); phần shapely/quy trình làm sạch là đề xuất thiết kế, chưa kiểm chứng trên dữ liệu thật (đánh dấu "chưa xác minh").
+- **Kết luận ngắn** (2–4 dòng): Dùng `ezdxf.recover.readfile` (tự sửa + audit; chỉ ASCII DXF) rồi duyệt model space theo layer, phân rã INSERT bằng `ezdxf.disassemble.recursive_decompose` (đệ quy, đã xác minh) hoặc `insert.virtual_entities()` (một cấp, MINSERT cần xử lý riêng), chuyển OCS→WCS bằng `entity.ocs().to_wcs(...)` hoặc `ezdxf.upright`, xấp xỉ cung/spline bằng `Path.flattening(distance)`, rồi làm sạch bằng shapely. CAD thiếu quan hệ nên ngữ nghĩa phải suy ra từ layer/block/text và kiểm chứng.
+- **Độ tin cậy**: cao cho phần API ezdxf (đã đối chiếu docs `.rst` và mã nguồn gốc trên GitHub, 2026-11-06); phần shapely/quy trình làm sạch là đề xuất thiết kế, chưa kiểm chứng trên dữ liệu thật (đánh dấu "chưa xác minh").
+- **Ghi chú kiểm chứng (vòng 2)**: `ezdxf.readthedocs.io` vẫn không phân giải DNS trong phiên này; thay bằng nguồn gốc cùng tác giả: `raw.githubusercontent.com/mozman/ezdxf/master/docs/source/*.rst` (tài liệu) và `src/ezdxf/*.py` (docstring/chữ ký). Là nhánh `master`, có thể lệch bản đã phát hành — nên kiểm lại trên bản ezdxf cài thực tế.
 
 ## Chi tiết
 
@@ -15,28 +16,37 @@ if auditor.has_errors:
     auditor.print_error_report()
 msp = doc.modelspace()
 ```
-- `recover.readfile()` trả về `(doc, auditor)`; có thể ném `DXFStructureError` hoặc `UnicodeDecodeError` (khi `errors='strict'`); lỗi giải mã trong XRECORD được ghi là `AuditError.DECODE_ERRORS`. Một số file vẫn hỏng (ví dụ issue #836: HATCH edge type lạ từ Visio) — cần đường thoát (báo lỗi, đề xuất sửa bằng CAD).
-- Ghi lại file đã recover có thể mất thông tin; pipeline chỉ đọc nên không cần ghi lại.
+- `recover.readfile(filename, errors=...)` trả về `(doc, auditor)`. Ngoại lệ (đã xác minh): `IOError` (không phải DXF / lỗi I/O), `ezdxf.DXFStructureError` (file hỏng), `UnicodeDecodeError` (chỉ khi `errors='strict'`). Ở chế độ mặc định, lỗi giải mã không ném ngoại lệ mà ghi `AuditError.DECODE_ERRORS` vào `Auditor.errors`; `errors='ignore'` ghi `AuditError.DECODING_ERROR` kèm số dòng gần đúng.
+- **Chỉ hỗ trợ ASCII DXF** (docs). Chậm hơn `ezdxf.readfile` → nên thử đường nhanh trước, `recover` khi lỗi. Còn có `recover.read` và `recover.explore` (trang docs không mô tả chữ ký/ý nghĩa đầy đủ).
+- File có dữ liệu nhị phân (thường trong XRECORD) có thể nạp được nhưng ghi lại có thể tạo DXF hỏng/mất thông tin → pipeline chỉ đọc nên không ghi lại.
+- Một số file vẫn hỏng (ví dụ issue #836: HATCH edge type lạ từ Visio — chưa mở lại issue vòng này) — cần đường thoát (báo lỗi, đề xuất sửa bằng CAD).
 - DWG: dùng `odafc.readfile` (xem `dxf-dwg-formats.md`).
 
 ### 2. Truy vấn entity
-- `msp.query('LWPOLYLINE[layer=="A-WALL"]')` hoặc lọc `e.dxf.layer` (cú pháp query: chưa kiểm chứng trong phiên này; có trong tài liệu ezdxf "Retrieve DXF entities").
+- Cú pháp query (đã xác minh, tutorial `getting_data`): `EntityQuery[AttributeQuery]`; phần entity là danh sách tên DXF viết HOA cách nhau bởi khoảng trắng hoặc `*`, tiền tố `!` để loại (`* !LINE`); phần thuộc tính là biểu thức boolean với `and`, `or`, `!`. Ví dụ: `msp.query('LINE[layer=="construction"]')`, `msp.query('*[layer=="construction" and linetype!="DASHED"]')`; có thể nối `result.query(...)`.
+- Hoặc lọc `e.dxf.layer` bằng Python. Layer có `is_off()`, `is_frozen()`, `is_locked()` (đã xác minh trong `entities/layer.py`).
 - Nhóm theo `e.dxftype()`; thống kê layer × type để lập bảng mapping.
 
 ### 3. Phân rã block
-- `insert.virtual_entities()` trả về entity đã áp biến đổi; đệ quy với block lồng. `ezdxf.disassemble` cho luồng phẳng và hàm lấy entity dưới dạng `Path`/`MeshBuilder` (tên hàm cụ thể: chưa xác minh trong phiên này). Không hỗ trợ XREF, ACIS, UNDERLAY, ACAD_TABLE, RAY, XLINE; không áp XCLIP.
-- Thuộc tính: `insert.attribs`, `get_attrib_text(tag)`.
+- `insert.virtual_entities(*, skipped_entity_callback=None, redraw_order=False)` — "yields the transformed referenced block content as virtual entities" (đã xác minh). **MINSERT**: method không giải thuộc tính MINSERT, chỉ trả sub-entity của INSERT đầu tiên; cần kiểm `insert.mcount > 1` và tự xử lý lưới (đã xác minh).
+- `insert.explode(target_layout=None, *, redraw_order=False) -> EntityQuery`: tạo entity thật trong layout đích (sửa bản vẽ → không dùng cho pipeline chỉ đọc). Việc INSERT gốc có bị huỷ hay không: docstring bị cắt trong nội dung đọc được → chưa xác minh.
+- Đệ quy block lồng: `ezdxf.disassemble.recursive_decompose(entities) -> Iterable[DXFEntity]` (đã xác minh: "flat stream of DXF entities"; INSERT có `mcount > 1` được khai triển MINSERT; yield ATTRIB của INSERT rồi decompose virtual entities). Việc `virtual_entities()` tự đệ quy qua INSERT lồng: chưa xác minh — dùng `recursive_decompose`.
+- Các hàm khác trong `ezdxf.disassemble` (đã xác minh tên): `make_primitive`, `to_primitives(entities, max_flattening_distance=None)`, `to_meshes`, `to_paths(primitives)`, `to_vertices(primitives)`, `to_control_vertices`; lớp `Primitive` (thuộc tính `entity`, `max_flattening_distance`, `path`, `mesh`, `is_empty`; phương thức `vertices()`, `bbox()`).
+- **Không hỗ trợ** (docs): "all ACIS based entities, XREF, UNDERLAY, ACAD_TABLE, RAY, XLINE"; entity không hỗ trợ bị bỏ qua (thành primitive rỗng). Từ mã nguồn: cũng không hỗ trợ SHAPE; MTEXT nhúng trong ATTRIB/ATTDEF chưa hỗ trợ. `recursive_decompose` **không áp XCLIP** (docstring mã nguồn; trang docs không nhắc XCLIP).
+- Thuộc tính: `insert.attribs` (list[Attrib]), `get_attrib(tag, search_const=False)`, `get_attrib_text(tag, default="", search_const=False)`.
+- MLINE: `mline.virtual_entities()` trả LINE, ARC, HATCH (xem `layers-blocks-xref.md`).
 
 ### 4. Hình học → shapely
 | Entity | Cách chuyển |
 |---|---|
 | LINE | LineString 2 điểm |
 | LWPOLYLINE | điểm (x, y) + bulge → cần chia cung; đóng nếu `closed` |
-| ARC/CIRCLE/ELLIPSE/SPLINE | flatten thành đa tuyến (ezdxf `Path.flattening(distance)`, có từ 0.15.1; từng có báo cáo crash với POLYLINE – issue #663) |
+| ARC/CIRCLE/ELLIPSE/SPLINE | flatten thành đa tuyến bằng `Path.flattening(distance, segments=4)` (đã xác minh chữ ký, adaptive recursive; trả `Iterator[Vec3]`; không trả đỉnh nào cho path rỗng; multi-path thì khe hở không phân biệt được với đoạn thẳng). Có `Path.sub_paths()` để tách single-path, `Path.has_curves`. Báo cáo crash với POLYLINE – issue #663 (chưa mở lại) |
 | HATCH | các path biên → polygon (lỗ = boundary lồng) |
-| TEXT/MTEXT | Point + chuỗi (MTEXT có mã định dạng cần làm sạch, ví dụ `plain_text()` — chưa xác minh tên) |
+| TEXT/MTEXT | Point + chuỗi. MTEXT: `MText.plain_text(split=False, fast=True)` trả text không có mã định dạng (đã xác minh; `fast=False` dùng `ezdxf.tools.text.plain_mtext`) |
+- Trang docs "Flatten entities" (`tasks/flatten_entities`) chỉ là placeholder TODO — không dùng làm nguồn.
 - Áp OCS→WCS và đơn vị trước (xem `coordinates-and-units.md`).
-- Chọn `distance` flatten theo đơn vị (ví dụ 1 mm–10 mm).
+- Chọn `distance` flatten theo đơn vị (ví dụ 1 mm–10 mm) — đề xuất, chưa xác minh.
 
 ### 5. Làm sạch hình học (đề xuất, chưa xác minh trên mẫu thật)
 1. Loại điểm trùng, đoạn độ dài ~0, entity ngoài vùng bao bất thường (outlier cách xa gốc).
@@ -54,20 +64,26 @@ msp = doc.modelspace()
 
 ## Liên quan đến pipeline CAD → BIM → GPKG
 - Mô-đun `ingest/` (recover + audit + units) → `cad2bim/` (mapping layer, polygonize, gán thuộc tính) → xuất dạng trung gian (GeoDataFrame theo `type`, CRS cục bộ) trước khi `extract/` georeference.
-- Cần test với DXF mẫu nhỏ: (a) phòng khép kín, (b) khe hở ở cửa, (c) INSERT lồng, (d) OCS extrusion −Z, (e) đơn vị mm.
-- Ghi vào output: `source_layer`, `source_handle` (`e.dxf.handle`) để truy vết về CAD gốc; handle là thuộc tính DXF — dùng cho trace, không phải ID ổn định giữa các phiên bản bản vẽ (chưa xác minh).
+- Cần test với DXF mẫu nhỏ: (a) phòng khép kín, (b) khe hở ở cửa, (c) INSERT lồng, (d) OCS extrusion −Z, (e) đơn vị mm, (f) MINSERT, (g) MLINE.
+- Ghi vào output: `source_layer`, `source_handle` (`e.dxf.handle`) để truy vết về CAD gốc. Lưu ý: entity ảo từ `virtual_entities()` không có handle và không thuộc layout nào (docstring MLINE; tương tự với INSERT chưa xác minh trực tiếp) → với entity ảo, lưu handle của INSERT cha. Handle không phải ID ổn định giữa các phiên bản bản vẽ (chưa xác minh).
 
 ## Nguồn
-- [ezdxf — Recover module](https://ezdxf.readthedocs.io/en/stable/drawing/recover.html) — truy cập 2026-11-06 (qua kết quả tìm kiếm)
-- [ezdxf — Disassemble](https://ezdxf.readthedocs.io/en/stable/disassemble.html) — truy cập 2026-11-06
-- [ezdxf — Insert](https://ezdxf.readthedocs.io/en/stable/blocks/insert.html) — truy cập 2026-11-06
-- [ezdxf — Tutorial for Blocks](https://ezdxf.readthedocs.io/en/stable/tutorials/blocks.html) — truy cập 2026-11-06
-- [ezdxf — Flatten entities task](https://ezdxf.readthedocs.io/en/stable/tasks/flatten_entities.html) — truy cập 2026-11-06 (nội dung chưa đọc được)
-- [ezdxf issue #836 (recover fail HATCH)](https://github.com/mozman/ezdxf/issues/836) — truy cập 2026-11-06
-- [ezdxf issue #663 (path.flattening crash)](https://github.com/mozman/ezdxf/issues/663) — truy cập 2026-11-06
-- [ezdxf — General Document how-to](https://ezdxf.readthedocs.io/en/stable/howto/document.html) — truy cập 2026-11-06
+(Chi tiết URL và ngày truy cập: xem cả `research/01-cad/_sources.md`.)
+- [ezdxf docs `drawing/recover.rst`](https://raw.githubusercontent.com/mozman/ezdxf/master/docs/source/drawing/recover.rst) — truy cập 2026-11-06 (nguồn của trang https://ezdxf.readthedocs.io/en/stable/drawing/recover.html)
+- [ezdxf docs `disassemble.rst`](https://raw.githubusercontent.com/mozman/ezdxf/master/docs/source/disassemble.rst) và [`src/ezdxf/disassemble.py`](https://raw.githubusercontent.com/mozman/ezdxf/master/src/ezdxf/disassemble.py) — truy cập 2026-11-06
+- [ezdxf `src/ezdxf/entities/insert.py`](https://raw.githubusercontent.com/mozman/ezdxf/master/src/ezdxf/entities/insert.py) — truy cập 2026-11-06
+- [ezdxf `src/ezdxf/entities/mline.py`](https://raw.githubusercontent.com/mozman/ezdxf/master/src/ezdxf/entities/mline.py) — truy cập 2026-11-06
+- [ezdxf `src/ezdxf/entities/mtext.py`](https://raw.githubusercontent.com/mozman/ezdxf/master/src/ezdxf/entities/mtext.py) — truy cập 2026-11-06
+- [ezdxf `src/ezdxf/entities/layer.py`](https://raw.githubusercontent.com/mozman/ezdxf/master/src/ezdxf/entities/layer.py) — truy cập 2026-11-06
+- [ezdxf `src/ezdxf/path/path.py`](https://raw.githubusercontent.com/mozman/ezdxf/master/src/ezdxf/path/path.py) — truy cập 2026-11-06
+- [ezdxf tutorial `getting_data.rst`](https://raw.githubusercontent.com/mozman/ezdxf/master/docs/source/tutorials/getting_data.rst) — truy cập 2026-11-06
+- [ezdxf `tasks/flatten_entities.rst`](https://raw.githubusercontent.com/mozman/ezdxf/master/docs/source/tasks/flatten_entities.rst) — truy cập 2026-11-06 (chỉ TODO)
+- [ezdxf issue #836 (recover fail HATCH)](https://github.com/mozman/ezdxf/issues/836) — truy cập 2026-11-06 (qua kết quả tìm kiếm vòng 1, chưa mở lại)
+- [ezdxf issue #663 (path.flattening crash)](https://github.com/mozman/ezdxf/issues/663) — truy cập 2026-11-06 (qua kết quả tìm kiếm vòng 1, chưa mở lại)
 
 ## Câu hỏi còn mở
-- Chưa đọc trực tiếp trang tutorial `getting_data` và `addons/drawing`/`path` (host readthedocs không fetch được); cần kiểm lại tên hàm trên bản ezdxf cài thực tế.
+- Chưa đọc trực tiếp host `ezdxf.readthedocs.io` (DNS vẫn bị chặn); đã thay bằng nguồn GitHub. Cần kiểm lại tên hàm trên bản ezdxf cài thực tế (nhánh `master` có thể mới hơn bản phát hành).
+- `Path.flattening` "có từ 0.15.1" (khẳng định cũ) — chưa xác minh, đã bỏ khỏi bảng.
 - Dung sai snap/flatten tối ưu; xử lý tường vẽ bằng 2 đường song song để ra footprint IfcWall.
+- `virtual_entities()` có đệ quy block lồng không; INSERT gốc có bị huỷ khi `explode()` không (docstring bị cắt).
 - Hiệu năng với file lớn (hàng trăm nghìn entity) — chưa xác minh.

@@ -55,7 +55,11 @@ ignore: ['^DEFPOINTS$', '.*-DIMS$', '.*-TEXT$']
 - [Wikipedia — ISO 13567](https://en.wikipedia.org/wiki/ISO_13567) — truy cập 2026-11-06
 - [Arkance — Setting Layer Standards in AutoCAD Part 2 (AEC UK)](https://ukcommunity.arkance.world/hc/en-us/articles/21550671880338-Setting-Layer-Standards-in-AutoCAD-Part-2) — truy cập 2026-11-06
 
+## Kiểm chứng vòng 2 (2026-11-06)
+- Vẫn **không** truy cập được (DNS bị chặn): `www.nationalcadstandard.org`, `nationalcadstandard.org`, `blog.draftsperson.net`, `en.wikipedia.org`, `help.graphisoft.com`. Do đó toàn bộ nội dung NCS/AIA, ISO 13567, BS 1192 và quy ước `xref|layer` ở trên giữ nguyên nhãn "qua kết quả tìm kiếm / chưa xác minh từ trang gốc". Tên layer cụ thể (`A-AREA`, `A-FLOR`, `A-GLAZ`, `A-COLS`, `A-ANNO-TEXT`, `A-ANNO-DIMS`) vẫn chưa xác minh. Cần allow thêm các host trên để đóng mục này.
+- Mã nguồn ezdxf (`xref.py`) xác nhận tên `DEFPOINTS` được ezdxf coi là tên layer/tài nguyên đặc biệt luôn được giữ nguyên khi nạp (cùng `0`, `STANDARD`, `CONTINUOUS`, `BYLAYER`/`BYBLOCK`) — hỗ trợ gián tiếp việc `Defpoints` là layer mặc định; mô tả "không in" vẫn chưa xác minh.
+
 ## Câu hỏi còn mở
-- Không truy cập được nationalcadstandard.org (mạng bị chặn): danh sách major group chính thức chưa đối chiếu.
+- Không truy cập được nationalcadstandard.org (mạng bị chặn, kiểm lại vòng 2): danh sách major group chính thức chưa đối chiếu.
 - Quy ước layer thực tế ở Việt Nam / TCVN liên quan (chưa xác minh, cần mẫu thật).
 - Có nên dùng đặc trưng phụ (màu, linetype, lineweight) để suy loại khi layer vô nghĩa không.
