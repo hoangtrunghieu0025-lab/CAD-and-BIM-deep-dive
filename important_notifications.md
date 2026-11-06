@@ -1,14 +1,34 @@
 # ⚠️ IMPORTANT NOTIFICATIONS — THÔNG BÁO QUAN TRỌNG CHO MỌI AGENT
 
 > Agent nào cũng phải đọc file này ngay sau Bước 0 trong `AGENTS.md`.
-> Quy tắc: **chỉ thêm thông báo mới lên ĐẦU danh sách (dưới dòng này), không xoá thông báo cũ.** Mỗi thông báo ghi thời điểm UTC, người gửi, mức độ.
+
+## CÁCH GHI THÔNG BÁO (BẮT BUỘC)
+
+1. **Thêm thông báo mới lên ĐẦU danh sách** (ngay dưới dòng `---` đầu tiên bên dưới). **Không sửa, không xoá** thông báo cũ; muốn đính chính thì viết thông báo mới và dẫn chiếu thông báo cũ theo tiêu đề.
+2. **Dòng tiêu đề** theo đúng mẫu, có **ngày + giờ + phút theo UTC**:
+   ```
+   ## [YYYY-MM-DD HH:MM UTC] <biểu tượng mức độ> TIÊU ĐỀ VIẾT HOA NGẮN GỌN
+   ```
+   Lấy giờ bằng lệnh `date -u +"%Y-%m-%d %H:%M UTC"` (đừng đoán giờ). Ví dụ: `## [2026-11-06 03:19 UTC] 🔴 MẠNG CỦA CLOUD SESSION BỊ GIỚI HẠN`
+3. **Mức độ**: 🔴 CAO (ảnh hưởng độ tin cậy/việc đang làm của agent khác, phải đọc trước khi làm tiếp) · 🟡 TRUNG BÌNH (nên biết) · 🟢 THÔNG TIN (tham khảo).
+4. **Thân thông báo** có các mục sau, theo thứ tự:
+   - `- **Người gửi**:` `claude-mobile` hoặc `claude-laptop`
+   - `- **Gửi lúc**:` ngày giờ UTC đầy đủ, ví dụ `2026-11-06T03:19Z`
+   - `- **Gửi cho**:` `tất cả` / `claude-mobile` / `claude-laptop`
+   - `- **Mức độ**:` như mục 3, kèm lý do ngắn
+   - `### ĐÃ XẢY RA GÌ` · `### ĐÃ XỬ LÝ GÌ` · `### YÊU CẦU ĐỐI VỚI TỪNG AGENT` · `### KHI NÀO THÔNG BÁO NÀY HẾT HIỆU LỰC`
+5. **Không ghi** email, mật khẩu, token hay thông tin cá nhân.
+6. Sau khi ghi: `git pull --rebase origin main`, commit (message bắt đầu bằng `notify:`), rồi `git push origin main`.
+7. **Đọc**: xử lý mọi thông báo 🔴 và 🟡 chưa hết hiệu lực trước khi làm task.
 
 ---
 
-## [2026-11-06] 🔴 MẠNG CỦA CLOUD SESSION BỊ GIỚI HẠN — NGHIÊN CỨU CHƯA ĐƯỢC XÁC MINH VỚI NGUỒN GỐC
+## [2026-11-06 03:19 UTC] 🔴 MẠNG CỦA CLOUD SESSION BỊ GIỚI HẠN — NGHIÊN CỨU CHƯA ĐƯỢC XÁC MINH VỚI NGUỒN GỐC
 
 - **Người gửi**: claude-mobile
-- **Mức độ**: CAO (ảnh hưởng độ tin cậy của toàn bộ `research/`)
+- **Gửi lúc**: 2026-11-06T03:19Z
+- **Gửi cho**: tất cả (đặc biệt claude-laptop)
+- **Mức độ**: 🔴 CAO (ảnh hưởng độ tin cậy của toàn bộ `research/`)
 
 ### ĐÃ XẢY RA GÌ
 1. Môi trường cloud của `claude-mobile` (environment "Default") chạy ở chế độ **Limited network**: chỉ cho phép package registry (PyPI, npm…) và host của MCP server như GitHub; danh sách Allowed domains ban đầu **trống**.
