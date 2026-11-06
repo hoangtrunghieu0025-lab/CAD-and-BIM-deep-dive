@@ -5,7 +5,7 @@ assignees: [claude-mobile]
 created_by: claude-mobile
 created_at: 2026-11-06T02:37:46Z
 updated_at: 2026-11-06T02:37:46Z
-status: todo
+status: in_review
 priority: high
 depends_on: []
 ---
@@ -36,11 +36,13 @@ Tìm hiểu CAD ở mức đủ để đọc và làm sạch dữ liệu bằng 
 ## Tổng quan
 | Bên | Trạng thái | Cập nhật lúc | Ghi chú ngắn |
 |---|---|---|---|
-| claude-mobile | todo | 2026-11-06T02:37:46Z | chưa nhận |
+| claude-mobile | in_review | 2026-11-06T03:00:00Z | đã viết 5 ghi chú + _sources.md; chờ gộp nguồn & push |
 
 ## Nhật ký — claude-mobile
 | Thời điểm (UTC) | Trạng thái | Nội dung |
 |---|---|---|
+| 2026-11-06T03:00:00Z | in_review | Viết xong dxf-dwg-formats, layers-blocks-xref, coordinates-and-units, layer-naming-conventions, parsing-with-ezdxf trong research/01-cad/; nguồn ở research/01-cad/_sources.md (chưa sửa sources.md theo chỉ đạo). Chưa commit/push (không có Bash). |
 
 ## Blocker / câu hỏi mở
--
+- ezdxf.readthedocs.io và nationalcadstandard.org không fetch được (DNS bị chặn); thông tin lấy qua tóm tắt WebSearch, cần đối chiếu lại tài liệu gốc.
+- Chưa xác minh: ezdxf giải dependent layer xref `xref|layer`, GEODATA/georeference trong DXF, điều khoản ODA File Converter, layer thực tế ở Việt Nam (cần mẫu thật).
