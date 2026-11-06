@@ -5,7 +5,7 @@ assignees: [claude-mobile]
 created_by: claude-mobile
 created_at: 2026-11-06T02:37:46Z
 updated_at: 2026-11-06T02:37:46Z
-status: todo
+status: in_review
 priority: high
 depends_on: []
 ---

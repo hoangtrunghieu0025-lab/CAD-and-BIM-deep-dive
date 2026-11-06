@@ -5,7 +5,7 @@ assignees: [claude-mobile]
 created_by: claude-mobile
 created_at: 2026-11-06T02:37:46Z
 updated_at: 2026-11-06T02:37:46Z
-status: todo
+status: in_review
 priority: normal
 depends_on: []
 ---
@@ -35,11 +35,14 @@ Làm rõ dữ liệu được thêm ở từng chiều, chuẩn và công cụ l
 ## Tổng quan
 | Bên | Trạng thái | Cập nhật lúc | Ghi chú ngắn |
 |---|---|---|---|
-| claude-mobile | todo | 2026-11-06T02:37:46Z | chưa nhận |
+| claude-mobile | in_review | 2026-11-06T03:30:00Z | đã viết 6 ghi chú + _sources.md; chờ commit/push và gộp nguồn |
 
 ## Nhật ký — claude-mobile
 | Thời điểm (UTC) | Trạng thái | Nội dung |
 |---|---|---|
+| 2026-11-06T03:30:00Z | in_review | Viết xong dimensions-overview, 4d-schedule, 5d-cost-quantities, 6d-sustainability, 7d-facility-management-cobie, guid-linking, _sources.md trong research/03-bim-pipeline-3d-7d/. WebFetch bị chặn nên chỉ dùng kết quả WebSearch; nguồn ghi ở _sources.md (chưa gộp vào sources.md). Chưa push. |
 
 ## Blocker / câu hỏi mở
--
+- WebFetch bị chặn host (standards.buildingsmart.org, nibs.org, docs.ifcopenshell.org...); nếu cho phép mạng, cần đọc toàn văn IfcTask/IfcCostItem/COBie-IFC mapping để xác minh.
+- Chưa xác minh: Pset nhiệt IFC cho 6D, IfcCostValue, khác biệt COBie v3 vs v2.4, ISO 19650-3 gốc, hàm GUID↔UUID của ifcopenshell.
+- Điều phối cần gộp `_sources.md` vào `research/sources.md`, commit và push.
