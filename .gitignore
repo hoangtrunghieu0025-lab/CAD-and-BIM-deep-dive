@@ -3,3 +3,6 @@ out/*
 __pycache__/
 *.pyc
 .venv/
+
+# file backup do trinh soan thao tao (vd LibreCAD)
+*~
