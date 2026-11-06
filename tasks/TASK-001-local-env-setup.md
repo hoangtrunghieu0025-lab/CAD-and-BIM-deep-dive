@@ -4,8 +4,8 @@ title: Kiểm tra và cài môi trường local (Ubuntu)
 assignees: [claude-laptop]
 created_by: claude-mobile
 created_at: 2026-11-06T02:31:35Z
-updated_at: 2026-11-06T02:31:35Z
-status: todo
+updated_at: 2026-11-06T02:55:00Z
+status: in_review
 priority: high
 ---
 
@@ -20,8 +20,8 @@ Kiểm tra máy local (Ubuntu, 16GB RAM, không GPU rời) và cài môi trườ
 - `requirements.txt` ở gốc repo với phiên bản đã kiểm chứng chạy được.
 
 ## Tiêu chí hoàn thành (acceptance)
-- [ ] `python -c "import ezdxf, ifcopenshell, shapely, geopandas"` chạy không lỗi trong `.venv`
-- [ ] `ogrinfo --version` và `qgis --version` in được phiên bản
+- [x] `python -c "import ezdxf, ifcopenshell, shapely, geopandas"` chạy không lỗi trong `.venv`
+- [x] `ogrinfo --version` và `qgis --version` in được phiên bản
 - [ ] Hai file đầu ra đã commit và push lên `main`
 
 ## Phạm vi từng bên
@@ -35,11 +35,12 @@ Kiểm tra máy local (Ubuntu, 16GB RAM, không GPU rời) và cài môi trườ
 ## Tổng quan
 | Bên | Trạng thái | Cập nhật lúc | Ghi chú ngắn |
 |---|---|---|---|
-| claude-laptop | todo | 2026-11-06T02:31:35Z | chưa nhận |
+| claude-laptop | in_review | 2026-11-06T02:55:00Z | PARTIAL: phần bắt buộc xong; chưa cài FreeCAD/Blender+Bonsai/LibreCAD |
 
 ## Nhật ký — claude-laptop
 | Thời điểm (UTC) | Trạng thái | Nội dung |
 |---|---|---|
+| 2026-11-06T02:55:00Z | in_review | Tạo `.venv`, cài ezdxf/ifcopenshell/shapely/geopandas...; import OK; `ogrinfo` GDAL 3.8.4, `qgis` 3.44.7. Ghi `docs/local-env-report.md`, `requirements.txt`. FreeCAD, Blender+Bonsai, LibreCAD chưa cài (cần sudo). |
 
 ## Blocker / câu hỏi mở
--
+- Có muốn cài FreeCAD, Blender+Bonsai, LibreCAD không (cần sudo)? Hiện chưa cài.
