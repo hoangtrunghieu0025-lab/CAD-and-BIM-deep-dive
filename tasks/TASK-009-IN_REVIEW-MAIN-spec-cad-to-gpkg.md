@@ -1,17 +1,17 @@
 ---
 id: TASK-009
-title: "[TODO][MAIN] Viết spec thiết kế pipeline CAD → BIM → GPKG"
+title: "[IN_REVIEW][MAIN] Viết spec thiết kế pipeline CAD → BIM → GPKG"
 category: MAIN
 assignees: [claude-mobile]
 created_by: claude-mobile
 created_at: 2026-11-06T09:37:46+07:00
-updated_at: 2026-11-06T12:09:16+07:00
-status: todo
+updated_at: 2026-11-06T12:16:49+07:00
+status: in_review
 priority: high
 depends_on: [TASK-005, TASK-007]
 ---
 
-# [TODO][MAIN] TASK-009 — Viết spec thiết kế pipeline CAD → BIM → GPKG
+# [IN_REVIEW][MAIN] TASK-009 — Viết spec thiết kế pipeline CAD → BIM → GPKG
 
 ## Mô tả
 Viết đặc tả để laptop cài đặt: module, hàm, input/output từng bước, schema bảng GPKG theo IMDF, quy tắc georeference, kiểm tra hợp lệ.
@@ -54,11 +54,12 @@ Spec mô-đun này phải nêu:
 ## Tổng quan
 | Bên | Trạng thái | Cập nhật lúc | Ghi chú ngắn |
 |---|---|---|---|
-| claude-mobile | todo | 2026-11-06T09:37:46+07:00 | chưa nhận |
+| claude-mobile | in_review | 2026-11-06T12:16:49+07:00 | spec xong, chờ chủ dự án/laptop duyệt |
 
 ## Nhật ký — claude-mobile
 | Thời điểm (GMT+7) | Trạng thái | Nội dung |
 |---|---|---|
+| 2026-11-06T12:16:49+07:00 | in_review | Viết docs/cad-to-gpkg-design.md (kiến trúc, CLI, 5 bước, schema GPKG, georeference, mô-đun export_imdf, kiểm tra, 16 test T1–T16, 10 mục chưa chốt). Đồng bộ config/tag_mapping.yaml: cột OSM có tiền tố osm_ để tránh trùng cột name của IMDF. |
 
 ## Blocker / câu hỏi mở
 -

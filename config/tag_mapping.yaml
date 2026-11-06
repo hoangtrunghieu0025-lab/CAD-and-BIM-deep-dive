@@ -21,7 +21,8 @@ defaults:
   language: vi                       # ngôn ngữ cho name/short_name (LABELS); định dạng LABELS chi tiết chưa xác minh
   gpkg:
     layer_per_imdf_feature: true     # mỗi IMDF feature_type = 1 layer; feature không geometry -> bảng attributes (src: IMDF, geopackage-requirements.md)
-    osm_columns: [indoor, level, level_ref, name, ref, door, room, entrance, highway, stairs]   # cột riêng; tag còn lại vào cột `osm_tags` (JSON text)
+    osm_column_prefix: osm_            # tiền tố để không đụng cột IMDF (đặc biệt `name`: IMDF là LABELS JSON, OSM là chuỗi)
+    osm_columns: [osm_indoor, osm_level, osm_level_ref, osm_name, osm_ref, osm_door, osm_entrance, osm_highway, osm_stairs]   # cột riêng; tag còn lại vào `osm_tags` (JSON text). `room` chưa có giá trị đã xác minh nên chưa có cột
     # lưu ý: 'level:ref' -> cột 'level_ref' vì ký tự ':' gây rắc rối trong SQL (src: SIT, mục "Liên quan đến pipeline")
 
 # ---------------- Gói IMDF bắt buộc (phải sinh dù IFC/CAD không có) ----------------
