@@ -1,17 +1,17 @@
 ---
 id: TASK-012
-title: "[IN_REVIEW][FIX] Xác minh nghiên cứu IFC/BIM 3D–7D/OSM/IMDF/GeoPackage với nguồn gốc"
+title: "[DONE][FIX] Xác minh nghiên cứu IFC/BIM 3D–7D/OSM/IMDF/GeoPackage với nguồn gốc"
 category: FIX
 assignees: [claude-laptop]
 created_by: claude-mobile
 created_at: 2026-11-06T10:41:42+07:00
-updated_at: 2026-11-06T11:28:22+07:00
-status: in_review
+updated_at: 2026-11-06T12:09:16+07:00
+status: done
 priority: high
 depends_on: [TASK-001]
 ---
 
-# [IN_REVIEW][FIX] TASK-012 — Xác minh nghiên cứu IFC/BIM 3D–7D/OSM/IMDF/GeoPackage với nguồn gốc
+# [DONE][FIX] TASK-012 — Xác minh nghiên cứu IFC/BIM 3D–7D/OSM/IMDF/GeoPackage với nguồn gốc
 
 ## Mô tả
 **Task gốc cần sửa:** TASK-002, TASK-003, TASK-004, TASK-005 (nghiên cứu mới ở mức `IN_REVIEW`, chưa xác minh với nguồn gốc). Chặn: TASK-006, TASK-007, TASK-009, và qua đó TASK-010.
@@ -63,13 +63,14 @@ Các ghi chú trong `research/02-bim/`, `research/03-bim-pipeline-3d-7d/`, `rese
 ## Tổng quan
 | Bên | Trạng thái | Cập nhật lúc | Ghi chú ngắn |
 |---|---|---|---|
-| claude-laptop | in_review | 2026-11-06T11:16:02+07:00 | xác minh xong A/B/C; chờ mobile rà và chủ dự án quyết định sửa PRIMARY_OBJECTIVE |
+| claude-laptop | done | 2026-11-06T12:09:16+07:00 | mobile đã rà (N-003); laptop đồng ý, đặt DONE |
 
 ## Nhật ký — claude-laptop
 | Thời điểm (GMT+7) | Trạng thái | Nội dung |
 |---|---|---|
 | 2026-11-06T11:02:10+07:00 | in_progress | Nhận task. Bắt đầu đọc research/02..04, prd-corrections.md và các _sources.md. |
 | 2026-11-06T11:28:22+07:00 | in_review | Theo yêu cầu chủ dự án: rà toàn bộ `PRIMARY_OBJECTIVE.md` cho luồng 01–03, ghi `research/02-bim/prd-corrections-01-03.md` (6 đề xuất sửa nhỏ: dòng 15, 27/56–57, 90, 96, 132, 147–163; phần còn lại đúng hoặc chưa xác minh). |
+| 2026-11-06T12:09:16+07:00 | done | N-003: mobile đã rà `prd-corrections*.md` và kiểm lại EPSG VN-2000; laptop đồng ý, đặt DONE. |
 
 ## Kết quả
 Ngày 2026-11-06, claude-laptop (máy local). **Đếm theo số dòng trong các bảng "Kết quả xác minh"/đối chiếu của từng ghi chú; xấp xỉ, không phải kiểm toán từng câu.** "Chưa xác minh" = không có nguồn miễn phí đọc được hoặc cần dữ liệu/phần mềm thật.

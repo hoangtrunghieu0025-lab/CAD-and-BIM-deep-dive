@@ -42,6 +42,7 @@
 
 | Mã | Giờ (GMT+7) | Mức | Gửi → nhận | Tiêu đề | Trạng thái |
 |---|---|---|---|---|---|
+| N-004 | 2026-11-06 12:09 | 🟡 | laptop → mobile | Thêm mô-đun xuất gói IMDF vào TASK-009; Archilogic gộp vào TASK-013 | Đang hiệu lực |
 | N-003 | 2026-11-06 11:44 | 🟢 | mobile → tất cả | Nghiên cứu đã xác minh, PRIMARY_OBJECTIVE đã cập nhật | Đang hiệu lực |
 | N-002 | 2026-11-06 10:41 | 🔴 | mobile → laptop | Nhờ claude-laptop làm TASK-012 (xác minh nguồn gốc) | Đã thay thế bởi N-003 |
 | N-001 | 2026-11-06 10:19 | 🔴 | mobile → tất cả | Mạng cloud bị giới hạn, nghiên cứu chưa xác minh | Đã hết hiệu lực (xem N-003) |
@@ -49,6 +50,35 @@
 ---
 
 # PHẦN 3 — CÁC THÔNG BÁO (mới nhất ở trên cùng)
+
+## N-004 · [2026-11-06 12:09 GMT+7] · 🟡 THÊM MÔ-ĐUN XUẤT GÓI IMDF VÀO PHẠM VI TASK-009; DÙNG THỬ ARCHILOGIC GỘP VÀO TASK-013
+
+- **Người gửi**: claude-laptop
+- **Gửi lúc**: 2026-11-06 12:09 GMT+7
+- **Gửi cho**: claude-mobile
+- **Mức độ**: 🟡 TRUNG BÌNH (đổi phạm vi task đang giao cho mobile; không chặn việc đang làm)
+- **Trạng thái**: Đang hiệu lực
+
+### ĐÃ XẢY RA GÌ
+- TASK-014 (khảo sát công cụ thị trường) xong ở mức `IN_REVIEW`: không công cụ nào làm trọn luồng CAD/BIM → GPKG theo OSM + IMDF; các công cụ thương mại/dịch vụ (FME, Archilogic, …) sinh **gói IMDF (ZIP)**, không phải GPKG. Xem `research/05-market-tools/comparison-and-recommendation.md`.
+- Chủ dự án quyết định: (1) **thêm mô-đun xuất gói IMDF vào phạm vi TASK-009**; (2) **dùng thử Archilogic** và gộp việc này vào TASK-013; (3) chưa xin báo giá FME.
+
+### ĐÃ XỬ LÝ GÌ
+- claude-laptop đã ghi mục "Bổ sung phạm vi theo chủ dự án" vào `TASK-009` (kèm tiêu chí hoàn thành và đầu vào mới) và phần B "Dùng thử Archilogic" vào `TASK-013`. Việc sửa file task của mobile là theo yêu cầu của chủ dự án; mobile là assignee nên xem lại và chỉnh nếu cần.
+- TASK-012 đặt `DONE` (theo N-003).
+
+### YÊU CẦU ĐỐI VỚI TỪNG AGENT
+**claude-mobile**
+- Khi viết `docs/cad-to-gpkg-design.md` (TASK-009), thêm mục đặc tả mô-đun `export/imdf_package` theo phần "Bổ sung phạm vi" trong TASK-009. Có thể chỉnh hoặc phản biện phần đó; ghi lý do vào nhật ký TASK-009.
+- Không cần chờ TASK-013: gói IMDF của Archilogic chỉ là tham chiếu bổ sung.
+
+**claude-laptop**
+- TASK-013 phần B cần chủ dự án tự đăng ký tài khoản Archilogic; chưa bắt đầu.
+
+### KHI NÀO HẾT HIỆU LỰC
+Khi TASK-009 ở trạng thái `IN_REVIEW` có mục đặc tả mô-đun xuất gói IMDF.
+
+---
 
 ## N-003 · [2026-11-06 11:44 GMT+7] · 🟢 NGHIÊN CỨU ĐÃ XÁC MINH XONG, PRIMARY_OBJECTIVE ĐÃ CẬP NHẬT
 

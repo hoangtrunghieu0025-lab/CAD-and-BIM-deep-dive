@@ -166,3 +166,11 @@
 | buildingSMART IDS — ids.xsd 1.0.0 | https://raw.githubusercontent.com/buildingSMART/IDS/development/Schema/ids.xsd | lod-mvd-ids (TASK-012) | 2026-11-06 |
 | IfcOpenShell 0.9.0.post1 — schema EXPRESS bundled + template Pset (IFC4, IFC4X3_ADD2) | (gói PyPI `ifcopenshell`; kiểm bằng `ifcopenshell_wrapper.schema_by_name`, `util.pset.get_template`) | 02-bim, 03-bim (TASK-012) | 2026-11-06 |
 | pyproj 3.8.0 — CSDL EPSG v12.029 (VN-2000) | (gói PyPI `pyproj`; `pyproj.database.query_crs_info`) | ifc-georeference | 2026-11-06 |
+| FME — IMDF Reader/Writer (FME Readers and Writers 2026.3) | https://docs.safe.com/fme/html/FME-Form-Documentation/FME-ReadersWriters/imdf/imdf.htm | 05-market-tools (TASK-014) | 2026-11-06 |
+| Archilogic — Pricing (giá, định dạng vào/ra) | https://www.archilogic.com/pricing | 05-market-tools | 2026-11-06 |
+| GitHub — rebeccasc/BIMtoOSM (IFC → OSM SIT; AGPL-3.0; commit cuối 2024-08-18) | https://github.com/rebeccasc/BIMtoOSM | 05-market-tools | 2026-11-06 |
+| GitHub — quuppalabs/imdfjson (thư viện Java IMDF; Apache-2.0) | https://github.com/quuppalabs/imdfjson | 05-market-tools | 2026-11-06 |
+| GitHub — davidhend/IMDF-Builder-for-Places (web app, PDF/ảnh → IMDF; MIT) | https://github.com/davidhend/IMDF-Builder-for-Places | 05-market-tools | 2026-11-06 |
+| GitHub — adap-c6-fingerprint/IMDFrnt (IMDF validator; chưa đánh giá) | https://github.com/adap-c6-fingerprint/IMDFrnt | 05-market-tools | 2026-11-06 |
+| GitHub — OSGeo/gdal (releases/latest = v3.13.3, 2026-08-18) | https://github.com/OSGeo/gdal/releases | 05-market-tools | 2026-11-06 |
+| Chi tiết nguồn của phiên A–E | (cuối từng file trong research/05-market-tools/) | 05-market-tools | 2026-11-06 |

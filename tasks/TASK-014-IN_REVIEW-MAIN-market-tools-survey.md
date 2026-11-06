@@ -1,17 +1,17 @@
 ---
 id: TASK-014
-title: "[TODO][MAIN] Khảo sát công cụ có sẵn trên thị trường cho bài toán CAD/BIM → GPKG (OSM + IMDF) và chi phí"
+title: "[IN_REVIEW][MAIN] Khảo sát công cụ có sẵn trên thị trường cho bài toán CAD/BIM → GPKG (OSM + IMDF) và chi phí"
 category: MAIN
 assignees: [claude-laptop, claude-mobile]
 created_by: claude-laptop
 created_at: 2026-11-06T11:38:51+07:00
-updated_at: 2026-11-06T11:42:13+07:00
-status: todo
+updated_at: 2026-11-06T12:00:39+07:00
+status: in_review
 priority: high
 depends_on: []
 ---
 
-# [TODO][MAIN] TASK-014 — Khảo sát công cụ có sẵn trên thị trường cho bài toán CAD/BIM → GPKG (OSM + IMDF) và chi phí
+# [IN_REVIEW][MAIN] TASK-014 — Khảo sát công cụ có sẵn trên thị trường cho bài toán CAD/BIM → GPKG (OSM + IMDF) và chi phí
 
 ## Mô tả
 Trước khi xây pipeline (TASK-010) cần biết **đã có công cụ sẵn cho đúng bài toán này chưa**, chi phí bao nhiêu, để quyết định *tự xây / mua / dùng kết hợp* và để **đối chiếu** với thiết kế của dự án. Yêu cầu của chủ dự án: làm **sớm** và **cho phép chạy multi-agent, nhiều phiên song song** để tăng tốc.
@@ -74,12 +74,12 @@ Chia theo **chủ đề độc lập**, mỗi phiên/agent một chủ đề, gh
 - Danh sách "đã thử chạy" (nếu có công cụ mã nguồn mở chạy được trên máy này): lệnh, kết quả, hạn chế.
 
 ## Tiêu chí hoàn thành (acceptance)
-- [ ] Mỗi phiên A–E có file riêng, mỗi công cụ có: mô tả, phủ bước nào của pipeline, định dạng vào/ra, giấy phép/giá, nguồn + ngày truy cập
-- [ ] Mọi con số giá có nguồn hoặc ghi "liên hệ báo giá"/"chưa xác minh"
-- [ ] `comparison-and-recommendation.md` có bảng so sánh, bảng chi phí, khoảng trống, khuyến nghị và đối chiếu với TASK-007/009/010
-- [ ] Ít nhất 2 công cụ mã nguồn mở ứng viên được thử chạy trên mẫu `samples/` (nếu tồn tại công cụ phù hợp), hoặc ghi lý do không thử được
-- [ ] Nguồn mới được gộp vào `research/sources.md` (chỉ thêm dòng)
-- [ ] Đã báo cáo cho chủ dự án (laptop: không tự commit)
+- [x] Mỗi phiên A–E có file riêng, mỗi công cụ có: mô tả, phủ bước nào của pipeline, định dạng vào/ra, giấy phép/giá, nguồn + ngày truy cập
+- [x] Mọi con số giá có nguồn hoặc ghi "liên hệ báo giá"/"chưa xác minh"
+- [x] `comparison-and-recommendation.md` có bảng so sánh, bảng chi phí, khoảng trống, khuyến nghị và đối chiếu với TASK-007/009/010
+- [x] Ít nhất 2 công cụ mã nguồn mở ứng viên được thử chạy trên mẫu `samples/` (nếu tồn tại công cụ phù hợp), hoặc ghi lý do không thử được
+- [x] Nguồn mới được gộp vào `research/sources.md` (chỉ thêm dòng)
+- [x] Đã báo cáo cho chủ dự án (laptop: không tự commit)
 
 ## Phạm vi từng bên
 - **claude-laptop**: có truy cập web rộng; ghi vào `research/05-market-tools/` (thư mục mới tạo cho task này), file task này và thêm dòng vào `research/sources.md`. Theo yêu cầu của chủ dự án, **không tự commit**; báo cáo xong để chủ dự án pull rồi mới commit.
@@ -93,7 +93,7 @@ Chia theo **chủ đề độc lập**, mỗi phiên/agent một chủ đề, gh
 ## Tổng quan
 | Bên | Trạng thái | Cập nhật lúc | Ghi chú ngắn |
 |---|---|---|---|
-| claude-laptop | todo | 2026-11-06T11:42:13+07:00 | đã đăng ký task; chờ chủ dự án ra lệnh bắt đầu chạy A–F |
+| claude-laptop | in_review | 2026-11-06T12:00:39+07:00 | A–F xong; chờ chủ dự án/mobile xem khuyến nghị |
 | claude-mobile | todo | 2026-11-06T11:38:51+07:00 | chưa nhận; có thể nhận một số phiên A–E |
 
 ## Nhật ký — claude-mobile
@@ -104,11 +104,29 @@ Chia theo **chủ đề độc lập**, mỗi phiên/agent một chủ đề, gh
 | Thời điểm (GMT+7) | Trạng thái | Nội dung |
 |---|---|---|
 | 2026-11-06T11:42:13+07:00 | todo | Đăng ký task. Chủ dự án trả lời: (1) cho phép tạo `research/05-market-tools/` (đã tạo, có `.gitkeep`); (2) chấp nhận cả công cụ mã nguồn mở lẫn thương mại, **ưu tiên mã nguồn mở xếp lên đầu**. Chưa bắt đầu khảo sát. |
+| 2026-11-06T11:47:59+07:00 | in_progress | Chủ dự án ra lệnh chạy. Mở 5 subagent (A thương mại ETL/GIS, B CAD/BIM vendor, C mã nguồn mở, D dịch vụ indoor, E học thuật/cộng đồng) ghi vào `research/05-market-tools/`; phiên F tự làm sau khi A–E xong. Không commit. |
+| 2026-11-06T12:00:39+07:00 | in_review | Phiên A–E xong (5 subagent, mỗi bên một file). Phiên F: kiểm chéo bằng nguồn gốc (FME IMDF Reader/Writer, giá Archilogic, GitHub API các repo, GDAL 3.13.3, chạy lại ogr2ogr DXF→GPKG); phát hiện và sửa 1 sai sót của phiên C (3 repo IMDF tồn tại); viết `comparison-and-recommendation.md`; gộp nguồn vào `research/sources.md`. Chưa commit. |
 
 ## Kết quả
-(điền khi xong: bảng tóm tắt số công cụ đã khảo sát theo phiên, khuyến nghị build/buy, link tới `comparison-and-recommendation.md`)
+Ngày 2026-11-06. Khảo sát 5 phiên (subagent song song) + phiên F tổng hợp; file trong `research/05-market-tools/`.
+
+| Phiên | File | Số mục khảo sát | Phát hiện chính |
+|---|---|---|---|
+| A thương mại ETL/GIS | `commercial-gis-etl.md` | 6 | FME có IMDF Reader/Writer (đã tự xác minh); ArcGIS Indoors ra IMDF gián tiếp qua FME; giá đều "liên hệ báo giá" |
+| B CAD/BIM vendor | `cad-bim-vendors.md` | 10 | Không phần mềm CAD/BIM nào xuất thẳng GPKG/IMDF; chỉ Windows/macOS; giá Archicad/OpenBuildings/SketchUp có công khai |
+| C mã nguồn mở (ưu tiên) | `open-source-tools.md` | ~18 | Không công cụ nào làm trọn luồng; `ogr2ogr` DXF→GPKG chạy nhưng không có tag OSM/IMDF; BIMtoOSM (IFC→OSM SIT) gần nhất nhưng ngừng từ 2024-08 |
+| D dịch vụ indoor | `indoor-mapping-services.md` | 8 | Archilogic nhận DWG/DXF, xuất IMDF; giá công khai ($24.90/$59 /floor plan/tháng; $329/lần); Apple Indoor Maps Program miễn phí nhưng chỉ nhận IMDF |
+| E học thuật/cộng đồng | `academic-community.md` | ~20 | Không repo mở nào làm IFC/CAD→IMDF; có IFC→OSM SIT, IFC→IndoorGML, IFC→CityJSON rời rạc |
+| F tổng hợp | `comparison-and-recommendation.md` | — | Bảng so sánh, chi phí, khoảng trống, khuyến nghị, đối chiếu TASK-007/009/010 |
+
+**Khuyến nghị**: tự xây lõi bằng Python mã nguồn mở; dùng FME hoặc Archilogic chỉ khi cần gói IMDF để nộp Apple/Microsoft Places (hoặc làm chuẩn đối chiếu), sau khi có báo giá. Đề xuất thêm vào phạm vi TASK-009 một mô-đun tuỳ chọn xuất gói IMDF (ZIP) từ các bảng GPKG.
+
+**Sai sót đã sửa trong quá trình tổng hợp**: phiên C ghi `imdfjson`, `IMDF-Builder-for-Places`, `IMDFrnt` là "không tìm thấy"; phiên F kiểm bằng GitHub API và cả ba tồn tại (đã sửa trong `open-source-tools.md`).
+
+**Hạn chế**: nhiều giá thương mại không công khai hoặc chỉ có từ nguồn thứ cấp; tiền tệ trên trang Archilogic không được ghi; một số trang trả 403/404; chưa khảo sát Google/Mapbox; chưa thử DWG, LibreDWG, JOSM, QGIS GUI.
 
 ## Blocker / câu hỏi mở
 - ~~Thư mục `research/05-market-tools/`~~ — ĐÃ ĐƯỢC PHÉP (2026-11-06).
 - ~~Ngân sách/giấy phép~~ — ĐÃ CHỐT: cả mã nguồn mở và thương mại, mã nguồn mở xếp đầu, không đặt trần chi phí.
-- Chờ chủ dự án ra lệnh bắt đầu chạy A–F (laptop chưa spawn subagent nào).
+- Chờ chủ dự án/mobile xem khuyến nghị (đặc biệt đề xuất thêm mô-đun xuất gói IMDF vào TASK-009) và quyết định có xin báo giá FME / dùng thử Archilogic không.
+- Chưa commit (theo yêu cầu chủ dự án).
