@@ -36,6 +36,6 @@ Hai agent làm việc trên cùng repo GitHub, phối hợp qua commit trên `ma
 ## 4. Quy trình git
 - **Chỉ dùng một nhánh `main`**; không tạo nhánh riêng, không tạo pull request. Cả hai agent push thẳng lên `main`.
 - **Trước khi bắt đầu và trước mỗi lần push**: `git pull --rebase origin main`. Nếu push bị từ chối vì remote có commit mới, pull --rebase lại rồi push lại. Không dùng `--force`.
-- **Commit + push ngay** sau khi gửi thư hoặc hoàn thành việc, để bên kia thấy được. Commit nhỏ, thường xuyên.
+- **Commit + push ngay** sau khi hoàn thành việc, để bên kia thấy được. Commit nhỏ, thường xuyên.
 - Vì mỗi agent chỉ ghi vào thư mục của mình (thư mục được giao), xung đột rất hiếm; nếu có, giải quyết khi rebase và không ghi đè công việc của bên kia.
 - Commit message nêu rõ nhiệm vụ, ví dụ: `research(mobile): add ifc spatial structure notes`.
