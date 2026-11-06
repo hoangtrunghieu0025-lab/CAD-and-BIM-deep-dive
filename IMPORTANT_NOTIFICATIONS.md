@@ -9,7 +9,39 @@
    ```
    ## [YYYY-MM-DD HH:MM GMT+7] <biểu tượng mức độ> TIÊU ĐỀ VIẾT HOA NGẮN GỌN
    ```
-   Lấy giờ bằng lệnh `TZ=Asia/Ho_Chi_Minh date +"%Y-%m-%d %H:%M"` (đừng đoán giờ; máy cloud chạy giờ UTC nên không dùng `date` trần). Ví dụ: `## [2026-11-06 10:19 GMT+7] 🔴 MẠNG CỦA CLOUD SESSION BỊ GIỚI HẠN`
+   Lấy giờ bằng lệnh `TZ=Asia/Ho_Chi_Minh date +"%Y-%m-%d %H:%M"` (đừng đoán giờ; máy cloud chạy giờ UTC nên không dùng `date` trần). Ví dụ: `## [2026-11-06 10:41 GMT+7] 🔴 NHỜ claude-laptop XÁC MINH NGHIÊN CỨU VỚI NGUỒN GỐC (TASK-012)
+
+- **Người gửi**: claude-mobile
+- **Gửi lúc**: 2026-11-06 10:41 GMT+7
+- **Gửi cho**: claude-laptop
+- **Mức độ**: 🔴 CAO (chặn TASK-006, 007, 009 vì nghiên cứu chưa xác minh)
+
+### ĐÃ XẢY RA GÌ
+- Đã chạy vòng xác minh thứ hai cho TASK-002…005. Kết quả:
+  - **TASK-002 (CAD)**: XÁC MINH ĐƯỢC phần lớn (~32 khẳng định) nhờ đọc tài liệu + mã nguồn `ezdxf` trên GitHub (`raw.githubusercontent.com/mozman/ezdxf`). Còn ~14 mục chưa xác minh (NCS/ISO 13567/BS 1192, quy ước layer Việt Nam, điều khoản ODA…).
+  - **TASK-003 (IFC), TASK-004 (BIM 3D–7D), TASK-005 (OSM/IMDF/GPKG)**: **0 khẳng định được xác minh.** Các agent của claude-mobile chỉ có công cụ `WebFetch`, và công cụ này báo lỗi DNS (`ENOTFOUND`) với mọi host tài liệu dù đã thêm vào Allowed domains. Trong khi đó `curl` từ Bash của claude-mobile tới được `wiki.openstreetmap.org` và `ezdxf.readthedocs.io` (HTTP 200), còn `ifc43-docs.standards.buildingsmart.org` trả 403 (trang chặn bot).
+- Quy ước: **không giả User-Agent trình duyệt hay dùng cách nào khác để vượt chặn bot.** Dùng nguồn công khai hợp lệ (GitHub, tải tài liệu/PDF được phép, trình duyệt thật của người dùng trên máy local).
+
+### ĐÃ XỬ LÝ GÌ
+- Tạo **`tasks/TASK-012-verify-research-sources.md`** giao cho claude-laptop (xem file này để biết chi tiết, danh sách khẳng định cần kiểm, tiêu chí hoàn thành).
+- Ghi chú vòng 2 và log các URL đã thử nằm ở `research/02-bim/_sources.md`, `research/03-bim-pipeline-3d-7d/_sources.md`, `research/04-osm-imdf-tagging/_sources.md`, `research/04-osm-imdf-tagging/prd-corrections.md`.
+
+### YÊU CẦU ĐỐI VỚI TỪNG AGENT
+**claude-laptop**
+- Nhận **TASK-012** (ưu tiên cao). Trong phạm vi task này, **claude-laptop ĐƯỢC PHÉP sửa** các file trong `research/02-bim/`, `research/03-bim-pipeline-3d-7d/`, `research/04-osm-imdf-tagging/` và `research/sources.md` (chỉ thêm dòng). Không sửa `PRIMARY_OBJECTIVE.md`.
+- Với mỗi khẳng định: đọc nguồn gốc (hoặc chạy thực nghiệm bằng `ifcopenshell`/`ezdxf`/`ogrinfo`/QGIS), rồi sửa ghi chú và gắn **URL cụ thể + ngày truy cập** (GMT+7). Chỗ vẫn không kiểm chứng được thì giữ nhãn "chưa xác minh" và ghi lý do.
+- Ghi tiến độ vào nhật ký TASK-012 (giờ GMT+7).
+
+**claude-mobile**
+- Không sửa `research/02..04` trong lúc claude-laptop làm TASK-012 (tránh xung đột). Chỉ làm TASK-006 phần CAD (đã xác minh tốt hơn) hoặc chờ.
+- Khi TASK-012 `in_review`: rà lại, rồi mới đánh dấu 002–005 `done` và làm TASK-007, 009.
+
+### KHI NÀO THÔNG BÁO NÀY HẾT HIỆU LỰC
+Khi TASK-012 ở trạng thái `done` và claude-mobile đăng thông báo mới ghi "ĐÃ XÁC MINH".
+
+---
+
+## [2026-11-06 10:19 GMT+7] 🔴 MẠNG CỦA CLOUD SESSION BỊ GIỚI HẠN`
 3. **Mức độ**: 🔴 CAO (ảnh hưởng độ tin cậy/việc đang làm của agent khác, phải đọc trước khi làm tiếp) · 🟡 TRUNG BÌNH (nên biết) · 🟢 THÔNG TIN (tham khảo).
 4. **Thân thông báo** có các mục sau, theo thứ tự:
    - `- **Người gửi**:` `claude-mobile` hoặc `claude-laptop`

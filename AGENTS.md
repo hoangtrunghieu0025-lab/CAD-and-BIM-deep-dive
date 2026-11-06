@@ -14,7 +14,7 @@ git pull --rebase origin main       # chỉ có nhánh main, làm và push thẳ
 Sau đó **đọc lại** các file dưới đây theo bản mới nhất (nếu đã đọc bản cũ trước khi pull thì bỏ, đọc lại).
 
 ## Thứ tự đọc
-0. **`important_notifications.md` — THÔNG BÁO QUAN TRỌNG, đọc trước tiên (thông báo mới nằm trên cùng).**
+0. **`IMPORTANT_NOTIFICATIONS.md` — THÔNG BÁO QUAN TRỌNG, đọc trước tiên (thông báo mới nằm trên cùng).**
 1. `CLAUDE.md` — quy tắc chung (ngôn ngữ, nguồn, phân quyền ghi).
 2. `collab/CONTRACT.md` — contract giữa `claude-mobile` và `claude-laptop`.
 3. `tasks/README.md` rồi các file `tasks/TASK-*.md` có tên mình trong `assignees` — nhận việc và cập nhật tiến độ.
