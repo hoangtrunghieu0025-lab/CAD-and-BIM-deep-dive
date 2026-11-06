@@ -5,7 +5,7 @@ category: SIDE
 assignees: [claude-laptop]
 created_by: claude-laptop
 created_at: 2026-11-06T10:37:25+07:00
-updated_at: 2026-11-06T15:13:39+07:00
+updated_at: 2026-11-06T15:23:43+07:00
 status: in_review
 priority: normal
 depends_on: [TASK-001]
@@ -44,11 +44,11 @@ Tên gói và nguồn dưới đây là gợi ý, chưa xác minh trên máy nà
 - **Bonsai**: add-on của Blender, cài trong Blender qua Extensions; phải khớp phiên bản Blender mà Bonsai hỗ trợ (kiểm tra trong tài liệu Bonsai khi cài).
 
 ## Tiêu chí hoàn thành (acceptance)
-- [ ] `librecad` mở được `samples/sample-floor-1.dxf`; thấy các layer `A-WALL`, `A-AREA`, `A-AREA-IDEN`, `A-DOOR`
-- [ ] `freecad` (hoặc `freecadcmd`) in được phiên bản; mở được `samples/sample-building.ifc`
-- [ ] `blender --version` in được phiên bản; Bonsai bật được và mở được `samples/sample-building.ifc`, thấy 2 tầng và các `IfcSpace`
-- [ ] `docs/local-env-report.md` cập nhật phiên bản và cách cài của cả ba công cụ
-- [ ] Nếu công cụ nào không cài/mở được: ghi lý do vào Blocker, không bỏ trống tiêu chí
+- [x] `librecad` mở được `samples/sample-floor-1.dxf`; thấy các layer `A-WALL`, `A-AREA`, `A-AREA-IDEN`, `A-DOOR` — LibreCAD 2.2.0.2 dựng đúng bản vẽ bằng `librecad dxf2pdf -a` (ảnh đã kiểm; 12 phòng, hành lang, cung cửa, nhãn); chưa xem bảng layer trong giao diện (không có công cụ chụp màn hình)
+- [ ] `freecad` (hoặc `freecadcmd`) in được phiên bản; mở được `samples/sample-building.ifc` — **HOÃN, chuyển sang TASK-016** (snap 2 GB, mạng chậm); không tính vào task này
+- [x] `blender --version` in được phiên bản; Bonsai bật được và mở được `samples/sample-building.ifc`, thấy 2 tầng và các `IfcSpace` — Blender 5.0.1; Bonsai 0.9.0-post1 bật được, nạp `sample-building.ifc` (IFC4, 2 tầng, 26 IfcSpace, 24 IfcDoor, 8 IfcWall) trong Blender chạy nền
+- [x] `docs/local-env-report.md` cập nhật phiên bản và cách cài của cả ba công cụ — LibreCAD, Blender, Bonsai đã cập nhật; FreeCAD ghi 'hoãn'
+- [x] Nếu công cụ nào không cài/mở được: ghi lý do vào Blocker, không bỏ trống tiêu chí — FreeCAD: lý do ghi ở nhật ký và Blocker
 - [x] **(B)** Chủ dự án đã đăng ký/cho phép dùng tài khoản Archilogic; không phát sinh phí ngoài ý muốn — tài khoản đã đăng ký; phát hiện phí $329 USD và dừng trước khi trả
 - [ ] **(B)** Đã chuyển đổi ≥1 DXF mẫu và tải về gói IMDF; `research/05-market-tools/archilogic-trial.md` liệt kê các file trong gói, so với danh sách bắt buộc của IMDF (`manifest.json`, `address.geojson`, `venue.geojson`) và các feature type có mặt — KHÔNG THỰC HIỆN: phát sinh phí $329 USD
 - [ ] **(B)** Có bảng so sánh: category/geometry mà Archilogic gán cho phòng, cửa, tường, cầu thang so với mapping của dự án (`config/tag_mapping.yaml`) và ghi chênh lệch — KHÔNG THỰC HIỆN: phát sinh phí $329 USD
@@ -75,6 +75,7 @@ Tên gói và nguồn dưới đây là gợi ý, chưa xác minh trên máy nà
 | 2026-11-06T14:47:20+07:00 | in_progress | **Hoãn FreeCAD** theo chủ dự án: snap FreeCAD kéo theo `kf6-core24` 1,74 GB (+ FreeCAD 529 MB), tải qua đường quốc tế chỉ ~0,2–1,2 Mbps (đã tải dở ~179 MB và ~116 MB trong `/var/lib/snapd/snaps/*.partial`). Chạy lại `sudo snap install freecad` khi mạng tốt hơn; Blender+Bonsai đã mở và đọc được `sample-building.ifc` nên phần kiểm IFC bằng GUI đã có. Phần B (Archilogic) vẫn chờ chủ dự án đăng ký tài khoản. |
 | 2026-11-06T15:02:03+07:00 | in_progress | Phần B: chủ dự án đã đăng ký tài khoản Archilogic. Phiên này **không có công cụ trình duyệt** (extension Claude in Chrome chưa kết nối) nên laptop không thao tác trên tài khoản; chủ dự án tự làm các bước trên web theo hướng dẫn, laptop phân tích gói tải về. Tìm thấy qua WebSearch: Archilogic gắn xuất IMDF với quy trình **Microsoft Places** (cần floor plan có georeference, có thể cần Place ID), trang Exporting chung chỉ liệt kê SVG, ảnh, DXF, IFC — nên IMDF có thể không xuất được trên gói Starter hoặc cần bước ánh xạ; ghi nhận như một phát hiện. Chưa có file nào được tải lên hoặc tải về. |
 | 2026-11-06T15:13:39+07:00 | in_review | **Phần B dừng, không trả tiền.** Chủ dự án tải `sample-floor-1.dxf` lên Archilogic: trang đặt hàng hiển thị **Order total $329.00 USD** (nút "Process and complete order"); gói Starter không bao gồm chuyển đổi DXF miễn phí. Theo quy tắc của task (không nhập thanh toán, dừng khi phát sinh phí) và quyết định của chủ dự án, **không bấm xử lý đơn**; đã xoá ảnh chụp (chứa thanh tab trình duyệt cá nhân). Kết quả xác minh: (1) phí chuyển đổi DXF = $329 USD/floor plan, hoàn tiền đầy đủ nếu không hài lòng trong 1 ngày làm việc; (2) **chưa xác minh** Starter/đơn hàng này có xuất IMDF hay không (xuất IMDF của Archilogic gắn với quy trình Microsoft Places). Không có file IMDF để đối chiếu; pipeline tự sinh gói IMDF thay thế (TASK-010). Đã cập nhật ghi chú tiền tệ trong `research/05-market-tools/`. Các tiêu chí phần B ghi 'không thực hiện: phát sinh phí'. |
+| 2026-11-06T15:23:43+07:00 | in_review | Dọn tiêu chí theo chủ dự án: tick các mục đã đạt (LibreCAD, Blender+Bonsai, báo cáo môi trường, ghi lý do công cụ chưa cài); **FreeCAD chuyển sang TASK-016** (SIDE, ưu tiên thấp); hai tiêu chí phần B (chuyển đổi DXF, bảng so sánh Archilogic) giữ chưa tick, đã ghi 'KHÔNG THỰC HIỆN: phát sinh phí $329 USD'. Đề xuất: đóng TASK-013 `DONE` kèm các ngoại lệ này, nếu chủ dự án đồng ý. |
 
 ## Blocker / câu hỏi mở
 - Cần `sudo` để cài; chờ người dùng quyết định cách cài (apt/snap) cho từng công cụ.
