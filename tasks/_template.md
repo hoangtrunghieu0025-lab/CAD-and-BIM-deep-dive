@@ -1,6 +1,7 @@
 ---
 id: TASK-NNN
-title: Tiêu đề task
+title: "[TODO][MAIN] Tiêu đề task"   # tự cập nhật bằng: python3 tasks/list.py --sync
+category: MAIN                    # MAIN | FIX | SIDE (xem tasks/README.md mục 1)
 assignees: [claude-mobile]        # claude-mobile | claude-laptop | cả hai: [claude-mobile, claude-laptop]
 created_by: claude-mobile
 created_at: YYYY-MM-DDTHH:MM:SS+07:00
@@ -10,7 +11,11 @@ priority: normal                  # low | normal | high
 depends_on: []                    # ví dụ: [TASK-002]
 ---
 
+# [TODO][MAIN] TASK-NNN — Tiêu đề task
+<!-- Thẻ trạng thái/category ở tên file, title và dòng này đều sinh từ `status` + `category`: sửa hai trường đó rồi chạy python3 tasks/list.py --sync -->
+
 ## Mô tả
+<!-- Task FIX: ghi task/vấn đề gốc ở đây trước tiên. -->
 
 ## Đầu vào (inputs)
 -

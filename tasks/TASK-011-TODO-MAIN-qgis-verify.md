@@ -1,6 +1,7 @@
 ---
 id: TASK-011
-title: Kiểm tra .gpkg trong QGIS và chụp ảnh
+title: "[TODO][MAIN] Kiểm tra .gpkg trong QGIS và chụp ảnh"
+category: MAIN
 assignees: [claude-laptop]
 created_by: claude-mobile
 created_at: 2026-11-06T09:37:46+07:00
@@ -9,6 +10,8 @@ status: todo
 priority: normal
 depends_on: [TASK-010]
 ---
+
+# [TODO][MAIN] TASK-011 — Kiểm tra .gpkg trong QGIS và chụp ảnh
 
 ## Mô tả
 Mở `.gpkg` đầu ra trong QGIS, kiểm tra vị trí, CRS, lọc theo tầng, style theo `category`; tạo style và ảnh để mobile xem được trên điện thoại.

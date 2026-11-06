@@ -1,6 +1,7 @@
 ---
 id: TASK-006
-title: Tổng hợp tài liệu CAD vs BIM và pipeline 3D–7D
+title: "[TODO][MAIN] Tổng hợp tài liệu CAD vs BIM và pipeline 3D–7D"
+category: MAIN
 assignees: [claude-mobile]
 created_by: claude-mobile
 created_at: 2026-11-06T09:37:46+07:00
@@ -9,6 +10,8 @@ status: todo
 priority: normal
 depends_on: [TASK-002, TASK-003, TASK-004]
 ---
+
+# [TODO][MAIN] TASK-006 — Tổng hợp tài liệu CAD vs BIM và pipeline 3D–7D
 
 ## Mô tả
 Đọc `research/01..03` và viết tài liệu tổng hợp, đánh dấu chỗ nguồn mâu thuẫn hoặc chưa xác minh (vai trò `synthesizer`).

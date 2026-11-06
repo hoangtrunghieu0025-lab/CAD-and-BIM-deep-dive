@@ -1,6 +1,7 @@
 ---
 id: TASK-003
-title: Nghiên cứu BIM và IFC (cấu trúc không gian, Pset, georeference)
+title: "[IN_REVIEW][MAIN] Nghiên cứu BIM và IFC (cấu trúc không gian, Pset, georeference)"
+category: MAIN
 assignees: [claude-mobile]
 created_by: claude-mobile
 created_at: 2026-11-06T09:37:46+07:00
@@ -9,6 +10,8 @@ status: in_review
 priority: high
 depends_on: []
 ---
+
+# [IN_REVIEW][MAIN] TASK-003 — Nghiên cứu BIM và IFC (cấu trúc không gian, Pset, georeference)
 
 ## Mô tả
 Tìm hiểu BIM/IFC: cấu trúc `IfcProject → IfcSite → IfcBuilding → IfcBuildingStorey → IfcSpace`, property set, phân loại, LOD/LOI, MVD/IDS, georeference (`IfcMapConversion`, `IfcProjectedCRS`), `ifcopenshell` để trích hình học.

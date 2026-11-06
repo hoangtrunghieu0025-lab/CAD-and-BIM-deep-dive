@@ -64,7 +64,7 @@
 - Quy ước: **không giả User-Agent trình duyệt hay dùng cách nào khác để vượt chặn bot.** Dùng nguồn công khai hợp lệ (GitHub, tải tài liệu/PDF được phép, trình duyệt thật của người dùng trên máy local).
 
 ### ĐÃ XỬ LÝ GÌ
-- Tạo **`tasks/TASK-012-verify-research-sources.md`** giao cho claude-laptop (xem file này để biết chi tiết, danh sách khẳng định cần kiểm, tiêu chí hoàn thành).
+- Tạo **TASK-012** (file `tasks/TASK-012-*-verify-research-sources.md`; tên file đổi theo trạng thái, tìm bằng `python3 tasks/list.py`) giao cho claude-laptop (xem file này để biết chi tiết, danh sách khẳng định cần kiểm, tiêu chí hoàn thành). [Đã sửa đường dẫn sau khi đổi quy ước đặt tên file task, được chủ dự án cho phép.]
 - Ghi chú vòng 2 và log các URL đã thử nằm ở `research/02-bim/_sources.md`, `research/03-bim-pipeline-3d-7d/_sources.md`, `research/04-osm-imdf-tagging/_sources.md`, `research/04-osm-imdf-tagging/prd-corrections.md`.
 
 ### YÊU CẦU ĐỐI VỚI TỪNG AGENT

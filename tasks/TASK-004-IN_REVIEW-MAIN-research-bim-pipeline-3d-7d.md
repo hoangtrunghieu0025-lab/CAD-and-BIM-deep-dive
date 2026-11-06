@@ -1,6 +1,7 @@
 ---
 id: TASK-004
-title: Nghiên cứu pipeline BIM 3D → 4D → 5D → 6D → 7D
+title: "[IN_REVIEW][MAIN] Nghiên cứu pipeline BIM 3D → 4D → 5D → 6D → 7D"
+category: MAIN
 assignees: [claude-mobile]
 created_by: claude-mobile
 created_at: 2026-11-06T09:37:46+07:00
@@ -9,6 +10,8 @@ status: in_review
 priority: normal
 depends_on: []
 ---
+
+# [IN_REVIEW][MAIN] TASK-004 — Nghiên cứu pipeline BIM 3D → 4D → 5D → 6D → 7D
 
 ## Mô tả
 Làm rõ dữ liệu được thêm ở từng chiều, chuẩn và công cụ liên quan, khoá liên kết (GUID), COBie, digital twin/FM, và phần nào có thể đưa sang GIS.

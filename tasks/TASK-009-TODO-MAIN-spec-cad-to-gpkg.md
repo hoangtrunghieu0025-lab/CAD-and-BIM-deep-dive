@@ -1,6 +1,7 @@
 ---
 id: TASK-009
-title: Viết spec thiết kế pipeline CAD → BIM → GPKG
+title: "[TODO][MAIN] Viết spec thiết kế pipeline CAD → BIM → GPKG"
+category: MAIN
 assignees: [claude-mobile]
 created_by: claude-mobile
 created_at: 2026-11-06T09:37:46+07:00
@@ -9,6 +10,8 @@ status: todo
 priority: high
 depends_on: [TASK-005, TASK-007]
 ---
+
+# [TODO][MAIN] TASK-009 — Viết spec thiết kế pipeline CAD → BIM → GPKG
 
 ## Mô tả
 Viết đặc tả để laptop cài đặt: module, hàm, input/output từng bước, schema bảng GPKG theo IMDF, quy tắc georeference, kiểm tra hợp lệ.

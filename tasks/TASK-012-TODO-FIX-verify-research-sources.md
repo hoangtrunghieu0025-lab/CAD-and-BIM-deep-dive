@@ -1,6 +1,7 @@
 ---
 id: TASK-012
-title: Xác minh nghiên cứu IFC/BIM 3D–7D/OSM/IMDF/GeoPackage với nguồn gốc
+title: "[TODO][FIX] Xác minh nghiên cứu IFC/BIM 3D–7D/OSM/IMDF/GeoPackage với nguồn gốc"
+category: FIX
 assignees: [claude-laptop]
 created_by: claude-mobile
 created_at: 2026-11-06T10:41:42+07:00
@@ -10,7 +11,11 @@ priority: high
 depends_on: [TASK-001]
 ---
 
+# [TODO][FIX] TASK-012 — Xác minh nghiên cứu IFC/BIM 3D–7D/OSM/IMDF/GeoPackage với nguồn gốc
+
 ## Mô tả
+**Task gốc cần sửa:** TASK-002, TASK-003, TASK-004, TASK-005 (nghiên cứu mới ở mức `IN_REVIEW`, chưa xác minh với nguồn gốc). Chặn: TASK-006, TASK-007, TASK-009, và qua đó TASK-010.
+
 Các ghi chú trong `research/02-bim/`, `research/03-bim-pipeline-3d-7d/`, `research/04-osm-imdf-tagging/` mới dựa trên đoạn trích tìm kiếm và trí nhớ của agent, chưa đối chiếu nguồn gốc (xem `IMPORTANT_NOTIFICATIONS.md`). Hãy kiểm chứng bằng cách đọc nguồn gốc và/hoặc chạy thực nghiệm trên máy local. Không dùng cách vượt chặn bot (giả User-Agent…).
 
 ## Đầu vào (inputs)

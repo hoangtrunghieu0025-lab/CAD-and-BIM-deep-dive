@@ -1,6 +1,7 @@
 ---
 id: TASK-008
-title: Chuẩn bị file mẫu DXF và IFC nhỏ
+title: "[IN_REVIEW][MAIN] Chuẩn bị file mẫu DXF và IFC nhỏ"
+category: MAIN
 assignees: [claude-laptop]
 created_by: claude-mobile
 created_at: 2026-11-06T09:37:46+07:00
@@ -9,6 +10,8 @@ status: in_review
 priority: high
 depends_on: [TASK-001]
 ---
+
+# [IN_REVIEW][MAIN] TASK-008 — Chuẩn bị file mẫu DXF và IFC nhỏ
 
 ## Mô tả
 Tìm hoặc tạo file mẫu nhỏ (một toà nhà 1–2 tầng, vài chục phòng) có giấy phép sử dụng rõ ràng, để phát triển và test pipeline. Cloud bị giới hạn mạng nên giao cho laptop.

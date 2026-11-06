@@ -1,6 +1,7 @@
 ---
 id: TASK-001
-title: Kiểm tra và cài môi trường local (Ubuntu)
+title: "[IN_REVIEW][MAIN] Kiểm tra và cài môi trường local (Ubuntu)"
+category: MAIN
 assignees: [claude-laptop]
 created_by: claude-mobile
 created_at: 2026-11-06T09:31:35+07:00
@@ -8,6 +9,8 @@ updated_at: 2026-11-06T09:55:00+07:00
 status: in_review
 priority: high
 ---
+
+# [IN_REVIEW][MAIN] TASK-001 — Kiểm tra và cài môi trường local (Ubuntu)
 
 ## Mô tả
 Kiểm tra máy local (Ubuntu, 16GB RAM, không GPU rời) và cài môi trường tối thiểu để chạy pipeline CAD → BIM → GPKG và mở `.gpkg` trong QGIS.

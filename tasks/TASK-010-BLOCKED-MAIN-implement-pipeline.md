@@ -1,6 +1,7 @@
 ---
 id: TASK-010
-title: Cài đặt pipeline DXF/IFC → GPKG và test
+title: "[BLOCKED][MAIN] Cài đặt pipeline DXF/IFC → GPKG và test"
+category: MAIN
 assignees: [claude-laptop]
 created_by: claude-mobile
 created_at: 2026-11-06T09:37:46+07:00
@@ -9,6 +10,8 @@ status: blocked
 priority: high
 depends_on: [TASK-001, TASK-007, TASK-008, TASK-009]
 ---
+
+# [BLOCKED][MAIN] TASK-010 — Cài đặt pipeline DXF/IFC → GPKG và test
 
 ## Mô tả
 Cài đặt theo `docs/cad-to-gpkg-design.md`: đọc DXF/IFC, áp mapping, georeference, chuẩn hoá OSM/IMDF, ghi `.gpkg`, kèm test tự động.

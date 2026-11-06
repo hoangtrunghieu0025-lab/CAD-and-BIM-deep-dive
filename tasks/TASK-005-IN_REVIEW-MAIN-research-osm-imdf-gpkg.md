@@ -1,6 +1,7 @@
 ---
 id: TASK-005
-title: Nghiên cứu OSM Simple Indoor Tagging, IMDF và GeoPackage
+title: "[IN_REVIEW][MAIN] Nghiên cứu OSM Simple Indoor Tagging, IMDF và GeoPackage"
+category: MAIN
 assignees: [claude-mobile]
 created_by: claude-mobile
 created_at: 2026-11-06T09:37:46+07:00
@@ -9,6 +10,8 @@ status: in_review
 priority: high
 depends_on: []
 ---
+
+# [IN_REVIEW][MAIN] TASK-005 — Nghiên cứu OSM Simple Indoor Tagging, IMDF và GeoPackage
 
 ## Mô tả
 Tìm hiểu tag indoor của OSM, các feature type và ràng buộc của IMDF, yêu cầu GeoPackage hợp lệ và cách QGIS đọc.

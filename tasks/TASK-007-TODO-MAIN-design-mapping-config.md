@@ -1,6 +1,7 @@
 ---
 id: TASK-007
-title: Thiết kế bảng mapping CAD/IFC → OSM → IMDF
+title: "[TODO][MAIN] Thiết kế bảng mapping CAD/IFC → OSM → IMDF"
+category: MAIN
 assignees: [claude-mobile, claude-laptop]
 created_by: claude-mobile
 created_at: 2026-11-06T09:37:46+07:00
@@ -9,6 +10,8 @@ status: todo
 priority: high
 depends_on: [TASK-002, TASK-003, TASK-005]
 ---
+
+# [TODO][MAIN] TASK-007 — Thiết kế bảng mapping CAD/IFC → OSM → IMDF
 
 ## Mô tả
 Chuyển bảng mapping trong `PRIMARY_OBJECTIVE.md` thành file cấu hình dùng được bởi code. Mobile soạn bản nháp từ research; laptop thử trên file mẫu thật và báo chỗ cần chỉnh.

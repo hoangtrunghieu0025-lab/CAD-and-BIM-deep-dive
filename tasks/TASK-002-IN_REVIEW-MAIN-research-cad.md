@@ -1,6 +1,7 @@
 ---
 id: TASK-002
-title: Nghiên cứu CAD (DWG/DXF, layer, block, xref, toạ độ)
+title: "[IN_REVIEW][MAIN] Nghiên cứu CAD (DWG/DXF, layer, block, xref, toạ độ)"
+category: MAIN
 assignees: [claude-mobile]
 created_by: claude-mobile
 created_at: 2026-11-06T09:37:46+07:00
@@ -9,6 +10,8 @@ status: in_review
 priority: high
 depends_on: []
 ---
+
+# [IN_REVIEW][MAIN] TASK-002 — Nghiên cứu CAD (DWG/DXF, layer, block, xref, toạ độ)
 
 ## Mô tả
 Tìm hiểu CAD ở mức đủ để đọc và làm sạch dữ liệu bằng `ezdxf`: định dạng, cấu trúc, quy ước đặt tên layer, hệ toạ độ/đơn vị, hạn chế ngữ nghĩa.

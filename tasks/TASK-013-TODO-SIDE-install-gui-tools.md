@@ -1,6 +1,7 @@
 ---
 id: TASK-013
-title: Cài FreeCAD, Blender + Bonsai, LibreCAD trên máy local
+title: "[TODO][SIDE] Cài FreeCAD, Blender + Bonsai, LibreCAD trên máy local"
+category: SIDE
 assignees: [claude-laptop]
 created_by: claude-laptop
 created_at: 2026-11-06T10:37:25+07:00
@@ -9,6 +10,8 @@ status: todo
 priority: normal
 depends_on: [TASK-001]
 ---
+
+# [TODO][SIDE] TASK-013 — Cài FreeCAD, Blender + Bonsai, LibreCAD trên máy local
 
 ## Mô tả
 TASK-001 xác nhận ba công cụ GUI sau chưa có trên máy local (Ubuntu 24.04, 16GB RAM, không GPU rời): FreeCAD, Blender + Bonsai (BlenderBIM), LibreCAD. Cài và kiểm chứng để mở được `samples/sample-floor-*.dxf` và `samples/sample-building.ifc` bằng mắt, đối chiếu với kết quả `ezdxf`/`ifcopenshell`. Chưa task nào khác phụ thuộc, nên không chặn pipeline.
