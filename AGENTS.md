@@ -16,8 +16,10 @@ Sau đó **đọc lại** các file dưới đây theo bản mới nhất (nếu
 ## Thứ tự đọc
 1. `CLAUDE.md` — quy tắc chung (ngôn ngữ, nguồn, phân quyền ghi).
 2. `collab/CONTRACT.md` — contract giữa `claude-mobile` và `claude-laptop`.
-3. `PRIMARY_OBJECTIVE.md` — mục tiêu dự án.
+3. `tasks/README.md` rồi các file `tasks/TASK-*.md` có tên mình trong `assignees` — nhận việc và cập nhật tiến độ.
+4. `PRIMARY_OBJECTIVE.md` — mục tiêu dự án.
 
 ## Cuối mỗi đợt làm việc
 - Commit + push để bên kia thấy (xem mục "Quy trình git" trong `collab/CONTRACT.md`).
+- Cập nhật tiến độ trong file task của mình.
 - Mỗi agent chỉ ghi vào thư mục được giao của mình.

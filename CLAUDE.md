@@ -20,3 +20,4 @@ Mục tiêu dự án: xem `PRIMARY_OBJECTIVE.md`.
 
 ## Cộng tác 2 agent (claude-mobile ↔ claude-laptop)
 - Theo `collab/CONTRACT.md`; push thẳng lên `main`, pull --rebase trước khi push. Không dùng mailbox.
+- Việc được giao trong `tasks/` (xem `tasks/README.md`); cập nhật tiến độ trong file task của mình.

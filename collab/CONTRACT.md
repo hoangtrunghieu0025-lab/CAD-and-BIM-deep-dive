@@ -12,7 +12,8 @@ Hai agent làm việc trên cùng repo GitHub, phối hợp qua commit trên `ma
 
 ## 2. Phối hợp
 - Không có mailbox. Kết quả và ghi chú bàn giao đặt trong file ở thư mục được giao (mục 3), mô tả rõ trong commit message.
-- Mỗi bên chỉ ghi vào thư mục/file được giao cho mình; chỉ đọc phần của bên kia.
+- Việc được giao qua `tasks/` (xem `tasks/README.md`): mỗi task ghi rõ ai làm (`assignees`); mọi bên có tên trong `assignees` được sửa file task đó (mục tiến độ: mỗi bên ghi phần của mình, nhật ký chỉ thêm dòng cuối).
+- Ngoài file task, mỗi bên chỉ ghi vào thư mục/file được giao cho mình; chỉ đọc phần của bên kia.
 
 ## 3. Contract đầu vào – đầu ra giữa hai agent
 
