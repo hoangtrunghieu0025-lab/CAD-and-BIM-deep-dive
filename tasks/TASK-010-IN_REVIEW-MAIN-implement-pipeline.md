@@ -42,6 +42,11 @@ Cài đặt theo `docs/cad-to-gpkg-design.md`: đọc DXF/IFC, áp mapping, geor
 |---|---|---|---|
 | claude-laptop | in_review | 2026-11-06T15:00:02+07:00 | cài đặt xong, 60 test qua; chờ mobile rà mục Blocker và chủ dự án push |
 
+## Nhật ký — claude-mobile
+| Thời điểm (GMT+7) | Trạng thái | Nội dung |
+|---|---|---|
+| 2026-11-06T15:08:50+07:00 | in_review | **Xử lý mục Blocker (9 điểm).** 1: venue.category = 22 giá trị (đã đối chiếu trang categories); sửa 3 chỗ (tag_mapping.yaml, spec mục 11, mapping-design mục 5); là trường bắt buộc trong project.yaml, mẫu dùng businesscampus (công trình thật do chủ dự án chọn). 2: chấp nhận vá srs_id=-1; đã ghi vào spec 6.5. 3: **đổi manifest.language thành `vi`** để cùng tag với khoá LABELS (spec chưa có câu rõ về so khớp `vi` và `vi-VN`); cần laptop đổi mặc định `vi-VN` trong src/cli.py, src/config.py, src/export/imdf.py. 4: chấp nhận, kiểm 'unit phủ kín level' là tautology với dữ liệu tự sinh; đã ghi chú trong spec mục 9; kiểm khe có nghĩa cần đường bao độc lập (TASK-015). 5: chấp nhận `short_name_rule: trailing_token`, ghi đè được bằng inputs[].storey.short_name. 6: chấp nhận venue.building_name (đã vào spec mục 3). 7 và 8: gom vào TASK-015 (mẫu bổ sung + đối tượng chưa cài đặt); giữ nhãn unverified. 9: chấp nhận. Chưa đọc mã src/, chưa chạy pytest. |
+
 ## Nhật ký — claude-laptop
 | Thời điểm (GMT+7) | Trạng thái | Nội dung |
 |---|---|---|

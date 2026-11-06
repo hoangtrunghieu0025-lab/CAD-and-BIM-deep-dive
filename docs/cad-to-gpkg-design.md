@@ -55,7 +55,7 @@ georeference:            # mục 6; bắt buộc trừ khi IFC4+ có IfcMapConve
   origin: [E0, N0]       # toạ độ (mét) của gốc cục bộ (0,0)
   rotation_deg: 0.0      # góc quay mặt bằng so với trục Đông
   scale: 1.0
-venue: {name: "...", category: null, buffer_m: 1.0}      # category: chưa chọn (mục 11)
+venue: {name: "...", category: businesscampus, building_name: null, buffer_m: 1.0}   # category BẮT BUỘC (22 giá trị, xem tag_mapping.yaml); building_name tuỳ chọn, dùng khi IFC không có tên toà nhà
 address: {address: "...", locality: "...", country: "VN"}
 ```
 
@@ -98,6 +98,7 @@ Ref: [ifc-spatial-structure](../research/02-bim/ifc-spatial-structure.md), [prop
 - `id` = `stable_v4(namespace_dự_án, source_ref)`: lấy 16 byte đầu của `sha256(namespace + source_ref)`, đặt version = 4 và variant `10xx`. IMDF yêu cầu id là "RFC 4122 §4.4 compliant version 4 UUID" ([nguồn](https://register.apple.com/resources/imdf/reference/type_designators), đọc 2026-11-06); `uuid5` có version = 5 nên không dùng. Ổn định giữa các lần chạy.
 - Khoá ngoại: `unit.level_id`, `opening.level_id`, `level.building_ids`, `footprint.building_ids`.
 - `level`: `storey_index` theo thứ tự cao độ (mặt đất = 0), `ordinal` map riêng.
+- **Quy tắc `short_name` tầng IFC**: lấy cụm số/mã cuối tên (`short_name_rule: trailing_token`: "Tầng 1"→"1", "B1"→"B1"; không có số thì giữ nguyên); ghi đè được bằng `inputs[].storey.short_name` trong `project.yaml`.
 - `venue`: polygon bao `footprint` + `buffer_m`; `address`, `manifest` từ `project.yaml`.
 - Bảng nào cần geometry null (`building`, `address`) → DataFrame thường.
 Ref: [osm-simple-indoor-tagging](../research/04-osm-imdf-tagging/osm-simple-indoor-tagging.md), [imdf-feature-types](../research/04-osm-imdf-tagging/imdf-feature-types.md).
@@ -148,7 +149,7 @@ Thứ tự ưu tiên (dùng nguồn đầu tiên có):
 2. **`georeference` trong `project.yaml`** (`crs`, `origin`, `rotation_deg`, `scale`): cùng công thức, dùng cho DXF và IFC2X3.
 3. **Control points** (≥ 2 cặp toạ độ cục bộ ↔ toạ độ thật, biến đổi đồng dạng): chỉ thiết kế, chưa bắt buộc cài đặt ở TASK-010.
 4. **`IfcSite.RefLatitude/RefLongitude`**: chỉ làm dự phòng, độ chính xác thấp; luôn ghi cảnh báo.
-5. Không có nguồn nào: lỗi (mã 1) trừ khi `--allow-unreferenced`; khi đó ghi `srs_id=-1`, `_meta.crs_source='none'`, và `export_imdf` từ chối.
+5. Không có nguồn nào: lỗi (mã 1) trừ khi `--allow-unreferenced`; khi đó ghi `srs_id=-1`, `_meta.crs_source='none'`, và `export_imdf` từ chối. Lưu ý (laptop, TASK-010): GDAL mặc định ghi `srs_id=99999` cho SRS tuỳ chỉnh, pipeline vá về `-1` (metadata và header blob), và trong trường hợp này không tạo RTree.
 
 CRS gợi ý cho Việt Nam (đã tra bằng CSDL EPSG qua `pyproj`): `EPSG:4756` (VN-2000 địa lý), `EPSG:3405` / `3406` (UTM 48N / 49N), `5896`–`5899` (TM-3). Quy định phép chiếu theo địa phương chưa xác minh. Ref: [ifc-georeference](../research/02-bim/ifc-georeference.md).
 
@@ -158,7 +159,7 @@ CRS gợi ý cho Việt Nam (đã tra bằng CSDL EPSG qua `pyproj`): `EPSG:4756
 
 - **Vào**: `.gpkg` do pipeline tạo (mục 5). **Ra**: `<tên>.imdf.zip` gồm `manifest.json` (bắt buộc), `address.geojson` (bắt buộc), `venue.geojson` (bắt buộc, đúng một Venue) và các `*.geojson` tuỳ chọn (`building`, `footprint`, `level`, `unit`, `opening`, `fixture`, `detail`, …).
 - **Chuyển đổi mỗi dòng → GeoJSON Feature**: `{"id": <id>, "type": "Feature", "feature_type": <feature_type>, "geometry": <geometry hoặc null>, "properties": {…}}`; bỏ `fid`, `source_*`, `osm_*`; cột JSON text → object/mảng; bảng `attributes` → `geometry: null`; `building`, `address` không có geometry.
-- **Manifest** (đã xác minh, [manifest](https://register.apple.com/resources/imdf/manifest), 2026-11-06): bắt buộc `version` (hiện chỉ cho phép `"1.0.0"`), `created` (DATE-TIME, không múi giờ, ví dụ `2020-09-09T12:34:56`), `language` (LANGUAGE-TAG, ví dụ `vi-VN`); tuỳ chọn `generated_by` (null hoặc chuỗi) và `extensions` (null hoặc mảng). File phải tên `manifest.json`.
+- **Manifest** (đã xác minh, [manifest](https://register.apple.com/resources/imdf/manifest), 2026-11-06): bắt buộc `version` (hiện chỉ cho phép `"1.0.0"`), `created` (DATE-TIME, không múi giờ, ví dụ `2020-09-09T12:34:56`), `language` (LANGUAGE-TAG; dự án dùng `vi`, **cùng tag với khoá trong LABELS**); tuỳ chọn `generated_by` (null hoặc chuỗi) và `extensions` (null hoặc mảng). File phải tên `manifest.json`.
 - **Từ chối** khi: thiếu venue/address, `crs_source='none'`, ràng buộc ở mục 9 loại B không đạt.
 - **Đối chiếu**: gói do Archilogic sinh từ DXF mẫu (nếu có) và validator cộng đồng `IMDFrnt` (chưa đánh giá). Ref: [imdf-relations-and-constraints](../research/04-osm-imdf-tagging/imdf-relations-and-constraints.md).
 
@@ -170,7 +171,9 @@ CRS gợi ý cho Việt Nam (đã tra bằng CSDL EPSG qua `pyproj`): `EPSG:4756
 
 **A. Cấu trúc GPKG** — `application_id = 0x47504B47`; `user_version ≥ 10200`; `gpkg_spatial_ref_sys` có `-1`, `0`, `4326`; `gpkg_contents.data_type` đúng (`features`/`attributes`); `gpkg_geometry_columns` khớp bảng; `PRAGMA integrity_check = ok`; `PRAGMA foreign_key_check` rỗng; `ogrinfo -al -so` đọc được.
 
-**B. Dữ liệu** — CRS 4326 trên mọi bảng có geometry; hình học hợp lệ, không rỗng, đúng kiểu cột; `id` duy nhất và là UUID; mọi khoá ngoại trỏ tới feature tồn tại; các cột bắt buộc không null (`level.name`, `level.short_name`, `venue.name`, …); `building` và `address` không có geometry; `opening` là LineString một phần, nằm trên ranh giới một `unit`; `unit` nằm trong `level`; các `unit` cùng tầng không chồng lấn và hợp ≈ `level` trong dung sai; mọi feature nằm trong `venue`.
+**B. Dữ liệu** — CRS 4326 trên mọi bảng có geometry; hình học hợp lệ, không rỗng, đúng kiểu cột; `id` duy nhất và là UUID; mọi khoá ngoại trỏ tới feature tồn tại; các cột bắt buộc không null (`level.name`, `level.short_name`, `venue.name`, …); `building` và `address` không có geometry; `opening` là LineString một phần, nằm trên ranh giới một `unit`; `unit` nằm trong `level`; các `unit` cùng tầng không chồng lấn; mọi feature nằm trong `venue`.
+
+*Về kiểm "hợp các unit ≈ `level`":* với dữ liệu do pipeline sinh thì luôn đúng (vì `level` được định nghĩa là hợp các unit) nên không phát hiện lỗi. Nó chỉ có ý nghĩa với GPKG do nguồn khác tạo. Phần phát hiện khe/lỗ thực sự là cảnh báo "lỗ/khe bên trong level". Muốn kiểm khe giữa unit có ý nghĩa cần đường bao độc lập (ví dụ đường bao tường `A-WALL` / `IfcWall`): ghi nhận là cải tiến sau (TASK-015), không bắt buộc.
 
 ## 10. Danh sách test cho TASK-010
 
@@ -201,7 +204,7 @@ CRS gợi ý cho Việt Nam (đã tra bằng CSDL EPSG qua `pyproj`): `EPSG:4756
 
 | # | Vấn đề | Việc cần làm |
 |---|---|---|
-| 1 | `venue.category` chưa chọn (27 giá trị của IMDF `reference/categories`) | tra rồi chọn; điền vào `project.yaml` |
+| 1 | `venue.category`: **22 giá trị** hợp lệ (đã đối chiếu trang categories; "27" trước đó là đếm nhầm). Là trường BẮT BUỘC của `project.yaml`, không có mặc định toàn cục; mẫu dùng `businesscampus` | chủ dự án chọn giá trị theo công trình thật |
 | 2 | ~~Dạng LABELS và Manifest~~ **đã xác minh** (mục 5, 7). Còn mở: cách hiểu "Labels MUST not contain mixed case characters" | chọn viết hoa; xác nhận bằng validator/Apple nếu có |
 | 3 | Cột OSM đã có tiền tố `osm_`; `namespace` UUID đã chốt trong `tag_mapping.yaml` | xong |
 | 4 | `IfcTransportElement` ELEVATOR chưa kiểm trong schema | laptop thử trên IFC có thang máy |

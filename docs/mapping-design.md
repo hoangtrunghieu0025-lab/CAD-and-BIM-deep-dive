@@ -53,7 +53,7 @@ Nguồn: [osm-simple-indoor-tagging](../research/04-osm-imdf-tagging/osm-simple-
 ## 5. Còn chưa xác minh / việc cho claude-laptop
 
 - **Layer ngoài mẫu**: `A-GLAZ`, `A-COLS`, `A-STRS`, `A-FLOR` chỉ là gợi ý NCS/AIA (nhãn `example`/`unverified`); danh sách major group chính thức chưa đối chiếu. Xem [layer-naming-conventions](../research/01-cad/layer-naming-conventions.md).
-- **`venue.category`** chưa chọn: phải là 1 trong 27 giá trị của IMDF `reference/categories` (research chưa chép lại).
+- **`venue.category`**: phải là 1 trong **22** giá trị của IMDF `reference/categories` (đã chép ở `config/tag_mapping.yaml`). Bắt buộc đặt trong `project.yaml`; mẫu dùng `businesscampus`, công trình thật do chủ dự án chọn.
 - **`IfcTransportElement` ELEVATOR**: tên class/enum và ánh xạ chưa kiểm trong schema.
 - **`door=*`, `room=*`**: các giá trị hợp lệ chưa đọc (`Key:door`, `Key:room`); config chỉ dùng `door=yes` (loại chưa rõ, đã xác minh) và không gán `room=*`.
 - **LABELS và Manifest** đã xác minh ([type_designators](https://register.apple.com/resources/imdf/reference/type_designators), [manifest](https://register.apple.com/resources/imdf/manifest)); còn mở cách hiểu "Labels MUST not contain mixed case characters" (đã chọn viết hoa).

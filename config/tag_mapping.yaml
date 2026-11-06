@@ -37,7 +37,7 @@ imdf_package:
   venue:
     geometry: buffer_of_building_footprint     # polygon bao hết mọi feature; mọi feature PHẢI nằm trong venue (src: REL)
     buffer_m: 1.0                              # lựa chọn của dự án, không phải của spec
-    category: null                             # TODO: chọn 1 giá trị hợp lệ trong reference/categories (mục venue, 27 giá trị) — CHƯA tra
+    category: null                             # BẮT BUỘC, đặt trong project.yaml (venue.category). 22 giá trị hợp lệ (đã đối chiếu trang reference/categories 2026-11-06): airport, airport.intl, aquarium, businesscampus, casino, communitycenter, conventioncenter, governmentfacility, healthcarefacility, hotel, museum, parkingfacility, resort, retailstore, shoppingcenter, stadium, stripmall, theater, themepark, trainstation, transitstation, university. Dự án mẫu dùng businesscampus (gần nhất với toà nhà văn phòng)
     name: null                                 # bắt buộc; lấy từ IfcSite/IfcBuilding Name hoặc config dự án
     display_point: centroid                    # bắt buộc
     address_id: from_address
@@ -47,7 +47,7 @@ imdf_package:
     country: null                              # mã ISO 3166
   manifest:
     version: "1.0.0"
-    language: "vi-VN"                          # ví dụ trong spec là "en-US"; định nghĩa đầy đủ Manifest object CHƯA xác minh
+    language: "vi"                             # = defaults.language = khoá trong LABELS. Dùng CÙNG một tag ở manifest và LABELS để không phụ thuộc cách spec so khớp ("vi" vs "vi-VN" chưa có câu spec nói rõ); "vi" là LANGUAGE-TAG hợp lệ (RFC 5646)
     generated_by: "cad-and-bim-deep-dive"
 
 # ---------------- Ánh xạ theo loại đối tượng ----------------
@@ -67,6 +67,7 @@ object_types:
     label_rule:                                # IMDF level.name / short_name
       name: "{long_name_or_name | level_case}" # ví dụ "TẦNG 1"
       short_name: "{storey_name | level_case}" # ngắn, ví dụ "1", "B1" (lấy từ tên tầng/level:ref, không lấy tên dài)
+      short_name_rule: trailing_token          # IFC: lấy cụm số/mã cuối tên ('Tầng 1'->'1', 'B1'->'B1'; không có số thì giữ nguyên). Ghi đè bằng project.yaml inputs[].storey.short_name khi cần
     osm:                                       # tầng KHÔNG có feature riêng trong SIT: gắn tag `level` lên mọi phần tử (src: SIT)
       level: "{storey_index}"                  # số vật lý: 0 = mặt đất, -1 = hầm đầu tiên; sinh theo thứ tự Elevation, KHÔNG ép bằng ordinal IMDF
       level:ref: "{storey_name}"               # nhãn như hiển thị trong toà nhà (1, 2, B1…)

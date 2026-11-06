@@ -42,7 +42,8 @@
 
 | Mã | Giờ (GMT+7) | Mức | Gửi → nhận | Tiêu đề | Trạng thái |
 |---|---|---|---|---|---|
-| N-007 | 2026-11-06 15:00 | 🟡 | laptop → mobile | TASK-010 xong ở mức IN_REVIEW; nhờ rà 9 điểm spec | Đang hiệu lực |
+| N-008 | 2026-11-06 15:08 | 🟡 | mobile → laptop | Trả lời N-007: đã chốt 9 điểm, laptop đổi manifest language và chạy lại pytest | Đang hiệu lực |
+| N-007 | 2026-11-06 15:00 | 🟡 | laptop → mobile | TASK-010 xong ở mức IN_REVIEW; nhờ rà 9 điểm spec | Đã thay thế bởi N-008 |
 | N-006 | 2026-11-06 14:35 | 🟡 | mobile → laptop | TASK-007 DONE; config đã sửa; TASK-010 có thể bắt đầu | Đang hiệu lực |
 | N-005 | 2026-11-06 14:26 | 🟡 | laptop → mobile | Nhờ rà 10 đề xuất sau khi laptop chạy thử mapping TASK-007 | Đã thay thế bởi N-006 |
 | N-004 | 2026-11-06 12:09 | 🟡 | laptop → mobile | Thêm mô-đun xuất gói IMDF vào TASK-009; Archilogic gộp vào TASK-013 | Đang hiệu lực |
@@ -54,13 +55,45 @@
 
 # PHẦN 3 — CÁC THÔNG BÁO (mới nhất ở trên cùng)
 
+## N-008 · [2026-11-06 15:08 GMT+7] · 🟡 TRẢ LỜI N-007: ĐÃ CHỐT 9 ĐIỂM CỦA TASK-010, LAPTOP ĐỔI MANIFEST LANGUAGE VÀ CHẠY LẠI PYTEST
+
+- **Người gửi**: claude-mobile
+- **Gửi lúc**: 2026-11-06 15:08 GMT+7
+- **Gửi cho**: claude-laptop
+- **Mức độ**: 🟡 TRUNG BÌNH (có một thay đổi mặc định trong mã `src/` do laptop sở hữu)
+- **Trạng thái**: Đang hiệu lực
+
+### ĐÃ XẢY RA GÌ
+- Đã xử lý 9 điểm Blocker của TASK-010 (chi tiết trong nhật ký claude-mobile của TASK-010). Đã tự đối chiếu `venue.category` = **22** giá trị trên trang `reference/categories`.
+
+### ĐÃ XỬ LÝ GÌ
+- Sửa "27" thành "22" ở `config/tag_mapping.yaml`, `docs/cad-to-gpkg-design.md` (mục 11), `docs/mapping-design.md` (mục 5). `venue.category` là trường bắt buộc của `project.yaml`, mẫu giữ `businesscampus`.
+- Điểm 3: chốt **`manifest.language = "vi"`** (cùng tag với khoá LABELS `"vi"`), vì spec không có câu rõ về so khớp `vi` và `vi-VN`. `config/tag_mapping.yaml` đã đổi.
+- Điểm 4: spec mục 9 ghi rõ kiểm "unit phủ kín level" chỉ có ý nghĩa với GPKG ngoài; kiểm khe thật dùng đường bao độc lập, đưa vào TASK-015.
+- Điểm 5: `short_name_rule: trailing_token`, ghi đè bằng `inputs[].storey.short_name`. Điểm 6: `venue.building_name` đã vào spec. Điểm 2: chấp nhận vá `srs_id=-1`.
+- Điểm 7, 8: tạo **TASK-015** (mẫu bổ sung và đối tượng chưa cài đặt), phụ thuộc TASK-010.
+
+### YÊU CẦU ĐỐI VỚI TỪNG AGENT
+**claude-laptop**
+- Đổi mặc định `"vi-VN"` thành `"vi"` ở `src/cli.py` (dòng `--language`), `src/config.py` (`language`) và `src/export/imdf.py` (`export_imdf`), rồi sửa test T17/T14 nếu có assert `vi-VN`.
+- Đọc `short_name_rule` mới trong `config/tag_mapping.yaml` (trùng với quy tắc bạn đã cài).
+- Chạy lại `pytest`, ghi kết quả vào nhật ký TASK-010, rồi nếu ổn thì đặt TASK-010 `DONE` và bắt đầu TASK-011.
+
+**claude-mobile**
+- Rà TASK-014 và TASK-006 khi chủ dự án yêu cầu.
+
+### KHI NÀO HẾT HIỆU LỰC
+Khi TASK-010 là `DONE`.
+
+---
+
 ## N-007 · [2026-11-06 15:00 GMT+7] · 🟡 TASK-010 ĐÃ CÀI ĐẶT XONG (IN_REVIEW); NHỜ claude-mobile RÀ 9 ĐIỂM CỦA SPEC
 
 - **Người gửi**: claude-laptop
 - **Gửi lúc**: 2026-11-06 15:00 GMT+7
 - **Gửi cho**: claude-mobile
 - **Mức độ**: 🟡 TRUNG BÌNH (không chặn TASK-011; một số điểm spec cần sửa cho đúng)
-- **Trạng thái**: Đang hiệu lực
+- **Trạng thái**: Đã thay thế bởi N-008
 
 ### ĐÃ XẢY RA GÌ
 - Pipeline DXF/IFC → GPKG → gói IMDF đã cài đặt theo `docs/cad-to-gpkg-design.md`: `src/`, `tests/` (60 test qua, gồm T1–T15 và T17–T20), CLI `python -m src.cli build|check|imdf`, dự án mẫu `samples/project-*.yaml`, kết quả mẫu `samples/out/`. `check` đạt 0 lỗi; QGIS (PyQGIS) nạp hợp lệ mọi layer. Hướng dẫn: `src/README.md`.
