@@ -1,0 +1,106 @@
+# config/layer_mapping.yaml — CAD layer / entity  ->  loại đối tượng (TASK-007, bản nháp của claude-mobile)
+#
+# Cách dùng: pipeline đọc file này ở bước "cad2bim". Chuẩn hoá tên layer -> duyệt `rules` theo thứ tự,
+# KHỚP ĐẦU TIÊN THẮNG -> nếu không khớp thì xét `ignore` -> cuối cùng `fallback`.
+# Mỗi rule có nhãn `status`:
+#   sample    = khớp layer của samples/*.dxf (laptop thử được ngay)
+#   example   = tên layer theo NCS/AIA nhưng CHƯA đối chiếu chuẩn gốc (chưa xác minh); chỉ là gợi ý
+#   unverified= đoán, cần mẫu bản vẽ thật
+# Căn cứ: research/01-cad/layer-naming-conventions.md (chiến lược mapping), samples/README.md (layer mẫu).
+
+version: 1
+profile: aia-like          # các profile khác (iso13567, vn_local) thêm sau; xem `profiles_disabled` ở cuối
+
+normalize:                 # áp dụng cho tên layer TRƯỚC khi so khớp (research/01-cad/layer-naming-conventions.md)
+  uppercase: true
+  strip_whitespace: true
+  strip_xref_prefix: true  # "XREF|A-WALL" -> "A-WALL" (lấy phần sau ký tự '|'); cách ezdxf đọc layer có '|' chưa xác minh
+
+units:                     # research/01-cad/coordinates-and-units.md
+  source: dxf_insunits     # đọc $INSUNITS qua doc.units
+  fallback_unit: m         # khi doc.units == 0 (unitless): bắt buộc lấy từ config; đổi theo dự án
+  target_unit: m
+  # conversion_factor ném TypeError với INSUNITS 0, 8, 9, 21-24 -> phải bắt lỗi và dùng fallback_unit
+
+rules:
+  # --- Nhãn phòng (phải đứng TRƯỚC A-AREA vì pattern A-AREA(-.*)? cũng khớp A-AREA-IDEN) ---
+  - id: space-label
+    pattern: '^A-AREA-IDEN$'
+    entity_types: [TEXT, MTEXT]
+    type: space_label            # không tạo đối tượng; gán text làm name/ref cho polygon phòng chứa điểm chèn
+    attach_to: space             # text nằm trong polygon nào thì gán cho polygon đó
+    text_fields: [ref_or_name]   # nội dung text -> thuộc tính name (hoặc ref nếu khớp mã phòng)
+    status: sample
+
+  # --- Phòng / không gian ---
+  - id: space-boundary
+    pattern: '^A-AREA(-.*)?$'
+    entity_types: [LWPOLYLINE, POLYLINE, HATCH]
+    type: space
+    ifc: IfcSpace
+    require_closed: true         # polyline phải khép kín; nếu hở thử shapely.ops.polygonize từ các LINE cùng layer
+    status: sample
+
+  # --- Tường ---
+  - id: wall
+    pattern: '^A-WALL(-.*)?$'
+    entity_types: [LINE, LWPOLYLINE, POLYLINE]
+    type: wall
+    ifc: IfcWall
+    status: sample
+
+  # --- Cửa (block INSERT) ---
+  - id: door
+    pattern: '^A-DOOR(-.*)?$'
+    entity_types: [INSERT]
+    block_pattern: '^DOOR'       # tên block; mẫu dùng block "DOOR"
+    type: door
+    ifc: IfcDoor
+    attributes_from_block: true  # giá trị nằm ở ATTRIB gắn INSERT, không ở ATTDEF của block definition
+    status: sample
+
+  # --- Gợi ý theo NCS/AIA (chưa đối chiếu chuẩn gốc) ---
+  - id: window
+    pattern: '^A-GLAZ(-.*)?$'
+    entity_types: [LINE, LWPOLYLINE, INSERT]
+    type: window
+    ifc: IfcWindow
+    status: example
+  - id: column
+    pattern: '^A-COLS?(-.*)?$'
+    entity_types: [LWPOLYLINE, INSERT, HATCH]
+    type: column
+    ifc: IfcColumn
+    status: example
+  - id: floor-pattern
+    pattern: '^A-FLOR(-.*)?$'
+    entity_types: [LINE, LWPOLYLINE, HATCH, INSERT]
+    type: ignore                 # A-FLOR (đồ nội thất/ hoàn thiện sàn) chưa dùng cho indoor mapping
+    status: example
+  - id: stair
+    pattern: '^A-STRS?(-.*)?$'   # tên layer cầu thang CHƯA xác minh
+    entity_types: [LINE, LWPOLYLINE, INSERT]
+    type: stair
+    ifc: IfcStair
+    status: unverified
+
+ignore:                          # layer không mang thông tin không gian
+  - '^DEFPOINTS$'                # ezdxf coi là tên đặc biệt (research/01-cad/layer-naming-conventions.md)
+  - '^A-ANNO-.*$'                # chú thích; không dùng cho indoor mapping (gợi ý, chưa xác minh)
+  - '.*-DIMS?$'
+  - '.*-TEXT$'
+
+fallback:
+  type: unknown
+  action: report                 # không ném lỗi; thống kê số entity theo layer để người dùng bổ sung rule
+  report_file: out/unmatched_layers.csv
+
+# Profile khác (CHƯA bật; cần mẫu bản vẽ thật để xác nhận)
+profiles_disabled:
+  vn_local:                      # tên layer tiếng Việt thường gặp — đề xuất từ kinh nghiệm chung, chưa xác minh
+    rules:
+      - {pattern: '^TUONG.*$', type: wall,  ifc: IfcWall}
+      - {pattern: '^CUA.*$',   type: door,  ifc: IfcDoor}
+      - {pattern: '^COT.*$',   type: column, ifc: IfcColumn}
+      - {pattern: '^PHONG.*$', type: space, ifc: IfcSpace}
+  iso13567: {note: 'agent 2 ký tự + element + presentation; chưa xác minh cấu trúc cụ thể'}

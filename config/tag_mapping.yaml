@@ -1,0 +1,183 @@
+# config/tag_mapping.yaml — loại đối tượng / IFC class  ->  tag OSM (Simple Indoor Tagging)  ->  feature IMDF (TASK-007, bản nháp của claude-mobile)
+#
+# Đầu vào của bước "normalize": mỗi đối tượng đã có `type` (từ layer_mapping.yaml hoặc từ IFC class).
+# Mỗi mục `object_types.<tên>` có: nguồn IFC, tag OSM, feature IMDF. `rules` bên trong chạy theo thứ tự, KHỚP ĐẦU TIÊN THẮNG.
+# Nhãn `status`: verified = có nguồn đã xác minh trong research/04 (URL ở dòng `src`); unverified = chưa xác minh, cần laptop thử.
+# Nguồn viết tắt:
+#   SIT  = research/04-osm-imdf-tagging/osm-simple-indoor-tagging.md  (OSM wiki Simple_Indoor_Tagging, đọc 2026-11-06)
+#   IMDF = research/04-osm-imdf-tagging/imdf-feature-types.md         (register.apple.com/resources/imdf, đọc 2026-11-06)
+#   REL  = research/04-osm-imdf-tagging/imdf-relations-and-constraints.md
+#   IFC  = research/02-bim/*.md
+
+version: 1
+
+# ---------------- Mặc định chung ----------------
+defaults:
+  ids:
+    scheme: uuid5                    # id IMDF = uuid5(namespace, IfcGloballyUniqueId hoặc "layer|handle" với CAD) -> ổn định giữa các lần chạy
+    namespace: null                  # TODO(dự án): chọn 1 UUID cố định cho dự án và ghi ở đây   (src: IMDF, IFC/ifc-spatial-structure.md)
+  crs:
+    target: "EPSG:4326"              # PRIMARY_OBJECTIVE mục 3.3 bước 5; CRS nguồn lấy từ IfcMapConversion/IfcProjectedCRS hoặc control points (IFC4+)
+  language: vi                       # ngôn ngữ cho name/short_name (LABELS); định dạng LABELS chi tiết chưa xác minh
+  gpkg:
+    layer_per_imdf_feature: true     # mỗi IMDF feature_type = 1 layer; feature không geometry -> bảng attributes (src: IMDF, geopackage-requirements.md)
+    osm_columns: [indoor, level, level_ref, name, ref, door, room, entrance, highway, stairs]   # cột riêng; tag còn lại vào cột `osm_tags` (JSON text)
+    # lưu ý: 'level:ref' -> cột 'level_ref' vì ký tự ':' gây rắc rối trong SQL (src: SIT, mục "Liên quan đến pipeline")
+
+# ---------------- Gói IMDF bắt buộc (phải sinh dù IFC/CAD không có) ----------------
+imdf_package:
+  required_files: [manifest.json, address.geojson, venue.geojson]    # src: REL (bắt buộc)
+  venue:
+    geometry: buffer_of_building_footprint     # polygon bao hết mọi feature; mọi feature PHẢI nằm trong venue (src: REL)
+    buffer_m: 1.0                              # lựa chọn của dự án, không phải của spec
+    category: null                             # TODO: chọn 1 giá trị hợp lệ trong reference/categories (mục venue, 27 giá trị) — CHƯA tra
+    name: null                                 # bắt buộc; lấy từ IfcSite/IfcBuilding Name hoặc config dự án
+    display_point: centroid                    # bắt buộc
+    address_id: from_address
+  address:                                     # bắt buộc; điền theo dự án
+    address: null
+    locality: null
+    country: null                              # mã ISO 3166
+  manifest:
+    version: "1.0.0"
+    language: "vi-VN"                          # ví dụ trong spec là "en-US"; định nghĩa đầy đủ Manifest object CHƯA xác minh
+    generated_by: "cad-and-bim-deep-dive"
+
+# ---------------- Ánh xạ theo loại đối tượng ----------------
+object_types:
+
+  storey:
+    ifc: IfcBuildingStorey
+    osm:                                       # tầng KHÔNG có feature riêng trong SIT: gắn tag `level` lên mọi phần tử (src: SIT)
+      level: "{storey_index}"                  # số vật lý: 0 = mặt đất, -1 = hầm đầu tiên; sinh theo thứ tự Elevation, KHÔNG ép bằng ordinal IMDF
+      level:ref: "{storey_name}"               # nhãn như hiển thị trong toà nhà (1, 2, B1…)
+      indoor: level                            # TUỲ CHỌN: outline tầng
+    imdf:
+      feature_type: level                      # src: IMDF
+      geometry: Polygon                        # outline tầng = hợp các unit cùng tầng (xấp xỉ), PHẢI phủ đúng hợp các unit (src: REL)
+      properties:
+        category: unspecified                  # trong 9 giá trị hợp lệ của level
+        outdoor: false
+        ordinal: "{storey_index}"              # integer; map riêng khỏi OSM `level`
+        name: "{storey_long_name_or_name}"     # BẮT BUỘC (LABELS)
+        short_name: "{storey_name}"            # BẮT BUỘC (LABELS)
+        building_ids: ["{building_id}"]
+    status: verified
+
+  building:
+    ifc: IfcBuilding                           # trong IFC4.3 là subtype IfcFacility (src: IFC/ifc-spatial-structure.md)
+    osm:                                       # `building=*` là tag OSM chung, không thuộc SIT (src: SIT)
+      building: "yes"
+      min_level: "{min_storey_index}"
+      max_level: "{max_storey_index}"
+    imdf:
+      feature_type: building                   # geometry NULL -> ghi thành bảng attributes
+      geometry: null
+      properties: {category: unspecified}      # trong 5 giá trị: parking, transit, transit.bus, transit.train, unspecified
+      companion:
+        feature_type: footprint                # polygon toà nhà nằm ở footprint, nối qua building_ids
+        geometry: Polygon
+        properties: {category: ground, building_ids: ["{building_id}"]}   # aerial | ground | subterranean
+    status: verified
+
+  space:
+    ifc: IfcSpace                              # gắn tầng qua IfcRelAggregates -> dùng get_aggregate, KHÔNG dùng get_container (src: IFC/ifc-spatial-structure.md)
+    geometry_source:                           # footprint 2D: ưu tiên representation FootPrint; mẫu chỉ có Body -> chiếu Body xuống XY (src: IFC/ifcopenshell-geometry-extraction.md)
+      order: [FootPrint, Body_projection]
+    rules:                                     # khớp đầu tiên thắng; so khớp trên IfcSpace.Name / LongName, DXF: text nhãn
+      - id: corridor
+        when: {name_regex: '(?i)\b(h[aà]nh\s*lang|corridor|hallway)\b'}
+        osm: {indoor: corridor}
+        imdf: {feature_type: unit, category: walkway}
+        status: verified                       # src: SIT (indoor=corridor), IMDF (category walkway có trong 63 giá trị unit); regex là lựa chọn của dự án
+      - id: restroom
+        when: {name_regex: '(?i)\b(wc|v[eệ]\s*sinh|toilet|restroom)\b'}
+        osm: {indoor: room}                    # giá trị room=* cho nhà vệ sinh CHƯA tra (Key:room chưa đọc) -> không gán room=*
+        imdf: {feature_type: unit, category: restroom}
+        status: unverified
+      - id: default-room
+        when: {any: true}
+        osm: {indoor: room}                    # "Conventional room with walls"; level=* BẮT BUỘC (src: SIT)
+        imdf: {feature_type: unit, category: room}
+        status: verified
+    osm_common:
+      level: "{storey_index}"                  # bắt buộc trên mọi phần tử indoor
+      level:ref: "{storey_name}"
+      name: "{long_name_or_name}"
+      ref: "{space_name}"                      # mã phòng, ví dụ P101
+    imdf_common:
+      level_id: "{level_id}"
+      name: "{long_name_or_name}"
+    checks:                                    # test tự động (src: REL)
+      - unit_within_level
+      - units_union_equals_level               # unit cùng tầng không chồng lấn, hợp = level, trong dung sai
+    status: verified
+
+  door:
+    ifc: IfcDoor                               # gắn tầng qua IfcRelContainedInSpatialStructure (get_container) — khác IfcSpace
+    geometry_source:
+      order: [opening_extent, OverallWidth_at_placement]
+      width_fallback_m: 0.9                    # OverallWidth là OPTIONAL (src: IFC/ifc-spatial-structure.md); 0.9 là mặc định của dự án
+    rules:
+      - id: building-entrance
+        when: {pset: {Pset_DoorCommon.IsExternal: true}}
+        osm: {entrance: "yes", door: "yes"}        # lối vào toà nhà dùng entrance=* thay indoor=door, vẫn có door=* (src: SIT); door=yes = loại chưa rõ
+        imdf: {feature_type: opening, category: pedestrian}
+        status: verified
+      - id: emergency-exit
+        when: {pset: {Pset_DoorCommon.FireExit: true}}
+        osm: {indoor: door, door: "yes"}
+        imdf: {feature_type: opening, category: emergencyexit}
+        status: unverified                     # FireExit có trong Pset_DoorCommon (src: IFC/property-sets...); ánh xạ sang emergencyexit là suy luận
+      - id: default-door
+        when: {any: true}
+        osm: {indoor: door, door: "yes"}         # cửa nội bộ = NODE indoor=door + door=* (src: SIT)
+        imdf: {feature_type: opening, category: pedestrian}
+        status: verified
+    osm_geometry: Point                        # node tại tâm cửa
+    imdf_geometry: LineString                  # độ dài ≈ bề rộng cửa, không multi-part; PHẢI nằm trên ranh giới unit (src: IMDF)
+    imdf_common: {level_id: "{level_id}"}
+    checks: [opening_on_unit_boundary]
+    status: verified
+
+  wall:
+    ifc: IfcWall
+    osm: {indoor: wall}                        # ưu tiên way theo đường tim tường (src: SIT)
+    osm_common: {level: "{storey_index}"}
+    imdf:
+      mode: simplified                         # simplified | structure
+      # simplified: KHÔNG xuất tường; ranh giới unit đi theo mặt tường (spec cho phép đơn giản hoá)
+      # structure : tường floor-to-ceiling xuất thành unit category structure (spec: MUST là structure Unit nếu mô hình tường); KHÔNG dùng fixture
+      structure: {feature_type: unit, category: structure}
+      # material tuỳ chọn: brick | concrete | drywall | glass | wood (là category unit riêng)
+    status: verified                           # src: IMDF (Tường — quy tắc gốc), SIT
+
+  stair:
+    ifc: IfcStair
+    osm: {stairs: "yes", indoor: room}           # khu cầu thang = area stairs=yes + indoor=room (hoặc indoor=area nếu không tường); từng flight: way highway=steps
+    osm_flight: {highway: steps}               # chỉ dùng khi tách từng đợt bậc
+    imdf: {feature_type: unit, category: stairs}
+    status: verified                           # src: SIT, IMDF (stairs có trong unit categories)
+
+  elevator:
+    ifc: IfcTransportElement                   # PredefinedType = ELEVATOR — CHƯA xác minh enum/ánh xạ trong schema; laptop thử trên IFC có thang máy
+    osm: {highway: elevator, area: "yes", indoor: room}    # (src: SIT, Tag:highway=elevator)
+    osm_door_node: {indoor: door}              # cửa thang máy là node riêng
+    imdf: {feature_type: unit, category: elevator}
+    status: unverified
+
+  column:
+    ifc: IfcColumn
+    osm: null                                  # SIT không có tag cột riêng đã xác minh
+    imdf: {feature_type: unit, category: column}   # cột floor-to-ceiling MUST là column Unit (src: IMDF)
+    status: verified
+
+  window:
+    ifc: IfcWindow
+    osm: {window: "yes"}                         # SIT có window=* (node, có repeat_on); giá trị cụ thể chưa tra
+    imdf: null                                 # IMDF không có feature cho cửa sổ -> không xuất
+    status: unverified
+
+# ---------------- Thứ tự sinh layer GPKG ----------------
+export_order: [venue, address, building, footprint, level, unit, opening, fixture, detail]
+# Feature không geometry (address, building, occupant, relationship) -> bảng attributes (pyogrio.write_dataframe với DataFrame thường)
