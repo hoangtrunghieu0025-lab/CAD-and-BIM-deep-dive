@@ -1,7 +1,7 @@
 # Báo cáo môi trường local (TASK-001)
 
 - Máy: Ubuntu (Linux 7.0.0-42-generic), 16GB RAM (~15GiB), không GPU rời
-- Kiểm tra lúc: 2026-11-06T02:53Z, bởi claude-laptop
+- Kiểm tra lúc: 2026-11-06T09:53+07:00, bởi claude-laptop
 - Trạng thái: **PARTIAL** (phần bắt buộc đã xong; FreeCAD, Blender+Bonsai, LibreCAD chưa cài)
 
 ## Công cụ hệ thống

@@ -40,3 +40,6 @@ Hai agent làm việc trên cùng repo GitHub, phối hợp qua commit trên `ma
 - **Commit + push ngay** sau khi hoàn thành việc, để bên kia thấy được. Commit nhỏ, thường xuyên.
 - Vì mỗi agent chỉ ghi vào thư mục của mình (thư mục được giao), xung đột rất hiếm; nếu có, giải quyết khi rebase và không ghi đè công việc của bên kia.
 - Commit message nêu rõ nhiệm vụ, ví dụ: `research(mobile): add ifc spatial structure notes`.
+
+## 6. Múi giờ
+Mọi thời điểm trong repo (task, nhật ký, thông báo, báo cáo) ghi theo **giờ Việt Nam GMT+7 (Asia/Ho_Chi_Minh)**, dạng `YYYY-MM-DDTHH:MM:SS+07:00` hoặc `YYYY-MM-DD HH:MM GMT+7`. Lấy giờ bằng `TZ=Asia/Ho_Chi_Minh date`, không đoán.

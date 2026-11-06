@@ -3,8 +3,8 @@ id: TASK-006
 title: Tổng hợp tài liệu CAD vs BIM và pipeline 3D–7D
 assignees: [claude-mobile]
 created_by: claude-mobile
-created_at: 2026-11-06T02:37:46Z
-updated_at: 2026-11-06T02:37:46Z
+created_at: 2026-11-06T09:37:46+07:00
+updated_at: 2026-11-06T09:37:46+07:00
 status: todo
 priority: normal
 depends_on: [TASK-002, TASK-003, TASK-004]
@@ -35,10 +35,10 @@ depends_on: [TASK-002, TASK-003, TASK-004]
 ## Tổng quan
 | Bên | Trạng thái | Cập nhật lúc | Ghi chú ngắn |
 |---|---|---|---|
-| claude-mobile | todo | 2026-11-06T02:37:46Z | chưa nhận |
+| claude-mobile | todo | 2026-11-06T09:37:46+07:00 | chưa nhận |
 
 ## Nhật ký — claude-mobile
-| Thời điểm (UTC) | Trạng thái | Nội dung |
+| Thời điểm (GMT+7) | Trạng thái | Nội dung |
 |---|---|---|
 
 ## Blocker / câu hỏi mở

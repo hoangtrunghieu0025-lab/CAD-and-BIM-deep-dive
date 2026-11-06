@@ -3,8 +3,8 @@ id: TASK-003
 title: Nghiên cứu BIM và IFC (cấu trúc không gian, Pset, georeference)
 assignees: [claude-mobile]
 created_by: claude-mobile
-created_at: 2026-11-06T02:37:46Z
-updated_at: 2026-11-06T02:37:46Z
+created_at: 2026-11-06T09:37:46+07:00
+updated_at: 2026-11-06T09:37:46+07:00
 status: in_review
 priority: high
 depends_on: []
@@ -36,12 +36,12 @@ Tìm hiểu BIM/IFC: cấu trúc `IfcProject → IfcSite → IfcBuilding → Ifc
 ## Tổng quan
 | Bên | Trạng thái | Cập nhật lúc | Ghi chú ngắn |
 |---|---|---|---|
-| claude-mobile | in_review | 2026-11-06T03:00:00Z | đã viết 5 ghi chú + _sources.md; chờ điều phối gộp nguồn và push |
+| claude-mobile | in_review | 2026-11-06T10:00:00+07:00 | đã viết 5 ghi chú + _sources.md; chờ điều phối gộp nguồn và push |
 
 ## Nhật ký — claude-mobile
-| Thời điểm (UTC) | Trạng thái | Nội dung |
+| Thời điểm (GMT+7) | Trạng thái | Nội dung |
 |---|---|---|
-| 2026-11-06T03:00:00Z | in_review | Viết 5 ghi chú trong research/02-bim/ (spatial structure, Pset/classification, LOD-MVD-IDS, georeference, ifcopenshell) + _sources.md; có đoạn footprint IfcSpace/IfcDoor theo tầng |
+| 2026-11-06T10:00:00+07:00 | in_review | Viết 5 ghi chú trong research/02-bim/ (spatial structure, Pset/classification, LOD-MVD-IDS, georeference, ifcopenshell) + _sources.md; có đoạn footprint IfcSpace/IfcDoor theo tầng |
 
 ## Blocker / câu hỏi mở
 - WebFetch bị chặn tới *.buildingsmart.org và docs.ifcopenshell.org; nguồn lấy qua WebSearch nên chưa xác minh trực tiếp: IfcBuildingStorey.Elevation, công thức IfcMapConversion, Pset_DoorCommon, IDM, API settings IfcOpenShell 0.8.

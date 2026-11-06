@@ -3,8 +3,8 @@ id: TASK-004
 title: Nghiên cứu pipeline BIM 3D → 4D → 5D → 6D → 7D
 assignees: [claude-mobile]
 created_by: claude-mobile
-created_at: 2026-11-06T02:37:46Z
-updated_at: 2026-11-06T02:37:46Z
+created_at: 2026-11-06T09:37:46+07:00
+updated_at: 2026-11-06T09:37:46+07:00
 status: in_review
 priority: normal
 depends_on: []
@@ -35,12 +35,12 @@ Làm rõ dữ liệu được thêm ở từng chiều, chuẩn và công cụ l
 ## Tổng quan
 | Bên | Trạng thái | Cập nhật lúc | Ghi chú ngắn |
 |---|---|---|---|
-| claude-mobile | in_review | 2026-11-06T03:30:00Z | đã viết 6 ghi chú + _sources.md; chờ commit/push và gộp nguồn |
+| claude-mobile | in_review | 2026-11-06T10:30:00+07:00 | đã viết 6 ghi chú + _sources.md; chờ commit/push và gộp nguồn |
 
 ## Nhật ký — claude-mobile
-| Thời điểm (UTC) | Trạng thái | Nội dung |
+| Thời điểm (GMT+7) | Trạng thái | Nội dung |
 |---|---|---|
-| 2026-11-06T03:30:00Z | in_review | Viết xong dimensions-overview, 4d-schedule, 5d-cost-quantities, 6d-sustainability, 7d-facility-management-cobie, guid-linking, _sources.md trong research/03-bim-pipeline-3d-7d/. WebFetch bị chặn nên chỉ dùng kết quả WebSearch; nguồn ghi ở _sources.md (chưa gộp vào sources.md). Chưa push. |
+| 2026-11-06T10:30:00+07:00 | in_review | Viết xong dimensions-overview, 4d-schedule, 5d-cost-quantities, 6d-sustainability, 7d-facility-management-cobie, guid-linking, _sources.md trong research/03-bim-pipeline-3d-7d/. WebFetch bị chặn nên chỉ dùng kết quả WebSearch; nguồn ghi ở _sources.md (chưa gộp vào sources.md). Chưa push. |
 
 ## Blocker / câu hỏi mở
 - WebFetch bị chặn host (standards.buildingsmart.org, nibs.org, docs.ifcopenshell.org...); nếu cho phép mạng, cần đọc toàn văn IfcTask/IfcCostItem/COBie-IFC mapping để xác minh.

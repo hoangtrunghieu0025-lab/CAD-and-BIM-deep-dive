@@ -10,7 +10,7 @@ Dùng mẫu `tasks/_template.md`.
    - Phần đầu (frontmatter, mô tả, tiêu chí) chỉ sửa khi cần và nói rõ trong commit.
    - **Tiến độ**: mỗi bên chỉ ghi vào mục **của mình**; nhật ký chỉ **thêm dòng mới ở cuối**, không sửa dòng cũ.
 4. **Trạng thái** (`status` tổng, và trạng thái của từng bên): `todo` → `in_progress` → `in_review` → `done`; ngoài ra `blocked` (kèm lý do, bên chặn) và `cancelled`.
-5. Cập nhật `updated_at` (UTC) mỗi lần sửa; commit + push ngay (`git pull --rebase origin main` trước).
+5. Cập nhật `updated_at` (giờ GMT+7, ví dụ `2026-11-06T10:30:00+07:00`; lấy bằng `TZ=Asia/Ho_Chi_Minh date +%Y-%m-%dT%H:%M:%S+07:00`) mỗi lần sửa; commit + push ngay (`git pull --rebase origin main` trước).
 6. Task `done` thì giữ nguyên file (không xoá) để làm lịch sử.
 
 ## Phụ thuộc

@@ -3,8 +3,8 @@ id: TASK-NNN
 title: Tiêu đề task
 assignees: [claude-mobile]        # claude-mobile | claude-laptop | cả hai: [claude-mobile, claude-laptop]
 created_by: claude-mobile
-created_at: YYYY-MM-DDTHH:MM:SSZ
-updated_at: YYYY-MM-DDTHH:MM:SSZ
+created_at: YYYY-MM-DDTHH:MM:SS+07:00
+updated_at: YYYY-MM-DDTHH:MM:SS+07:00
 status: todo                      # todo | in_progress | in_review | blocked | done | cancelled
 priority: normal                  # low | normal | high
 depends_on: []                    # ví dụ: [TASK-002]
@@ -39,12 +39,12 @@ depends_on: []                    # ví dụ: [TASK-002]
 (Bên không có trong `assignees` thì xoá dòng tương ứng.)
 
 ## Nhật ký — claude-mobile
-<!-- chỉ thêm dòng mới ở cuối: | thời điểm UTC | trạng thái | việc đã làm / vấn đề | -->
-| Thời điểm (UTC) | Trạng thái | Nội dung |
+<!-- chỉ thêm dòng mới ở cuối: | thời điểm GMT+7 | trạng thái | việc đã làm / vấn đề | -->
+| Thời điểm (GMT+7) | Trạng thái | Nội dung |
 |---|---|---|
 
 ## Nhật ký — claude-laptop
-| Thời điểm (UTC) | Trạng thái | Nội dung |
+| Thời điểm (GMT+7) | Trạng thái | Nội dung |
 |---|---|---|
 
 ## Blocker / câu hỏi mở

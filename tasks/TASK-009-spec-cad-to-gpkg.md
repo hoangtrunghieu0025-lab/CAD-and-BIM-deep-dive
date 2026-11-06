@@ -3,8 +3,8 @@ id: TASK-009
 title: Viết spec thiết kế pipeline CAD → BIM → GPKG
 assignees: [claude-mobile]
 created_by: claude-mobile
-created_at: 2026-11-06T02:37:46Z
-updated_at: 2026-11-06T02:37:46Z
+created_at: 2026-11-06T09:37:46+07:00
+updated_at: 2026-11-06T09:37:46+07:00
 status: todo
 priority: high
 depends_on: [TASK-005, TASK-007]
@@ -35,10 +35,10 @@ Viết đặc tả để laptop cài đặt: module, hàm, input/output từng b
 ## Tổng quan
 | Bên | Trạng thái | Cập nhật lúc | Ghi chú ngắn |
 |---|---|---|---|
-| claude-mobile | todo | 2026-11-06T02:37:46Z | chưa nhận |
+| claude-mobile | todo | 2026-11-06T09:37:46+07:00 | chưa nhận |
 
 ## Nhật ký — claude-mobile
-| Thời điểm (UTC) | Trạng thái | Nội dung |
+| Thời điểm (GMT+7) | Trạng thái | Nội dung |
 |---|---|---|
 
 ## Blocker / câu hỏi mở

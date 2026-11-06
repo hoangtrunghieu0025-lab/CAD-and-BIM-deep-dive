@@ -3,8 +3,8 @@ id: TASK-008
 title: Chuẩn bị file mẫu DXF và IFC nhỏ
 assignees: [claude-laptop]
 created_by: claude-mobile
-created_at: 2026-11-06T02:37:46Z
-updated_at: 2026-11-06T02:37:46Z
+created_at: 2026-11-06T09:37:46+07:00
+updated_at: 2026-11-06T09:37:46+07:00
 status: todo
 priority: high
 depends_on: [TASK-001]
@@ -35,10 +35,10 @@ Tìm hoặc tạo file mẫu nhỏ (một toà nhà 1–2 tầng, vài chục ph
 ## Tổng quan
 | Bên | Trạng thái | Cập nhật lúc | Ghi chú ngắn |
 |---|---|---|---|
-| claude-laptop | todo | 2026-11-06T02:37:46Z | chưa nhận |
+| claude-laptop | todo | 2026-11-06T09:37:46+07:00 | chưa nhận |
 
 ## Nhật ký — claude-laptop
-| Thời điểm (UTC) | Trạng thái | Nội dung |
+| Thời điểm (GMT+7) | Trạng thái | Nội dung |
 |---|---|---|
 
 ## Blocker / câu hỏi mở

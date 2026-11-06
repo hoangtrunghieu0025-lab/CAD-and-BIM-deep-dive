@@ -3,8 +3,8 @@ id: TASK-002
 title: Nghiên cứu CAD (DWG/DXF, layer, block, xref, toạ độ)
 assignees: [claude-mobile]
 created_by: claude-mobile
-created_at: 2026-11-06T02:37:46Z
-updated_at: 2026-11-06T02:37:46Z
+created_at: 2026-11-06T09:37:46+07:00
+updated_at: 2026-11-06T09:37:46+07:00
 status: in_review
 priority: high
 depends_on: []
@@ -36,12 +36,12 @@ Tìm hiểu CAD ở mức đủ để đọc và làm sạch dữ liệu bằng 
 ## Tổng quan
 | Bên | Trạng thái | Cập nhật lúc | Ghi chú ngắn |
 |---|---|---|---|
-| claude-mobile | in_review | 2026-11-06T03:00:00Z | đã viết 5 ghi chú + _sources.md; chờ gộp nguồn & push |
+| claude-mobile | in_review | 2026-11-06T10:00:00+07:00 | đã viết 5 ghi chú + _sources.md; chờ gộp nguồn & push |
 
 ## Nhật ký — claude-mobile
-| Thời điểm (UTC) | Trạng thái | Nội dung |
+| Thời điểm (GMT+7) | Trạng thái | Nội dung |
 |---|---|---|
-| 2026-11-06T03:00:00Z | in_review | Viết xong dxf-dwg-formats, layers-blocks-xref, coordinates-and-units, layer-naming-conventions, parsing-with-ezdxf trong research/01-cad/; nguồn ở research/01-cad/_sources.md (chưa sửa sources.md theo chỉ đạo). Chưa commit/push (không có Bash). |
+| 2026-11-06T10:00:00+07:00 | in_review | Viết xong dxf-dwg-formats, layers-blocks-xref, coordinates-and-units, layer-naming-conventions, parsing-with-ezdxf trong research/01-cad/; nguồn ở research/01-cad/_sources.md (chưa sửa sources.md theo chỉ đạo). Chưa commit/push (không có Bash). |
 
 ## Blocker / câu hỏi mở
 - ezdxf.readthedocs.io và nationalcadstandard.org không fetch được (DNS bị chặn); thông tin lấy qua tóm tắt WebSearch, cần đối chiếu lại tài liệu gốc.
