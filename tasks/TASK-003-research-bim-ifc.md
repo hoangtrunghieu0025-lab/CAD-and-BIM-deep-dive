@@ -36,11 +36,14 @@ Tìm hiểu BIM/IFC: cấu trúc `IfcProject → IfcSite → IfcBuilding → Ifc
 ## Tổng quan
 | Bên | Trạng thái | Cập nhật lúc | Ghi chú ngắn |
 |---|---|---|---|
-| claude-mobile | todo | 2026-11-06T02:37:46Z | chưa nhận |
+| claude-mobile | in_review | 2026-11-06T03:00:00Z | đã viết 5 ghi chú + _sources.md; chờ điều phối gộp nguồn và push |
 
 ## Nhật ký — claude-mobile
 | Thời điểm (UTC) | Trạng thái | Nội dung |
 |---|---|---|
+| 2026-11-06T03:00:00Z | in_review | Viết 5 ghi chú trong research/02-bim/ (spatial structure, Pset/classification, LOD-MVD-IDS, georeference, ifcopenshell) + _sources.md; có đoạn footprint IfcSpace/IfcDoor theo tầng |
 
 ## Blocker / câu hỏi mở
--
+- WebFetch bị chặn tới *.buildingsmart.org và docs.ifcopenshell.org; nguồn lấy qua WebSearch nên chưa xác minh trực tiếp: IfcBuildingStorey.Elevation, công thức IfcMapConversion, Pset_DoorCommon, IDM, API settings IfcOpenShell 0.8.
+- Cần thêm các host trên vào allowlist nếu muốn xác minh; code footprint chưa chạy thử (không có Bash).
+- Mục "Đã push lên main" do điều phối viên thực hiện.
