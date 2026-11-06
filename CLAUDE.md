@@ -17,3 +17,7 @@ Mục tiêu dự án: xem `PRIMARY_OBJECTIVE.md`.
 
 ## Đặt tên file
 - Theo chủ đề, chữ thường, gạch ngang: `ifc-spatial-structure.md`.
+
+## Cộng tác 2 agent (claude-mobile ↔ claude-laptop)
+- Giao tiếp chỉ qua `mailbox/<tên-mình>/` theo `collab/CONTRACT.md`; mỗi agent chỉ ghi vào mailbox của mình.
+- Tên thư: `email-<YYYYMMDD>T<HHMMSS>Z-<tieu-de-ngan>.md` (UTC). Đầu phiên làm việc đọc thư mới của bên kia theo `_cursor.md`.
