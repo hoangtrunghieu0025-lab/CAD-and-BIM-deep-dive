@@ -1,16 +1,16 @@
 ---
 id: TASK-001
-title: "[IN_REVIEW][MAIN] Kiểm tra và cài môi trường local (Ubuntu)"
+title: "[DONE][MAIN] Kiểm tra và cài môi trường local (Ubuntu)"
 category: MAIN
 assignees: [claude-laptop]
 created_by: claude-mobile
 created_at: 2026-11-06T09:31:35+07:00
-updated_at: 2026-11-06T09:55:00+07:00
-status: in_review
+updated_at: 2026-11-06T14:18:40+07:00
+status: done
 priority: high
 ---
 
-# [IN_REVIEW][MAIN] TASK-001 — Kiểm tra và cài môi trường local (Ubuntu)
+# [DONE][MAIN] TASK-001 — Kiểm tra và cài môi trường local (Ubuntu)
 
 ## Mô tả
 Kiểm tra máy local (Ubuntu, 16GB RAM, không GPU rời) và cài môi trường tối thiểu để chạy pipeline CAD → BIM → GPKG và mở `.gpkg` trong QGIS.
@@ -25,7 +25,7 @@ Kiểm tra máy local (Ubuntu, 16GB RAM, không GPU rời) và cài môi trườ
 ## Tiêu chí hoàn thành (acceptance)
 - [x] `python -c "import ezdxf, ifcopenshell, shapely, geopandas"` chạy không lỗi trong `.venv`
 - [x] `ogrinfo --version` và `qgis --version` in được phiên bản
-- [ ] Hai file đầu ra đã commit và push lên `main`
+- [x] Hai file đầu ra đã commit và push lên `main`
 
 ## Phạm vi từng bên
 - **claude-laptop**: toàn bộ; được ghi `docs/local-env-report.md`, `requirements.txt`.
@@ -38,12 +38,13 @@ Kiểm tra máy local (Ubuntu, 16GB RAM, không GPU rời) và cài môi trườ
 ## Tổng quan
 | Bên | Trạng thái | Cập nhật lúc | Ghi chú ngắn |
 |---|---|---|---|
-| claude-laptop | in_review | 2026-11-06T09:55:00+07:00 | PARTIAL: phần bắt buộc xong; chưa cài FreeCAD/Blender+Bonsai/LibreCAD |
+| claude-laptop | done | 2026-11-06T14:18:40+07:00 | phần bắt buộc xong; công cụ GUI chuyển sang TASK-013 |
 
 ## Nhật ký — claude-laptop
 | Thời điểm (GMT+7) | Trạng thái | Nội dung |
 |---|---|---|
 | 2026-11-06T09:55:00+07:00 | in_review | Tạo `.venv`, cài ezdxf/ifcopenshell/shapely/geopandas...; import OK; `ogrinfo` GDAL 3.8.4, `qgis` 3.44.7. Ghi `docs/local-env-report.md`, `requirements.txt`. FreeCAD, Blender+Bonsai, LibreCAD chưa cài (cần sudo). |
+| 2026-11-06T14:18:40+07:00 | done | Đặt DONE: mọi tiêu chí thoả, file đầu ra đã có trên `origin/main` (kiểm bằng `git cat-file`). Lý do: TASK-010 phụ thuộc task này phải `DONE`. |
 
 ## Blocker / câu hỏi mở
 - Có muốn cài FreeCAD, Blender+Bonsai, LibreCAD không (cần sudo)? Hiện chưa cài.

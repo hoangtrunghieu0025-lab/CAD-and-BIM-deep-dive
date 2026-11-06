@@ -1,17 +1,17 @@
 ---
 id: TASK-013
-title: "[TODO][SIDE] Cài FreeCAD, Blender + Bonsai, LibreCAD và dùng thử Archilogic"
+title: "[IN_PROGRESS][SIDE] Cài FreeCAD, Blender + Bonsai, LibreCAD và dùng thử Archilogic"
 category: SIDE
 assignees: [claude-laptop]
 created_by: claude-laptop
 created_at: 2026-11-06T10:37:25+07:00
-updated_at: 2026-11-06T12:09:16+07:00
-status: todo
+updated_at: 2026-11-06T14:15:23+07:00
+status: in_progress
 priority: normal
 depends_on: [TASK-001]
 ---
 
-# [TODO][SIDE] TASK-013 — Cài FreeCAD, Blender + Bonsai, LibreCAD và dùng thử Archilogic
+# [IN_PROGRESS][SIDE] TASK-013 — Cài FreeCAD, Blender + Bonsai, LibreCAD và dùng thử Archilogic
 
 ## Mô tả
 TASK-001 xác nhận ba công cụ GUI sau chưa có trên máy local (Ubuntu 24.04, 16GB RAM, không GPU rời): FreeCAD, Blender + Bonsai (BlenderBIM), LibreCAD. Cài và kiểm chứng để mở được `samples/sample-floor-*.dxf` và `samples/sample-building.ifc` bằng mắt, đối chiếu với kết quả `ezdxf`/`ifcopenshell`. Chưa task nào khác phụ thuộc, nên không chặn pipeline.
@@ -64,12 +64,14 @@ Tên gói và nguồn dưới đây là gợi ý, chưa xác minh trên máy nà
 ## Tổng quan
 | Bên | Trạng thái | Cập nhật lúc | Ghi chú ngắn |
 |---|---|---|---|
-| claude-laptop | todo | 2026-11-06T10:37:25+07:00 | chưa nhận; cần người dùng chạy lệnh cài (sudo) |
+| claude-laptop | in_progress | 2026-11-06T12:17:25+07:00 | đã kiểm nguồn cài; chờ chủ dự án chạy lệnh sudo (phần A) và đăng ký Archilogic (phần B) |
 
 ## Nhật ký — claude-laptop
 | Thời điểm (GMT+7) | Trạng thái | Nội dung |
 |---|---|---|
 | 2026-11-06T12:09:16+07:00 | todo | Theo chủ dự án: gộp phần B — dùng thử Archilogic (kết quả từ TASK-014) vào task này; đổi tiêu đề. Chưa bắt đầu. |
+| 2026-11-06T12:17:25+07:00 | in_progress | Nhận task. Kiểm nguồn cài (chưa cài gì): apt có `librecad` 2.2.0.2 và `blender` 4.0.2 (quá cũ cho Bonsai ≥4.2); không có gói apt `freecad` trên máy này; snap `freecad` stable 1.1 (529MB), snap `blender` có kênh 5.0/stable=5.0.1; Bonsai 0.9.0-post1 (py311) trên extensions.blender.org yêu cầu Blender 4.2.0–5.1.0. `sudo` cần mật khẩu nên chờ chủ dự án chạy. |
+| 2026-11-06T14:15:23+07:00 | in_progress | Phần A (một phần): **LibreCAD 2.2.0.2** (apt) và **Blender 5.0.1** (snap `5.0/stable`) đã cài. **Bonsai 0.9.0-post1** cài bằng dòng lệnh Blender; Blender chạy nền nạp `sample-building.ifc` OK (IFC4, 2 tầng Elevation 0.0/3.0, 26 IfcSpace, 24 IfcDoor, 8 IfcWall). LibreCAD: `dxf2pdf -a` dựng đúng `sample-floor-1.dxf` (ảnh `docs/assets/librecad-sample-floor-1.png`); chưa nhìn trực tiếp GUI/bảng layer. **FreeCAD chưa cài**: lỗi `network is unreachable` lúc tải snap lần đầu; chờ chủ dự án chạy lại `sudo snap install freecad`. Lưu ý: lần tải Bonsai đầu bị cắt (654 KB, sha256 sai) nên bỏ, tải lại 170 MB và kiểm sha256 trước khi cài. Cập nhật `docs/local-env-report.md`. |
 
 ## Blocker / câu hỏi mở
 - Cần `sudo` để cài; chờ người dùng quyết định cách cài (apt/snap) cho từng công cụ.
