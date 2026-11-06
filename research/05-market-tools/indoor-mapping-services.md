@@ -60,7 +60,8 @@ Trung bình. Giá Archilogic và FAQ/chương trình Apple đọc từ trang ch�
 - **Khoá nhà cung cấp/quyền dữ liệu:** Xuất được nhiều format mở (kể cả IMDF/GeoJSON), giảm khoá; quyền dữ liệu/ToS chưa đọc. Trang nói "Export in any format" ở Plus/Starter [THỨ CẤP qua tìm kiếm].
 - **Mạnh/hạn chế:** Mạnh: giá công khai rõ, nhận DXF/DWG, ra IMDF/GeoJSON. Hạn chế: không có GPKG/OSM tags; không xác nhận IFC đầu vào; chất lượng nhận diện phòng/cửa trên CAD thật chưa kiểm; tính theo floor plan nên toà nhiều tầng đắt.
 - **Nguồn:** https://www.archilogic.com/pricing (2026-11-06).
-- **Chưa xác minh:** tiền tệ, điều khoản dữ liệu, độ chính xác đầu ra IMDF so với Apple validator, IFC input.
+- Cập nhật 2026-11-06 (TASK-013 phần B): màn hình đặt hàng `app.archilogic.com/order` của chủ dự án hiển thị **"Order total $329.00 USD"** cho việc chuyển đổi 1 file DXF (nút "Process and complete order"; hoàn tiền đầy đủ nếu không hài lòng trong 1 ngày làm việc sau khi giao mô hình). Tiền tệ của khoản phí chuyển đổi $329 vì vậy là **USD (đã xác minh)**; tiền tệ của gói Plus/Professional vẫn chưa ghi trên trang giá. Chưa trả tiền; chưa xác minh được Starter có xuất IMDF.
+- **Chưa xác minh:** tiền tệ của gói Plus/Professional, điều khoản dữ liệu, độ chính xác đầu ra IMDF so với Apple validator, IFC input.
 
 ### Pointr (IMDF Converter / MapScale / Microsoft Places converter)
 - **Nhà cung cấp & loại:** Pointr; nhà cung cấp indoor mapping/wayfinding/positioning; có công cụ IMDF Conversion.

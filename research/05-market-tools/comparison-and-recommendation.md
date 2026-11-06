@@ -65,6 +65,8 @@ Nguồn từng dòng: `open-source-tools.md` (C), `academic-community.md` (E), `
 | Pointr converter | $125/floor plan (nguồn thứ cấp) | $125 × 10 = $1.250 (chưa xác minh) | $6.250 (chưa xác minh) |
 | FME, ArcGIS Indoors, Mappedin, MazeMap, Mapsted | liên hệ báo giá | **không tính được** | **không tính được** |
 
+**Cập nhật 2026-11-06 (TASK-013 phần B): màn hình đặt hàng `app.archilogic.com/order` của chủ dự án hiển thị **"Order total $329.00 USD"** cho việc chuyển đổi 1 file DXF (nút "Process and complete order"; hoàn tiền đầy đủ nếu không hài lòng trong 1 ngày làm việc sau khi giao mô hình). Tiền tệ của khoản phí chuyển đổi $329 vì vậy là **USD (đã xác minh)**; tiền tệ của gói Plus/Professional vẫn chưa ghi trên trang giá. Chưa trả tiền; chưa xác minh được Starter có xuất IMDF.**
+
 Các con số ở cột 3–4 là **phép nhân của phiên F từ giá niêm yết**, chưa gồm thuế/phí khác; tiền tệ trên trang Archilogic **không được ghi** (chỉ ký hiệu "$"); chưa kiểm số "floor plan" có là một tầng hay một bản vẽ. Mẫu của dự án có 2 tầng; số tầng thực tế chưa biết nên bảng dùng 10 và 50 làm kịch bản. Không tính "theo số người dùng" vì các dịch vụ trên tính theo floor plan.
 
 ## 4. Khoảng trống (chưa công cụ nào phủ)
