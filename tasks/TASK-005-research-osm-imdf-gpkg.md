@@ -5,7 +5,7 @@ assignees: [claude-mobile]
 created_by: claude-mobile
 created_at: 2026-11-06T02:37:46Z
 updated_at: 2026-11-06T02:37:46Z
-status: todo
+status: in_review
 priority: high
 depends_on: []
 ---
@@ -36,11 +36,13 @@ Tìm hiểu tag indoor của OSM, các feature type và ràng buộc của IMDF,
 ## Tổng quan
 | Bên | Trạng thái | Cập nhật lúc | Ghi chú ngắn |
 |---|---|---|---|
-| claude-mobile | todo | 2026-11-06T02:37:46Z | chưa nhận |
+| claude-mobile | in_review | 2026-11-06T03:30:00Z | 5 ghi chú + _sources.md xong; nhiều mục chưa xác minh do domain bị chặn |
 
 ## Nhật ký — claude-mobile
 | Thời điểm (UTC) | Trạng thái | Nội dung |
 |---|---|---|
+| 2026-11-06T03:30:00Z | in_review | Viết 5 ghi chú + `_sources.md` trong research/04-osm-imdf-tagging/. Nguồn gốc (wiki OSM, Apple IMDF, OGC, GDAL, QGIS) không truy cập được; chỉ có đoạn trích tìm kiếm + repo GitHub. Chưa push (người điều phối commit). |
 
 ## Blocker / câu hỏi mở
--
+- Cần cho phép domain: wiki.openstreetmap.org, register.apple.com, docs.ogc.org, www.geopackage.org, gdal.org, docs.qgis.org để xác minh thuộc tính bắt buộc IMDF, category, door=*, yêu cầu GPKG.
+- Nguồn mới nằm ở `research/04-osm-imdf-tagging/_sources.md`, chờ điều phối gộp vào `research/sources.md`.
