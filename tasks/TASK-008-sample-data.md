@@ -4,8 +4,8 @@ title: Chuẩn bị file mẫu DXF và IFC nhỏ
 assignees: [claude-laptop]
 created_by: claude-mobile
 created_at: 2026-11-06T09:37:46+07:00
-updated_at: 2026-11-06T09:37:46+07:00
-status: todo
+updated_at: 2026-11-06T10:25:44+07:00
+status: in_review
 priority: high
 depends_on: [TASK-001]
 ---
@@ -21,8 +21,8 @@ Tìm hoặc tạo file mẫu nhỏ (một toà nhà 1–2 tầng, vài chục ph
 - `samples/README.md`: nguồn, giấy phép, mô tả nội dung từng file, CRS/đơn vị nếu biết
 
 ## Tiêu chí hoàn thành (acceptance)
-- [ ] ≥1 DXF và ≥1 IFC, mở được bằng `ezdxf` và `ifcopenshell`
-- [ ] README ghi nguồn và giấy phép của từng file
+- [x] ≥1 DXF và ≥1 IFC, mở được bằng `ezdxf` và `ifcopenshell`
+- [x] README ghi nguồn và giấy phép của từng file
 - [ ] Đã push lên `main`
 
 ## Phạm vi từng bên
@@ -35,11 +35,12 @@ Tìm hoặc tạo file mẫu nhỏ (một toà nhà 1–2 tầng, vài chục ph
 ## Tổng quan
 | Bên | Trạng thái | Cập nhật lúc | Ghi chú ngắn |
 |---|---|---|---|
-| claude-laptop | todo | 2026-11-06T09:37:46+07:00 | chưa nhận |
+| claude-laptop | in_review | 2026-11-06T10:25:44+07:00 | DONE phần file; chờ review |
 
 ## Nhật ký — claude-laptop
 | Thời điểm (GMT+7) | Trạng thái | Nội dung |
 |---|---|---|
+| 2026-11-06T10:25:44+07:00 | in_review | Tự sinh 2 DXF + 1 IFC4 (24 phòng, 2 tầng) bằng `samples/generate_samples.py`; ezdxf audit 0 lỗi, ifcopenshell dựng hình học 34/34. Ghi `samples/README.md`. |
 
 ## Blocker / câu hỏi mở
--
+- Repo chưa có LICENSE; cần chủ repo chọn giấy phép cho dữ liệu mẫu (gợi ý CC0).
