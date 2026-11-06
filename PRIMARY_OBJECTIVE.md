@@ -12,10 +12,10 @@
   | Định dạng | Ghi chú |
   |---|---|
   | DWG | Nhị phân, của Autodesk, phổ biến nhất |
-  | DXF | Dạng trao đổi (text/ASCII), dễ parse – thư viện `ezdxf` |
+  | DXF | Dạng trao đổi (thường ASCII, có biến thể binary), dễ parse – thư viện `ezdxf` (`ezdxf.recover` chỉ hỗ trợ ASCII) |
   | DGN | MicroStation (Bentley) |
   | SVG/PDF | Bản vẽ vector xuất ra, mất nhiều thông tin |
-- **Khái niệm cần nắm**: layer, block/attribute, xref, đơn vị bản vẽ, hệ toạ độ cục bộ (WCS/UCS), tỉ lệ, model space vs paper space.
+- **Khái niệm cần nắm**: layer, block/attribute, xref, đơn vị bản vẽ, hệ toạ độ (DXF lưu ở WCS hoặc OCS, không lưu UCS), tỉ lệ, model space vs paper space.
 - **Hạn chế**: không có quan hệ giữa đối tượng, quy ước đặt tên layer tuỳ từng đơn vị thiết kế, khó tái sử dụng dữ liệu.
 
 ### 1.2. BIM (Building Information Modeling)
@@ -24,7 +24,7 @@
   - **IFC** (ISO 16739, buildingSMART) – chuẩn mở, trung lập: `IfcProject → IfcSite → IfcBuilding → IfcBuildingStorey → IfcSpace / IfcWall / IfcDoor …`
   - **RVT** (Revit), **NWD/NWC** (Navisworks), **SKP**, **ArchiCAD PLN** – định dạng độc quyền.
   - **COBie**, **BCF**, **gbXML**, **CityGML** – các chuẩn bổ trợ (bàn giao vận hành, trao đổi issue, mô phỏng năng lượng, GIS 3D).
-- **Khái niệm cần nắm**: Property Set (Pset), Quantity Set, Classification (Uniclass, OmniClass, UniFormat), LOD/LOI, Level of Development, IDS (Information Delivery Specification), IDM/MVD.
+- **Khái niệm cần nắm**: Property Set (Pset), Quantity Set, Classification (Uniclass, OmniClass, UniFormat), LOD/LOI (ISO 7817-1 dùng thuật ngữ Level of Information Need – LOIN; "LOD" tuỳ nguồn hiểu là Level of Development/Detail), IDS (Information Delivery Specification), IDM/MVD.
 - **Công cụ**: IfcOpenShell, BlenderBIM/Bonsai, FreeCAD, xBIM, Speckle, Revit + Dynamo.
 
 ### 1.3. So sánh CAD vs BIM
@@ -55,6 +55,8 @@ Thiết kế (CAD/2D) ─► Mô hình 3D BIM ─► 4D (thời gian) ─► 5D 
 | **5D** | Chi phí | Khối lượng (Quantity Take-off), đơn giá, dự toán | CostX, Revit schedules, `IfcCostItem` |
 | **6D** | Bền vững / năng lượng | Hiệu suất năng lượng, vật liệu, carbon | gbXML, EnergyPlus, Insight |
 | **7D** | Vận hành & bảo trì (FM / Asset Mgmt) | Thông tin tài sản, bảo hành, lịch bảo trì, sensor/IoT | COBie, CAFM/CMMS, Digital Twin |
+
+> Định nghĩa 6D/7D **không thống nhất** giữa các nguồn (một số nguồn coi 6D là quản lý cơ sở vật chất). Bảng trên là **quy ước của dự án** (6D = bền vững, 7D = FM). Chi tiết: `research/03-bim-pipeline-3d-7d/dimensions-overview.md`.
 
 **Việc cần làm trong phần này**
 - [ ] Mô tả data model ở mỗi bước (input → xử lý → output) và dữ liệu nào được **bổ sung** ở từng chiều.
@@ -87,13 +89,13 @@ Xây dựng một pipeline tự động, lặp lại được, nhận **bản v�
 
 **Bước 2 – CAD → BIM (làm giàu ngữ nghĩa)**
 - Lập **bảng ánh xạ layer → loại đối tượng** (ví dụ `A-WALL` → `IfcWall`, `A-DOOR` → `IfcDoor`, `A-AREA` → `IfcSpace`) dạng file cấu hình YAML/JSON để tuỳ biến theo từng dự án.
-- Dựng polygon từ đường biên (`shapely.polygonize`), nhận diện phòng/không gian, gán tầng (`IfcBuildingStorey`) theo file/ layer/ cao độ.
+- Dựng polygon từ đường biên (`shapely.ops.polygonize`), nhận diện phòng/không gian, gán tầng (`IfcBuildingStorey`) theo file/ layer/ cao độ.
 - Gán thuộc tính từ block attribute / text (tên phòng, số phòng, diện tích).
 - (Tuỳ chọn) Sinh file IFC trung gian bằng `ifcopenshell` để làm "nguồn sự thật" BIM.
 
 **Bước 3 – Extract hình học & thuộc tính**
 - Với IFC: duyệt `IfcSpace`, `IfcWall`, `IfcDoor`, `IfcWindow`, `IfcStair`, `IfcBuildingStorey`…; lấy footprint 2D mỗi tầng (cắt mặt phẳng ngang / `ifcopenshell.geom` + `shapely`).
-- **Georeference**: xác định CRS đích (ví dụ EPSG:4326 hoặc CRS địa phương như VN-2000/UTM 48N–49N), dùng `IfcMapConversion` / `IfcProjectedCRS` hoặc điểm điều khiển (control points) để biến đổi toạ độ cục bộ → toạ độ thực.
+- **Georeference**: xác định CRS đích (ví dụ EPSG:4326 hoặc CRS địa phương như VN-2000/UTM 48N–49N), dùng `IfcMapConversion` / `IfcProjectedCRS` (**chỉ có từ IFC4**, không có ở IFC2X3) hoặc điểm điều khiển (control points) / `IfcSite.RefLatitude/RefLongitude` làm phương án thay thế để biến đổi toạ độ cục bộ → toạ độ thực. Mã VN-2000 (tra trong CSDL EPSG): địa lý `EPSG:4756`; UTM 48N `EPSG:3405`, 49N `EPSG:3406`; ngoài ra có các mã VN-2000 TM-3 (ví dụ `EPSG:5896`–`5899`). Chọn phép chiếu theo quy định địa phương (chưa xác minh quy định pháp lý).
 
 **Bước 4 – Chuẩn hoá: OSM tagging & IMDF**
 
@@ -101,40 +103,48 @@ Xây dựng một pipeline tự động, lặp lại được, nhận **bản v�
 
 | Đối tượng | Tag OSM |
 |---|---|
-| Tầng | `level=*`, `level:ref=*`, `repeat_on=*` |
-| Phòng / không gian | `indoor=room`, `ref=*`, `name=*` |
+| Tầng | `level=*` (bắt buộc trên mọi phần tử indoor), `level:ref=*`, `repeat_on=*` (chỉ trên node, không gồm tầng khởi đầu); trên toà nhà: `min_level`/`max_level`; `indoor=level` (outline tầng, tuỳ chọn) |
+| Phòng / không gian | `indoor=room`, `room=*` (mục đích sử dụng), `ref=*`, `name=*` |
 | Hành lang | `indoor=corridor` |
-| Tường | `indoor=wall` |
-| Cửa | `door=*`, `entrance=*` |
-| Cầu thang / thang máy | `highway=steps`, `highway=elevator` |
+| Tường | `indoor=wall` (ưu tiên way theo đường tim tường) |
+| Cửa nội bộ | node `indoor=door` + `door=*` |
+| Lối vào toà nhà | `entrance=*` (+ `door=*`) |
+| Cầu thang | khu cầu thang: area `stairs=yes` + `indoor=room` hoặc `indoor=area`; từng flight: way `highway=steps` |
+| Thang máy | area `highway=elevator` + `area=yes` + `indoor=room` hoặc `indoor=area`; cửa là node `indoor=door`/`entrance` |
 | Khu vực | `indoor=area` |
-| Toà nhà | `building=*`, `building:levels=*` |
+| Toà nhà | `building=*`, `building:levels=*` (tag OSM chung, không thuộc Simple Indoor Tagging) |
 
 *4b. IMDF* – ánh xạ vào các feature type chuẩn (mỗi loại là một layer/ file GeoJSON, ở đây là một bảng trong GPKG):
 
+> IMDF 1.0.0 có **16** feature type. Gói IMDF cần `manifest.json`; **bắt buộc** chỉ `manifest.json`, `address.geojson`, `venue.geojson`, và mọi feature phải nằm trong một venue.
+
 | IMDF feature | Nguồn từ BIM/CAD | Ghi chú |
 |---|---|---|
-| `venue` | Khu/ công trình tổng | Polygon bao ngoài |
-| `building` | `IfcBuilding` | |
-| `footprint` | Đường bao toà nhà | |
-| `level` | `IfcBuildingStorey` | `ordinal`, `short_name`, `outdoor` |
-| `unit` | `IfcSpace` | `category` (room, walkway, restroom, elevator…) |
-| `opening` | `IfcDoor` | `category` (door, …) |
-| `fixture` | Tường, vách, thiết bị cố định | |
-| `detail` | Đường nét chi tiết | |
-| `amenity`, `occupant`, `anchor`, `address` | Thông tin bổ sung | Tuỳ dữ liệu có sẵn |
+| `venue` | Khu/ công trình tổng | Polygon bao ngoài; **bắt buộc** |
+| `address` | Địa chỉ | **Bắt buộc**; không có geometry |
+| `building` | `IfcBuilding` | geometry **null**; polygon nằm ở `footprint` |
+| `footprint` | Đường bao toà nhà | Polygon; liên kết qua `building_ids` |
+| `level` | `IfcBuildingStorey` | `ordinal`, `outdoor`; `name` và `short_name` bắt buộc; `building_ids` nullable |
+| `unit` | `IfcSpace`; **tường kết cấu** | `category` (room, walkway, restroom, elevator, `structure`…); tường floor-to-ceiling phải là `unit` category `structure` (vật liệu `brick`/`concrete`/`drywall`/`glass`/`wood` tuỳ chọn) |
+| `opening` | `IfcDoor` | geometry **LineString**; `category` (door, …) |
+| `fixture` | Thiết bị cố định/bán cố định | Polygon; **không** dùng cho tường kết cấu |
+| `detail` | Đường nét chi tiết | LineString |
+| `amenity`, `anchor` | Thông tin bổ sung | Tuỳ dữ liệu có sẵn |
+| `occupant` | Đơn vị thuê/sử dụng | geometry **null** |
+| `geofence`, `kiosk`, `relationship`, `section` | Tuỳ chọn | 4 feature type còn lại của 16 |
 
 - Mỗi feature có `id` (UUID – nên tái sử dụng `IfcGloballyUniqueId`/ sinh UUID ổn định), `feature_type`, `geometry`, `properties`.
 - Xây quan hệ qua khoá ngoại: `unit.level_id → level.id`, `level.building_ids → building.id`…
 - Lập **bảng mapping category** (IFC class / CAD layer ⇄ OSM tag ⇄ IMDF category) trong một file cấu hình duy nhất để dễ bảo trì.
 
 **Bước 5 – Xuất GeoPackage chuẩn**
-- Dùng `geopandas` / `fiona` / `pyogrio` ghi `.gpkg` với **mỗi IMDF feature type = một layer** (`venue`, `building`, `level`, `unit`, `opening`, `fixture`, …).
+- Dùng `geopandas` / `pyogrio` (không cần `fiona`) ghi `.gpkg` với **mỗi IMDF feature type = một layer** (`venue`, `building`, `level`, `unit`, `opening`, `fixture`, …).
 - Bắt buộc:
   - Gán **CRS** rõ ràng (ví dụ EPSG:4326) cho mọi layer.
   - Hình học hợp lệ (`make_valid`), đúng kiểu (Polygon/ LineString/ Point), không rỗng.
+  - Feature không có geometry (`address`, `building`, `occupant`, `relationship`…) ghi thành bảng `attributes` bằng `pyogrio.write_dataframe` với DataFrame thường (không dùng GeoDataFrame có `geometry=[None]`).
   - Cột thuộc tính có kiểu xác định; các tag OSM giữ ở các cột riêng hoặc cột `tags` (JSON).
-  - Có spatial index (GPKG tự tạo RTree) và bảng `gpkg_contents`/ `gpkg_geometry_columns` hợp lệ.
+  - Có spatial index (RTree là extension `gpkg_rtree_index` của spec; GDAL/pyogrio tạo mặc định, tắt bằng `SPATIAL_INDEX=NO`) và bảng `gpkg_contents`/ `gpkg_geometry_columns` hợp lệ.
 - Validate: `ogrinfo -al -so`, kiểm tra bằng `pytest`, IMDF validator (nếu xuất thêm GeoJSON), kiểm tra topology (unit không chồng lấn, nằm trong level).
 
 **Bước 6 – Import & kiểm tra trong QGIS**
@@ -147,7 +157,11 @@ Xây dựng một pipeline tự động, lặp lại được, nhận **bản v�
 ```
 CAD-and-BIM-deep-dive/
 ├── PRIMARY_OBJECTIVE.md        # file này
-├── docs/                       # ghi chú nghiên cứu CAD, BIM, 4D–7D
+├── AGENTS.md  CLAUDE.md        # quy tắc cho agent
+├── IMPORTANT_NOTIFICATIONS.md  # thông báo giữa các agent
+├── collab/  tasks/             # hợp đồng cộng tác, danh sách task
+├── research/                   # ghi chú nghiên cứu CAD, BIM, 4D–7D, OSM/IMDF (01..04)
+├── docs/                       # tài liệu tổng hợp (synthesizer)
 ├── config/
 │   ├── layer_mapping.yaml      # CAD layer  → loại đối tượng
 │   └── tag_mapping.yaml        # IFC/CAD    → OSM tags → IMDF category
@@ -194,3 +208,8 @@ Python 3.11+, `ezdxf`, `ifcopenshell`, `shapely`, `pyproj`, `geopandas`, `pyogri
 - IMDF (Apple): https://register.apple.com/resources/imdf/
 - GeoPackage (OGC): https://www.geopackage.org/
 - QGIS: https://qgis.org/
+
+---
+
+## 7. Lịch sử chỉnh sửa
+- 2026-11-06: chủ dự án cho phép sửa mục 1–3 theo kết quả xác minh TASK-012 (`research/02-bim/prd-corrections-01-03.md`, `research/04-osm-imdf-tagging/prd-corrections.md`): DXF binary, OCS, LOIN, quy ước 6D/7D, `shapely.ops.polygonize`, georeference IFC4+/VN-2000, bỏ `fiona`, RTree là extension, bảng OSM (cửa, cầu thang, thang máy, tầng) và IMDF (16 feature type, tường là `unit`, geometry null/LineString), sơ đồ repo.
