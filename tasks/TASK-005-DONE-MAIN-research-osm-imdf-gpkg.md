@@ -1,17 +1,17 @@
 ---
 id: TASK-005
-title: "[IN_REVIEW][MAIN] Nghiên cứu OSM Simple Indoor Tagging, IMDF và GeoPackage"
+title: "[DONE][MAIN] Nghiên cứu OSM Simple Indoor Tagging, IMDF và GeoPackage"
 category: MAIN
 assignees: [claude-mobile]
 created_by: claude-mobile
 created_at: 2026-11-06T09:37:46+07:00
-updated_at: 2026-11-06T10:34:15+07:00
-status: in_review
+updated_at: 2026-11-06T11:43:57+07:00
+status: done
 priority: high
 depends_on: []
 ---
 
-# [IN_REVIEW][MAIN] TASK-005 — Nghiên cứu OSM Simple Indoor Tagging, IMDF và GeoPackage
+# [DONE][MAIN] TASK-005 — Nghiên cứu OSM Simple Indoor Tagging, IMDF và GeoPackage
 
 ## Mô tả
 Tìm hiểu tag indoor của OSM, các feature type và ràng buộc của IMDF, yêu cầu GeoPackage hợp lệ và cách QGIS đọc.
@@ -39,13 +39,14 @@ Tìm hiểu tag indoor của OSM, các feature type và ràng buộc của IMDF,
 ## Tổng quan
 | Bên | Trạng thái | Cập nhật lúc | Ghi chú ngắn |
 |---|---|---|---|
-| claude-mobile | in_review | 2026-11-06T10:34:15+07:00 | Vòng 2: 5 domain vẫn bị chặn DNS; 0 xác minh mới; thêm prd-corrections.md + _sources.md |
+| claude-mobile | done | 2026-11-06T11:43:57+07:00 | Vòng 2: 5 domain vẫn bị chặn DNS; 0 xác minh mới; thêm prd-corrections.md + _sources.md |
 
 ## Nhật ký — claude-mobile
 | Thời điểm (GMT+7) | Trạng thái | Nội dung |
 |---|---|---|
 | 2026-11-06T10:30:00+07:00 | in_review | Viết 5 ghi chú + `_sources.md` trong research/04-osm-imdf-tagging/. Nguồn gốc (wiki OSM, Apple IMDF, OGC, GDAL, QGIS) không truy cập được; chỉ có đoạn trích tìm kiếm + repo GitHub. Chưa push (người điều phối commit). |
 | 2026-11-06T10:34:15+07:00 | in_review | Vòng 2 xác minh: WebFetch tới wiki.openstreetmap.org, register.apple.com, www.geopackage.org, gdal.org, docs.qgis.org đều lỗi ENOTFOUND (chưa được allow trong session). Đã xác minh 0 / đã sửa 0 / vẫn chưa xác minh: toàn bộ khẳng định kỹ thuật. Tạo `prd-corrections.md` (đề xuất, gắn nhãn chưa xác minh) và `_sources.md` (trước đó chưa tồn tại dù nhật ký cũ nói đã tạo). Cần allow lại domain rồi chạy lại. |
+| 2026-11-06T11:43:57+07:00 | done | Rà soát kết quả xác minh của claude-laptop (TASK-012, commit 26869c0); chủ dự án cho phép áp dụng đề xuất vào PRIMARY_OBJECTIVE.md. Đánh dấu done. |
 
 ## Blocker / câu hỏi mở
 - Cần cho phép domain: wiki.openstreetmap.org, register.apple.com, docs.ogc.org, www.geopackage.org, gdal.org, docs.qgis.org để xác minh thuộc tính bắt buộc IMDF, category, door=*, yêu cầu GPKG.

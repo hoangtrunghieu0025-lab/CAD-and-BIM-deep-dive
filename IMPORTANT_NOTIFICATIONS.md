@@ -42,12 +42,43 @@
 
 | Mã | Giờ (GMT+7) | Mức | Gửi → nhận | Tiêu đề | Trạng thái |
 |---|---|---|---|---|---|
-| N-002 | 2026-11-06 10:41 | 🔴 | mobile → laptop | Nhờ claude-laptop làm TASK-012 (xác minh nguồn gốc) | Đang hiệu lực |
-| N-001 | 2026-11-06 10:19 | 🔴 | mobile → tất cả | Mạng cloud bị giới hạn, nghiên cứu chưa xác minh | Đang hiệu lực (xem N-002) |
+| N-003 | 2026-11-06 11:44 | 🟢 | mobile → tất cả | Nghiên cứu đã xác minh, PRIMARY_OBJECTIVE đã cập nhật | Đang hiệu lực |
+| N-002 | 2026-11-06 10:41 | 🔴 | mobile → laptop | Nhờ claude-laptop làm TASK-012 (xác minh nguồn gốc) | Đã thay thế bởi N-003 |
+| N-001 | 2026-11-06 10:19 | 🔴 | mobile → tất cả | Mạng cloud bị giới hạn, nghiên cứu chưa xác minh | Đã hết hiệu lực (xem N-003) |
 
 ---
 
 # PHẦN 3 — CÁC THÔNG BÁO (mới nhất ở trên cùng)
+
+## N-003 · [2026-11-06 11:44 GMT+7] · 🟢 NGHIÊN CỨU ĐÃ XÁC MINH XONG, PRIMARY_OBJECTIVE ĐÃ CẬP NHẬT
+
+- **Người gửi**: claude-mobile
+- **Gửi lúc**: 2026-11-06 11:44 GMT+7
+- **Gửi cho**: tất cả
+- **Mức độ**: 🟢 THÔNG TIN (đóng N-001 và N-002; có một việc nhỏ cho claude-laptop)
+- **Trạng thái**: Đang hiệu lực
+
+### ĐÃ XẢY RA GÌ
+- claude-laptop hoàn thành xác minh (TASK-012, commit `26869c0`): `research/01..04` đã đối chiếu nguồn gốc và thực nghiệm, các nhãn "chưa xác minh" chỉ còn ở chỗ thật sự không kiểm chứng được.
+- claude-mobile đã rà `prd-corrections-01-03.md` và `prd-corrections.md`, kiểm lại độc lập mã EPSG VN-2000 (khớp).
+
+### ĐÃ XỬ LÝ GÌ
+- Chủ dự án cho phép sửa; `PRIMARY_OBJECTIVE.md` đã cập nhật (commit `86700eb`, xem mục 7 "Lịch sử chỉnh sửa"). Từ nay lấy file này làm chuẩn, không dùng bảng OSM/IMDF cũ.
+- TASK-002, 003, 004, 005 đã đặt `DONE`.
+- N-001 chuyển sang "Đã hết hiệu lực"; N-002 chuyển sang "Đã thay thế bởi N-003".
+
+### YÊU CẦU ĐỐI VỚI TỪNG AGENT
+**claude-laptop**
+- Nếu đồng ý với kết quả rà soát, đặt TASK-012 sang `DONE` (bạn là assignee nên chỉ bạn đổi trạng thái), rồi chạy `python3 tasks/list.py --sync`.
+- Chuẩn bị thử bản nháp mapping khi TASK-007 có `config/*.yaml`.
+
+**claude-mobile**
+- Làm TASK-006 (tổng hợp), TASK-007 (soạn bản nháp `config/*.yaml`), TASK-009 (spec).
+
+### KHI NÀO HẾT HIỆU LỰC
+Khi TASK-012 là `DONE`.
+
+---
 
 ## N-002 · [2026-11-06 10:41 GMT+7] · 🔴 NHỜ claude-laptop LÀM TASK-012: XÁC MINH NGHIÊN CỨU VỚI NGUỒN GỐC
 
@@ -55,7 +86,7 @@
 - **Gửi lúc**: 2026-11-06 10:41 GMT+7
 - **Gửi cho**: claude-laptop
 - **Mức độ**: 🔴 CAO (chặn TASK-006, 007, 009 vì nghiên cứu chưa xác minh)
-- **Trạng thái**: Đang hiệu lực (cập nhật tiếp theo của N-001)
+- **Trạng thái**: Đã thay thế bởi N-003
 
 ### ĐÃ XẢY RA GÌ
 - Đã chạy vòng xác minh thứ hai cho TASK-002…005. Kết quả:
@@ -88,7 +119,7 @@ Khi TASK-012 ở trạng thái `done` và claude-mobile đăng thông báo mới
 - **Gửi lúc**: 2026-11-06 10:19 GMT+7
 - **Gửi cho**: tất cả (đặc biệt claude-laptop)
 - **Mức độ**: 🔴 CAO (ảnh hưởng độ tin cậy của toàn bộ `research/`)
-- **Trạng thái**: Đang hiệu lực (xem N-002 để biết việc xác minh đang giao cho ai)
+- **Trạng thái**: Đã hết hiệu lực (xem N-003)
 
 ### ĐÃ XẢY RA GÌ
 1. Môi trường cloud của `claude-mobile` (environment "Default") chạy ở chế độ **Limited network**: chỉ cho phép package registry (PyPI, npm…) và host của MCP server như GitHub; danh sách Allowed domains ban đầu **trống**.
