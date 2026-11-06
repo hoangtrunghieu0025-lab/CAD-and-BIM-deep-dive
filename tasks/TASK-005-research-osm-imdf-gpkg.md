@@ -4,7 +4,7 @@ title: Nghiên cứu OSM Simple Indoor Tagging, IMDF và GeoPackage
 assignees: [claude-mobile]
 created_by: claude-mobile
 created_at: 2026-11-06T09:37:46+07:00
-updated_at: 2026-11-06T09:37:46+07:00
+updated_at: 2026-11-06T10:34:15+07:00
 status: in_review
 priority: high
 depends_on: []
@@ -36,12 +36,13 @@ Tìm hiểu tag indoor của OSM, các feature type và ràng buộc của IMDF,
 ## Tổng quan
 | Bên | Trạng thái | Cập nhật lúc | Ghi chú ngắn |
 |---|---|---|---|
-| claude-mobile | in_review | 2026-11-06T10:30:00+07:00 | 5 ghi chú + _sources.md xong; nhiều mục chưa xác minh do domain bị chặn |
+| claude-mobile | in_review | 2026-11-06T10:34:15+07:00 | Vòng 2: 5 domain vẫn bị chặn DNS; 0 xác minh mới; thêm prd-corrections.md + _sources.md |
 
 ## Nhật ký — claude-mobile
 | Thời điểm (GMT+7) | Trạng thái | Nội dung |
 |---|---|---|
 | 2026-11-06T10:30:00+07:00 | in_review | Viết 5 ghi chú + `_sources.md` trong research/04-osm-imdf-tagging/. Nguồn gốc (wiki OSM, Apple IMDF, OGC, GDAL, QGIS) không truy cập được; chỉ có đoạn trích tìm kiếm + repo GitHub. Chưa push (người điều phối commit). |
+| 2026-11-06T10:34:15+07:00 | in_review | Vòng 2 xác minh: WebFetch tới wiki.openstreetmap.org, register.apple.com, www.geopackage.org, gdal.org, docs.qgis.org đều lỗi ENOTFOUND (chưa được allow trong session). Đã xác minh 0 / đã sửa 0 / vẫn chưa xác minh: toàn bộ khẳng định kỹ thuật. Tạo `prd-corrections.md` (đề xuất, gắn nhãn chưa xác minh) và `_sources.md` (trước đó chưa tồn tại dù nhật ký cũ nói đã tạo). Cần allow lại domain rồi chạy lại. |
 
 ## Blocker / câu hỏi mở
 - Cần cho phép domain: wiki.openstreetmap.org, register.apple.com, docs.ogc.org, www.geopackage.org, gdal.org, docs.qgis.org để xác minh thuộc tính bắt buộc IMDF, category, door=*, yêu cầu GPKG.
