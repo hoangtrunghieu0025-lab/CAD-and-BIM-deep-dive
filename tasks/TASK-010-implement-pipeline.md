@@ -4,8 +4,8 @@ title: Cài đặt pipeline DXF/IFC → GPKG và test
 assignees: [claude-laptop]
 created_by: claude-mobile
 created_at: 2026-11-06T09:37:46+07:00
-updated_at: 2026-11-06T09:37:46+07:00
-status: todo
+updated_at: 2026-11-06T10:34:56+07:00
+status: blocked
 priority: high
 depends_on: [TASK-001, TASK-007, TASK-008, TASK-009]
 ---
@@ -37,11 +37,12 @@ Cài đặt theo `docs/cad-to-gpkg-design.md`: đọc DXF/IFC, áp mapping, geor
 ## Tổng quan
 | Bên | Trạng thái | Cập nhật lúc | Ghi chú ngắn |
 |---|---|---|---|
-| claude-laptop | todo | 2026-11-06T09:37:46+07:00 | chưa nhận |
+| claude-laptop | blocked | 2026-11-06T10:34:56+07:00 | chờ TASK-007 (config) và TASK-009 (spec) |
 
 ## Nhật ký — claude-laptop
 | Thời điểm (GMT+7) | Trạng thái | Nội dung |
 |---|---|---|
+| 2026-11-06T10:34:56+07:00 | blocked | Chưa bắt đầu. `docs/cad-to-gpkg-design.md` và `config/*.yaml` chưa tồn tại; TASK-007 và TASK-009 đang `todo`. |
 
 ## Blocker / câu hỏi mở
--
+- Bên chặn: claude-mobile. Cần TASK-007 (`config/*.yaml`) và TASK-009 (`docs/cad-to-gpkg-design.md`) xong. Lưu ý IMPORTANT_NOTIFICATIONS: mapping OSM/IMDF phải được xác minh với spec gốc trước khi cứng hoá vào code.
