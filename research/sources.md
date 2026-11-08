@@ -174,3 +174,12 @@
 | GitHub — adap-c6-fingerprint/IMDFrnt (IMDF validator; chưa đánh giá) | https://github.com/adap-c6-fingerprint/IMDFrnt | 05-market-tools | 2026-11-06 |
 | GitHub — OSGeo/gdal (releases/latest = v3.13.3, 2026-08-18) | https://github.com/OSGeo/gdal/releases | 05-market-tools | 2026-11-06 |
 | Chi tiết nguồn của phiên A–E | (cuối từng file trong research/05-market-tools/) | 05-market-tools | 2026-11-06 |
+| ifcopenshell 0.9.0.post1 — schema IFC4X3_ADD2 và template Pset (kiểm trực tiếp, lớp/enum/Pset kiến trúc & MEP) | https://pypi.org/project/ifcopenshell/ | 06-bim-architect-mep | 2026-11-08 |
+| buildingSMART — IfcRelVoidsElement (IFC 4.3.2, qua tìm kiếm) | https://standards.buildingsmart.org/IFC/RELEASE/IFC4_3/HTML/lexical/IfcRelVoidsElement.htm | 06-bim-architect-mep | 2026-11-08 |
+| buildingSMART — IfcDistributionPort (IFC4, qua tìm kiếm) | https://standards.buildingsmart.org/IFC/RELEASE/IFC4/FINAL/HTML/schema/ifcsharedbldgserviceelements/lexical/ifcdistributionport.htm | 06-bim-architect-mep | 2026-11-08 |
+| Autodesk — Revit API MEP system classification enum 2026 (qua tìm kiếm) | https://help.autodesk.com/cloudhelp/2026/ENU/Revit-API-MainReference/files/html/43ec0d75-d6bb-2d08-a920-9715e83040e7.htm | 06-bim-architect-mep | 2026-11-08 |
+| Autodesk — About Spaces (Room vs Space, qua tìm kiếm) | https://help.autodesk.com/cloudhelp/2026/ENU/Revit-MEPEng/files/GUID-B876A6F6-4091-40CA-ADCD-AA5D0EFC5EE3.htm | 06-bim-architect-mep | 2026-11-08 |
+| Autodesk — Customize System Types (qua tìm kiếm) | https://help.autodesk.com/cloudhelp/2020/ENU/Revit-Model/files/GUID-0E860EB4-62A7-4B5A-89A4-FEA563232E18.htm | 06-bim-architect-mep | 2026-11-08 |
+| BD+C — Level of Development (BIMForum/AIA, qua tìm kiếm) | https://www.bdcnetwork.com/home/article/55144799/level-of-development-will-a-new-standard-bring-clarity-to-bim-model-detail | 06-bim-architect-mep | 2026-11-08 |
+| ArchGyan — BIM for MEP Engineers (blog, tin cậy thấp) | https://archgyan.com/bim-mep-engineers-coordinating-models/ | 06-bim-architect-mep | 2026-11-08 |
+| United-BIM — case study MEP coordination (vendor, tin cậy thấp) | https://www.united-bim.com/?p=40007 | 06-bim-architect-mep | 2026-11-08 |
