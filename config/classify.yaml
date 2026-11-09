@@ -1,0 +1,58 @@
+# config/classify.yaml — phân loại tầng 1 của cad2bim v2 (TASK-018). Khai báo, không mã cứng trong .py.
+# Cách khớp: tách tên layer thành token (chữ/số, không phân biệt hoa thường); KHỚP TOKEN chứ không khớp chuỗi con
+# (tránh lỗi "col" khớp "color" của ifcbim). Thứ tự ưu tiên nằm ở `priority`.
+# Từ vựng lấy từ layer thật của 61 bản vẽ (tiếng Anh/Tây Ban Nha) + NCS (A-WALL, A-DOOR, A-AREA, A-GLAZ, A-COLS, A-STRS).
+# Mọi mặc định (cao, dày) là GIẢ ĐỊNH và được ghi claim_state=assumed trong mô hình.
+
+priority: [annotation, wall, door, window, column, beam, stair, space, furniture, mep_duct, mep_pipe, mep_equipment, mep_fire]
+
+# token (hoặc đuôi token) chỉ chú thích/khung/lưới: không có hình học BIM
+annotation:
+  tokens: [TEXT, TXT, DTEXT, MTEXT, NOTE, NOTES, DIM, DIMS, DIMENSION, DIMENSIONS, DEFPOINTS, HATCH, HATCHES, FRAME, FRAM,
+           BORDER, TITLE, AXIS, GRID, SECTION, SECTIONS, ELEV, ELEVATION, ELEVATIONS, PERSPECTIVE, LEGEND, SYMB, SYMBOL,
+           IDEN, LABEL, VIEWPORT, VPORT, SHEET, NORTH, PLOT, ANNO, TAG, TAGS, LEADER, REVISION, CLOUD, DASH, CENTER]
+  suffixes: [HATCH, TEXT, TXT, DIM, DIMS]       # token kết thúc bằng một trong các đuôi này (vd "COLHATCH")
+
+kinds:
+  wall:           {tokens: [WALL, WALLS, MUR, MURO, MUROS, PARED, TUONG, EXTERIOR, INTERIOR, PARTITION], ifc: IfcWall}
+  door:           {tokens: [DOOR, DOORS, PUERTA, PUERTAS, PORTE, CUA], ifc: IfcDoor,
+                   block_tokens: [DOOR, PUERTA, PORTE]}
+  window:         {tokens: [WIN, WINDOW, WINDOWS, VENTANA, VENTANAS, GLAZ, GLAZING, GLASS, GLASSES], ifc: IfcWindow,
+                   block_tokens: [WINDOW, VENTANA]}
+  column:         {tokens: [COLUMN, COLUMNS, COL, COLS, COLU, PILAR, PILARES, CAU], ifc: IfcColumn}
+  beam:           {tokens: [BEAM, BEAMS, VIGA, VIGAS], ifc: IfcBeam}
+  stair:          {tokens: [STAIR, STAIRS, STRS, ESCALERA, ESCALERAS], ifc: IfcStair}
+  space:          {tokens: [AREA, AREAS, ROOM, ROOMS, SPACE, SPACES, ZONE, ZONES, HABITACION], ifc: IfcSpace}
+  furniture:      {tokens: [FUR, FURN, FURNITURE, MUEBLES, MOBILIARIO], ifc: IfcFurniture}
+  mep_duct:       {tokens: [DUCT, DUCTS, DUCTWORK, VENTILATION, SUPPLY, RETURN], ifc: IfcDuctSegment}
+  mep_pipe:       {tokens: [PIPE, PIPES, PIPING, TUBERIA, DRAIN, DRAINAGE, SANITARY, PLUMBING], ifc: IfcPipeSegment}
+  mep_equipment:  {tokens: [EQUIP, EQUIPMENT, EQBMNT, EQUI], ifc: IfcDistributionElement}
+  mep_fire:       {tokens: [FIRE, ALARM, SPRINKLER, SPK, DETECTOR], ifc: IfcDistributionElement}
+
+defaults:                  # GIẢ ĐỊNH (assumed) khi bản vẽ không cung cấp
+  wall:    {height_m: 3.0, thickness_m: 0.20}
+  column:  {height_m: 3.0}
+  door:    {width_m: 0.90, height_m: 2.10}
+  window:  {width_m: 1.20, height_m: 1.20, sill_m: 0.90}
+
+tolerances:                # mét
+  snap_m: 0.01
+  extend_m: 0.30           # kéo dài đầu rời; đặt lớn hơn khe hở dự kiến rõ rệt
+  pair_min_m: 0.05         # độ dày tường nhỏ nhất khi ghép hai nét
+  pair_max_m: 0.45
+  min_wall_len_m: 0.30
+  angle_tol_deg: 1.0
+  offset_tol_m: 0.01
+  mitre_limit: 5.0
+  flatten_m: 0.005         # sai số làm phẳng cung
+  space_min_area_m2: 1.0
+  space_max_area_m2: 5000.0
+
+units:
+  # Khi $INSUNITS = 0 hoặc khai báo nhưng kích thước vô lý, chọn đơn vị đầu tiên cho kích thước hợp lý (luôn ghi assumed). Thứ tự thử:
+  guess_order: [m, mm, cm, in]
+  plausible_extent_m: [3.0, 300.0]   # cạnh lớn nhất của bản vẽ chính sau khi đổi sang mét; ngoài khoảng này thì nghi $INSUNITS sai
+
+limits:
+  max_prims: 400000        # chặn bản vẽ quá lớn (ghi cờ truncated)
+  max_block_depth: 3

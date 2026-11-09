@@ -6,3 +6,6 @@ __pycache__/
 
 # file backup do trinh soan thao tao (vd LibreCAD)
 *~
+
+# bản vẽ thật tải về, giấy phép không rõ: chỉ dùng cục bộ, KHÔNG commit
+samples/corpus_real/
