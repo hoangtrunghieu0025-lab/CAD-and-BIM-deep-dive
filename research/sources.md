@@ -242,3 +242,10 @@
 | IfcOpenShell repo (src/bonsai, src/ifcopenshell-python; clone thưa HEAD 2026-11-08; dxf2ifc.py ở src/bonsai/scripts, GPL-3.0 theo tiêu đề tệp) | https://github.com/IfcOpenShell/IfcOpenShell | 06-cad-to-bim | 2026-11-08 |
 | ezdxf (GitHub) | https://github.com/mozman/ezdxf | 06-cad-to-bim | 2026-11-08 |
 | ODA File Converter (trang tải; AppImage 27.10.0.0, đóng nguồn) | https://www.opendesign.com/guestfiles/oda_file_converter | 06-cad-to-bim | 2026-11-09 |
+| ezdxf 1.4.5 cài cục bộ — bảng DXFATTRIBS (mã nhóm của LINE, ARC, CIRCLE, INSERT, TEXT, ATTRIB, LWPOLYLINE); kiểm bằng mã, chưa đối chiếu tài liệu Autodesk | https://github.com/mozman/ezdxf | 06-cad-to-bim | 2026-11-09 |
+| IfcOpenShell 0.9.0.post1 cài cục bộ — schema IFC4 (thứ tự thuộc tính IfcWall/IfcDoor/IfcSpace, các lớp IfcRel*, hình học); chưa đối chiếu buildingSMART docs | https://github.com/IfcOpenShell/IfcOpenShell | 06-cad-to-bim | 2026-11-09 |
+| MCP4IFC — trang dự án (MCP server dùng IfcOpenShell + Bonsai cho LLM; mới đọc kết quả tìm kiếm, chưa kiểm giấy phép) | https://show2instruct.github.io/mcp4ifc/ | 06-cad-to-bim | 2026-11-09 |
+| ifc-bonsai-mcp (Show2Instruct, GitHub; chưa kiểm giấy phép/mức hoạt động) | https://github.com/Show2Instruct/ifc-bonsai-mcp | 06-cad-to-bim | 2026-11-09 |
+| A Modular Reference Architecture for MCP-Servers Enabling Agentic BIM Interaction (arXiv 2601.00809; chưa đọc toàn văn) | https://arxiv.org/pdf/2601.00809 | 06-cad-to-bim | 2026-11-09 |
+| Higharc — AI chuyển bản phác 2D sang BIM 3D (AEC Magazine; tuyên bố của hãng chưa kiểm chứng) | https://aecmag.com/ai/higharc-ai-delivers-3d-bim-model-from-2d-sketch/ | 06-cad-to-bim | 2026-11-09 |
+| Best AI Plugins for Revit 2026 (blog tổng hợp, độ tin cậy trung bình) | https://aibuildingtools.com/blog/best-ai-plugins-for-revit | 06-cad-to-bim | 2026-11-09 |

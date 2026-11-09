@@ -187,6 +187,41 @@ Phân vai gợi ý: claude-mobile viết M0–M2 (thuần Python, kiểm tự đ
 - **Dung sai** (`snap`, `extend`, `pair_thickness`) phụ thuộc đơn vị và tỉ lệ bản vẽ; cần chọn theo đơn vị đã chuẩn hoá sang mét và hiệu chỉnh trên dữ liệu thật.
 - **Chưa kiểm**: ghép cặp nét song song; gán tường chủ cho cửa; hiệu năng trên bản vẽ lớn (2D23D báo 54 MB DXF/35 s là số liệu của tác giả, chưa kiểm).
 
+## 8. Luồng AI agent (bổ sung 2026-11-09, theo chỉ đạo của mentor và thảo luận với chủ dự án)
+
+**Bối cảnh**: mentor xác định đầu vào chỉ là **file CAD 2D chi tiết**; yêu cầu: (1) chuyển sang IFC **mất ít thông tin nhất**, (2) **làm giàu** thông số ngữ cảnh cho mô hình 3D, thậm chí **vẽ thêm**. DXF thuần thiếu ngữ cảnh (tên phòng, ký hiệu, chú giải, khung tên, nhiều view trên một sheet), nên thêm lớp AI **đọc ảnh vẽ từ DXF**. Các mục 1–7 ở trên vẫn đúng và trở thành "công cụ xác định" mà agent gọi.
+
+### 8.1 Nguyên tắc
+1. **AI đề xuất, code thực thi và kiểm.** AI không ghi tọa độ; AI chỉ trỏ tới `handle` DXF hoặc vùng ảnh. Hình học (`read/segments/walls`) và ghi IFC (ifcopenshell) là mã xác định.
+2. **Ảnh để hiểu ngữ cảnh, DXF để lấy hình học.** Ảnh vẽ từ DXF có chồng nhãn handle (set-of-marks) để AI tham chiếu được thực thể cụ thể.
+3. **Lớp nguồn 2D lossless**: mọi thực thể DXF có chỗ trong IFC (kể cả thứ chưa hiểu), giữ layer/màu/linetype/handle/tên block/ATTRIB trong Pset `CAD_Source`. Lớp BIM suy luận nằm trên và trỏ ngược về lớp này. Có kiểm bảo toàn (đếm thực thể, tổng chiều dài, diện tích) theo layer.
+4. **Mô hình diễn giải trung gian** (thay cho "BIM Knowledge Graph"): mở rộng `BimModel/BimElement` (`elements.py`) với nút/cạnh mang bằng chứng (handle, ảnh cắt), `claim_state` (`measured`/`inferred`/`assumed`/`ai_inferred`), `confidence`, giả thuyết thay thế; lưu JSON cạnh IFC. **Chưa dùng cơ sở dữ liệu đồ thị riêng** (Neo4j/RDF): quy mô một bản vẽ mỗi lần chạy, chưa có nhu cầu truy vấn chéo dự án. Giữ schema (loại nút, loại cạnh) rõ để đổi sang DB đồ thị sau nếu công ty cần truy vấn nhiều dự án.
+5. **Vòng phản hồi**: critic render IFC chồng lên ảnh gốc + chỉ số (bảo toàn, số phòng, IoU) rồi báo ngược lên để sửa; giới hạn số vòng; mục độ tin cậy thấp chờ người duyệt.
+6. **Bắt đầu bằng một agent có bộ công cụ**, đo kết quả, chỉ tách nhiều agent khi thấy lợi ích rõ (chưa có bằng chứng cần nhiều agent).
+
+### 8.2 Các tầng
+| Tầng | AI làm | Mã xác định làm |
+|---|---|---|
+| 0 Render + lossless | — | Đọc DXF, vẽ ảnh toàn sheet / theo vùng / theo nhóm layer có nhãn handle; ghi lớp nguồn 2D |
+| 1 Hiểu sheet | Khung tên, tỉ lệ, đơn vị, loại bản vẽ, tách view, tầng nào | Bbox, `$INSUNITS`, kiểm chéo đơn vị |
+| 2 Layer/Block | Xem ảnh mẫu + thống kê, đề xuất lớp IFC (`classify.yaml` là giá trị tiên nghiệm) | Ghi kết quả thành bảng ánh xạ tái dùng |
+| 3 Phần tử | Phòng (tên + vùng), hướng cửa, cầu thang, cột — trả về danh sách handle | `segments/walls`: snap, noding, ghép tường; lỗ mở, host cửa |
+| 4 Ghi IFC | — | ifcopenshell: lớp nguồn + lớp BIM, Pset, `IfcRelSpaceBoundary` |
+| 5 Critic | Chỉ ra chỗ lệch giữa ảnh IFC và ảnh gốc | Chỉ số, kiểm lược đồ IFC |
+| 6 Làm giàu / vẽ thêm | Đề xuất vật liệu, Pset, chiều cao, sàn/trần/mái (qua công cụ; tham khảo MCP4IFC, bonsai-mcp) | Kiểm tên Pset (`util.pset.get_template`), ghi IFC; mọi thứ thêm vào gắn `assumed` |
+| 7 Xuất | — | GPKG/IMDF (đường hiện có, `src/export/`) |
+| Sau IFC (phụ) | — | **Cost (5D)**: khối lượng từ Qto IFC × đơn giá trong cấu hình công ty (CSV/YAML); khối lượng suy từ chiều cao giả định gắn `assumed`. **Asset (7D)**: Pset tài sản từ ánh xạ cấu hình/nhập tay. Cần mã phần tử ổn định giữa các lần chạy |
+
+### 8.3 Phạm vi và thứ tự
+- Cost/Asset là module **phụ** đọc IFC và ghi Pset/`IfcCostItem` hoặc bảng riêng; dự án dùng nội bộ nên đơn giá và thuộc tính tài sản đặt trong tệp cấu hình do công ty sửa, không mã cứng, không gò theo chuẩn bên ngoài. Làm **sau** khi luồng lõi (tầng 0–7) chạy.
+- Thứ tự đề xuất: (a) tầng 0 lossless `ifc2d.py` + kiểm bảo toàn (không cần dữ liệu thêm); (b) POC tầng 0–1 (render có nhãn handle + agent đọc, đo mức hiểu ngữ cảnh) trên `samples/sample-floor-*.dxf` và `samples/corpus_real/`; (c) tầng 2–3; (d) ghi IFC có ngữ nghĩa + critic (trùng M3); (e) làm giàu (M4); (f) Cost/Asset.
+
+### 8.4 Việc còn mở
+- **Chưa đo được** AI hiểu ngữ cảnh tốt đến đâu từ ảnh vẽ DXF; POC (b) là bước kiểm chứng đầu tiên.
+- Chi phí/độ trễ/độ tái lập của lời gọi mô hình (cache theo hash DXF + prompt, đầu ra theo schema JSON): chưa thiết kế chi tiết.
+- Câu hỏi cho mentor: "chi tiết" gồm kiến trúc/kết cấu/MEP; mức làm giàu mong muốn (chỉ Pset hay cả hình học 3D suy ra); có bản vẽ thật không.
+- Công cụ tham khảo (chỉ đọc kết quả tìm kiếm ngày 2026-11-09, **chưa kiểm** giấy phép/mức hoạt động): MCP4IFC, `ifc-bonsai-mcp`, `Bonsai_mcp`, `ifcMCP`, kiến trúc tham chiếu arXiv 2601.00809; công cụ thương mại Higharc, BIMify (đóng, ra Revit). Chưa thấy công cụ mã nguồn mở nào làm trọn DXF → IFC có ngữ nghĩa bằng AI đọc ảnh.
+
 ## Liên quan đến pipeline CAD → BIM → GPKG
 Tài liệu này mô tả khung chính của bước `cad2bim` trong [docs/cad-to-gpkg-design.md](../../docs/cad-to-gpkg-design.md) mục 4.2 và đề xuất cập nhật đó khi được chấp thuận (chỉ `synthesizer` được ghi vào `docs/`).
 
