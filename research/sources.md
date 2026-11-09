@@ -183,3 +183,62 @@
 | BD+C — Level of Development (BIMForum/AIA, qua tìm kiếm) | https://www.bdcnetwork.com/home/article/55144799/level-of-development-will-a-new-standard-bring-clarity-to-bim-model-detail | 06-bim-architect-mep | 2026-11-08 |
 | ArchGyan — BIM for MEP Engineers (blog, tin cậy thấp) | https://archgyan.com/bim-mep-engineers-coordinating-models/ | 06-bim-architect-mep | 2026-11-08 |
 | United-BIM — case study MEP coordination (vendor, tin cậy thấp) | https://www.united-bim.com/?p=40007 | 06-bim-architect-mep | 2026-11-08 |
+| BIM Corner — DWG to IFC step by step | https://bimcorner.com/migration-of-cad-dwg-models-to-ifc-step-by-step-guide/ | 06-cad-to-bim (TASK-017) | 2026-11-08 |
+| Graphisoft — How to model wall from a 2D line (Magic Wand) | https://support.graphisoft.com/hc/en-us/articles/23126601413649-How-to-model-wall-from-a-2D-line | 06-cad-to-bim | 2026-11-08 |
+| Graphisoft — Tips to import DWG files as Trace Reference | https://community.graphisoft.com/t5/Data-Exchange-articles/Tips-to-Import-DWG-Files-as-Trace-Reference/ta-p/303459 | 06-cad-to-bim | 2026-11-08 |
+| IfcOpenShell docs — geometry.create_2pt_wall | https://docs.ifcopenshell.org/autoapi/ifcopenshell/api/geometry/create_2pt_wall/index.html | 06-cad-to-bim | 2026-11-08 |
+| ISARC 2021 — Systematic review of automated BIM modelling from 2D documentation | https://www.iaarc.org/publications/2021_proceedings_of_the_38th_isarc/a_systematic_review_of_automated_bim_modelling_for_existing_buildings_from_2d_documentation.html | 06-cad-to-bim | 2026-11-08 |
+| arXiv 2306.01642 — Automatic reconstruction of semantic 3D models from 2D floor plans | https://arxiv.org/abs/2306.01642v1 | 06-cad-to-bim | 2026-11-08 |
+| NOVEDGE — Preparing DWG files for reliable IFC export | https://novedge.com/blogs/design-news/autocad-tip-preparing-dwg-files-for-reliable-ifc-export | 06-cad-to-bim | 2026-11-08 |
+| Autodesk Revit help — Import walls / tạo tường từ underlay | https://help.autodesk.com/cloudhelp/2026/ENU/Revit-DocumentPresent/files/GUID-0805BFCA-44E1-4DF4-9875-8238C7AB406E.htm | 06-cad-to-bim | 2026-11-08 |
+| Speckle community — DWG to Revit separation lines | https://speckle.community/t/dwg-to-revit-separation-lines/11612 | 06-cad-to-bim | 2026-11-08 |
+| GitHub — vylint-22/SaN-architect-ai (DWG/DXF → IFC2x3, chưa chọn giấy phép) | https://github.com/vylint-22/SaN-architect-ai | 06-cad-to-bim | 2026-11-08 |
+| GitHub — IfcOpenShell issue #2151 (dxf2ifc.py) | https://github.com/IfcOpenShell/IfcOpenShell/issues/2151 | 06-cad-to-bim | 2026-11-08 |
+| GitHub — IfcOpenShell discussion #4293 (DXF → IFC) | https://github.com/IfcOpenShell/IfcOpenShell/discussions/4293 | 06-cad-to-bim | 2026-11-08 |
+| buildingSMART forum — Converting DXF to IFC format | https://forums.buildingsmart.org/t/converting-dxf-to-ifc-format/3702 | 06-cad-to-bim | 2026-11-08 |
+| GitHub — AMostafaH/CrossBIM (DXF → IFC, .NET) | https://github.com/AMostafaH/CrossBIM | 06-cad-to-bim | 2026-11-08 |
+| GitHub — VDobranov/DXF2IFC2D | https://github.com/VDobranov/DXF2IFC2D | 06-cad-to-bim | 2026-11-08 |
+| GitHub — sahilyousafp/FloorPlanToIFC (ảnh → IFC, Mask R-CNN) | https://github.com/sahilyousafp/FloorPlanToIFC | 06-cad-to-bim | 2026-11-08 |
+| GitHub — joyjo/to-generate-2D-floorplan-CAD-from-3D-point-clouds | https://github.com/joyjo/to-generate-2D-floorplan-CAD-from-3D-point-clouds | 06-cad-to-bim | 2026-11-08 |
+| arXiv 2503.11498 — Cloud2BIM (point cloud → IFC) | https://arxiv.org/html/2503.11498v2 | 06-cad-to-bim | 2026-11-08 |
+| FreeCAD docs — FreeCAD and DWG Import | https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/FreeCAD_and_DWG_Import.md | 06-cad-to-bim | 2026-11-08 |
+| OSArch — DWG → IFC qua FreeCAD (sai cao độ/tỷ lệ trong BlenderBIM) | https://community-test.osarch.org/thread/2547/p1 | 06-cad-to-bim | 2026-11-08 |
+| YouTube — FreeCAD: Converting 2D Plans To 3D. The Very Basics! (chỉ tiêu đề, chưa xem) | https://www.youtube.com/watch?v=qJGhboRjtmg | 06-cad-to-bim | 2026-11-08 |
+| YouTube — Freecad 2D to 3D Floor Plan - Simple Trick (chỉ tiêu đề, chưa xem) | https://www.youtube.com/watch?v=Wg4edLGioPw | 06-cad-to-bim | 2026-11-08 |
+| YouTube — Your first BIM drawing in 20 mins: Blender, Bonsai and IFC (chỉ tiêu đề, chưa xem) | https://www.youtube.com/watch?v=fxpIg-su-00 | 06-cad-to-bim | 2026-11-08 |
+| OSArch wiki — Blender 2D dxf to ifc (2021-11-05) | https://wiki.osarch.org/blender-2d-dxf-to-ifc/ | 06-cad-to-bim | 2026-11-08 |
+| YouTube — FreeCAD: Converting 2D Plans To 3D (MangoJelly, 2025-10-11) — đã đọc phụ đề tự động; ví dụ cơ khí, không BIM/IFC | https://www.youtube.com/watch?v=qJGhboRjtmg | 06-cad-to-bim | 2026-11-08 |
+| YouTube — Your first BIM drawing in 20 mins using Bonsai (Prof Rino, 2025-11-07) — đã đọc phụ đề tự động; dựng từ đầu, không nhập DXF | https://www.youtube.com/watch?v=fxpIg-su-00 | 06-cad-to-bim | 2026-11-08 |
+| FreeCAD 1.1.4 (mã nguồn tại máy: Draft/importDXF.py, BIM/bimcommands, BIM/Arch.py, BIM/nativeifc) | local: FreeCAD_1.1.4-Linux-x86_64-py311.AppImage | 06-cad-to-bim | 2026-11-08 |
+| FreeCAD docs — BIM Workbench | https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/BIM_Workbench.md | 06-cad-to-bim | 2026-11-08 |
+| FreeCAD docs — Arch Wall | https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/Arch_Wall.md | 06-cad-to-bim | 2026-11-08 |
+| IfcOpenShell docs — api.pset (add_pset, edit_pset) | https://docs.ifcopenshell.org/autoapi/ifcopenshell/api/pset/index.html | 06-cad-to-bim | 2026-11-08 |
+| IfcOpenShell docs — api.classification | https://docs.ifcopenshell.org/autoapi/ifcopenshell/api/classification/index.html | 06-cad-to-bim | 2026-11-08 |
+| IfcOpenShell docs — api.pset_template | https://docs.ifcopenshell.org/autoapi/ifcopenshell/api/pset_template/index.html | 06-cad-to-bim | 2026-11-08 |
+| GitHub — Kevinscsatoshi/ifcbim (CAD2BIM Studio; DXF → IFC theo layer; không có giấy phép) | https://github.com/Kevinscsatoshi/ifcbim | 06-cad-to-bim | 2026-11-08 |
+| GitHub — alvin528/CAD2BIM (Agent Skill + bộ xuất IFC từ model-spec.json; Apache-2.0) | https://github.com/alvin528/CAD2BIM | 06-cad-to-bim | 2026-11-08 |
+| CAD2BIM demo (GitHub Pages của alvin528) | https://alvin528.github.io/CAD2BIM/ | 06-cad-to-bim | 2026-11-08 |
+| arXiv — tìm "CAD2BIM" (0 kết quả) | https://arxiv.org/search/?query=CAD2BIM&searchtype=all | 06-cad-to-bim | 2026-11-08 |
+| GitHub — Mcrauli/dwg2ifc (DXF/DWG → IFC4 theo layer, solid tham số; MIT) | https://github.com/Mcrauli/dwg2ifc | 06-cad-to-bim | 2026-11-08 |
+| GitHub — aec-platform/roomgraph (PDF vector → tường/phòng/lỗ mở/IFC; MIT) | https://github.com/aec-platform/roomgraph | 06-cad-to-bim | 2026-11-08 |
+| GitHub — naquib0513/2D23D (DXF → IFC4 giàn tạm; MIT) | https://github.com/naquib0513/2D23D | 06-cad-to-bim | 2026-11-08 |
+| GitHub — GabxSup/DWG-to-IFC-Converter (stub, không giấy phép) | https://github.com/GabxSup/DWG-to-IFC-Converter | 06-cad-to-bim | 2026-11-08 |
+| GitHub — Abdallah-Sallem/2D_to_3D-from-DXF-to-IFC (thực ra mô tả văn bản → IFC bằng LLM) | https://github.com/Abdallah-Sallem/2D_to_3D-from-DXF-to-IFC | 06-cad-to-bim | 2026-11-08 |
+| GitHub — mtak35/cad2ingetrazo (GPL-3.0) | https://github.com/mtak35/cad2ingetrazo | 06-cad-to-bim | 2026-11-08 |
+| GitHub — VaclavNezerka/Cloud2BIM (point cloud → IFC; MIT) | https://github.com/VaclavNezerka/Cloud2BIM | 06-cad-to-bim | 2026-11-08 |
+| GitHub — weiliansong/A-Scan2BIM | https://github.com/weiliansong/A-Scan2BIM | 06-cad-to-bim | 2026-11-08 |
+| GitHub — art-programmer/FloorplanTransformation (Raster-to-Vector; MIT) | https://github.com/art-programmer/FloorplanTransformation | 06-cad-to-bim | 2026-11-08 |
+| GitHub — DrZiji/VecFloorSeg (phân đoạn mặt bằng vector) | https://github.com/DrZiji/VecFloorSeg | 06-cad-to-bim | 2026-11-08 |
+| GitHub — Show2Instruct/ifc-bonsai-mcp (MCP: LLM điều khiển Bonsai; MIT) | https://github.com/Show2Instruct/ifc-bonsai-mcp | 06-cad-to-bim | 2026-11-08 |
+| MCP4IFC (arXiv 2511.05533) | https://arxiv.org/html/2511.05533v1 | 06-cad-to-bim | 2026-11-08 |
+| Hugging Face — Voxel51/FloorPlanCAD (bộ dữ liệu) | https://huggingface.co/datasets/Voxel51/FloorPlanCAD | 06-cad-to-bim | 2026-11-08 |
+| GitHub — datadrivenconstruction/cad2data-Revit-IFC-DWG (giấy phép NOASSERTION, chưa đọc mã) | https://github.com/datadrivenconstruction/cad2data-Revit-IFC-DWG | 06-cad-to-bim | 2026-11-08 |
+| Zbirovský & Nežerka — Open-source automatic pipeline for efficient conversion of large-scale point clouds to IFC format, Automation in Construction 177 (2025) 106303 (theo README Cloud2BIM; chưa đọc bài) | https://doi.org/10.1016/j.autcon.2025.106303 | 06-cad-to-bim | 2026-11-08 |
+| GitHub — Show2Instruct/ifc-floorplan (IFC → mặt bằng; không giấy phép) | https://github.com/Show2Instruct/ifc-floorplan | 06-cad-to-bim | 2026-11-08 |
+| GitHub — Show2Instruct/ifc-bonsai-mcp (MIT; đã đọc mã) | https://github.com/Show2Instruct/ifc-bonsai-mcp | 06-cad-to-bim | 2026-11-08 |
+| GitHub — DrZiji/VecFloorSeg (không giấy phép; đã đọc mã) | https://github.com/DrZiji/VecFloorSeg | 06-cad-to-bim | 2026-11-08 |
+| FreeCAD docs — Arch IFC | https://wiki.freecad.org/Arch_IFC | 06-cad-to-bim | 2026-11-08 |
+| FreeCAD docs — IFC import/export (cộng đồng) | https://robertmassaioli.github.io/freecad-docs/bim/concepts/ifc-import-export/ | 06-cad-to-bim | 2026-11-08 |
+| IfcOpenShell repo (src/bonsai, src/ifcopenshell-python; clone thưa HEAD 2026-11-08; dxf2ifc.py ở src/bonsai/scripts, GPL-3.0 theo tiêu đề tệp) | https://github.com/IfcOpenShell/IfcOpenShell | 06-cad-to-bim | 2026-11-08 |
+| ezdxf (GitHub) | https://github.com/mozman/ezdxf | 06-cad-to-bim | 2026-11-08 |
+| ODA File Converter (trang tải; AppImage 27.10.0.0, đóng nguồn) | https://www.opendesign.com/guestfiles/oda_file_converter | 06-cad-to-bim | 2026-11-09 |
