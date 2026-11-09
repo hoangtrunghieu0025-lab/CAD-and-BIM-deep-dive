@@ -24,3 +24,5 @@ Dữ liệu mẫu: `samples/project-dxf.yaml`, `samples/project-ifc.yaml` (toạ
 (`options.wall_mode` trong project.yaml), object `door` (type/automatic/material), `display_point`, `fixture`/`detail`,
 control points (`georeference.control_points`), cảnh báo khe so với đường bao tường, IFC2X3.
 Chưa cài đặt: thang máy từ DXF, thang cuốn, `IfcWindow` (chỉ đếm), GPKG nhiều toà nhà.
+
+**cad2bim 3D (TASK-018, chưa nối vào `build`/GPKG):** `src/cad2bim/read3d.py` đọc lưới mặt (polyface, polygon mesh, 3DFACE, MESH), khung dây (cung chính xác) và nét có `thickness`; `analyze3d.py` → `Model3D`; `ifc3d.py` ghi IFC4 (proxy theo layer, `Curve3D`). Chưa đọc `3DSOLID`/`BODY`/`REGION`, chưa phân loại ngữ nghĩa. Test: `tests/test_v3_read3d.py`.

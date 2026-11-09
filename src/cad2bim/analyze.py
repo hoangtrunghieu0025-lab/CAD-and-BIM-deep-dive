@@ -22,7 +22,7 @@ from . import segments as sg
 from . import walls as wl
 from .classify import ANNOTATION, UNKNOWN, Classifier
 from .elements import BimElement, BimModel, Provenance, stable_id
-from .read import _UNIT_FACTOR, Prim, iter_prims, raw_span, resolve_units
+from .read import _UNIT_FACTOR, Prim, iter_prims, probe_span, resolve_units
 
 ROOT = Path(__file__).resolve().parents[2]
 _PATH_ETYPES = {"LINE", "LWPOLYLINE", "POLYLINE", "ARC", "CIRCLE", "ELLIPSE", "SPLINE"}
@@ -56,7 +56,7 @@ def analyze(path: str | Path, cfg: dict[str, Any] | None = None, *, storey: str 
             model.warn(w)
     doc = src.doc
     msp = doc.modelspace()
-    span = raw_span(msp)                                      # tính một lần, nhân với hệ số của từng đơn vị thử
+    span = probe_span(msp, lim["max_block_depth"])            # đo trên hình học đã mở khối; tính một lần, nhân với hệ số từng đơn vị thử
     factor, unit_name, how = resolve_units(doc, cfg.get("units", {}), lambda u: span * _UNIT_FACTOR[u], fallback_unit)
     if how == "insunits_conflict":
         model.warn(f"{name}: $INSUNITS={doc.header.get('$INSUNITS')} nhưng kích thước bản vẽ ({span:g} đơn vị) vô lý; "

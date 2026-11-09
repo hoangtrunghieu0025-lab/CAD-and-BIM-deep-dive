@@ -56,3 +56,5 @@ units:
 limits:
   max_prims: 400000        # chặn bản vẽ quá lớn (ghi cờ truncated)
   max_block_depth: 3
+  max_block_depth_3d: 8    # bộ đọc 3D (read3d.py): kho thật có khối lồng sâu hơn 3 tầng chứa nhiều hình học
+  max_items_3d: 2000000    # chặn tệp 3D quá lớn (ghi cờ truncated)

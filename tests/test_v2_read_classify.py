@@ -155,3 +155,21 @@ def test_empty_drawing_keeps_declared_unit():
     doc, msp = _doc(units=4)
     cfg_u = {"guess_order": ["m", "mm", "cm", "in"], "plausible_extent_m": [3.0, 300.0]}
     assert resolve_units(doc, cfg_u, lambda u: guess_extent_m(msp, u), None)[2] == "insunits"
+
+
+def test_unit_check_sees_geometry_inside_blocks_inserted_at_origin(tmp_path):
+    """Ca tái hiện từ bản vẽ thật (Apto, Small-apto): mọi INSERT cấp cao nhất đặt tại (0,0) và chứa hình học ở toạ độ
+    thật (xa gốc); $INSUNITS=4 nhưng bản vẽ rộng ~28 đơn vị => phải nhận ra là mét, không được bỏ qua kiểm tra."""
+    doc = ezdxf.new("R2018")
+    doc.header["$INSUNITS"] = 4
+    doc.layers.add("WALL")
+    blk = doc.blocks.new("PLAN")
+    for y in (2150.0, 2150.3):                                    # hai nét tường song song cách nhau 0,3 đơn vị
+        blk.add_line((2840.0, y), (2868.0, y), dxfattribs={"layer": "WALL"})
+    blk.add_line((2840.0, 2150.0), (2840.0, 2164.0), dxfattribs={"layer": "WALL"})
+    doc.modelspace().add_blockref("PLAN", (0, 0), dxfattribs={"layer": "0"})
+    f = tmp_path / "origin_block.dxf"
+    doc.saveas(f)
+    m = analyze(f)
+    assert m.stats["units"] == "m" and m.stats["units_how"] == "insunits_conflict"
+    assert m.stats["wall_input_len_m"] > 40.0                      # 28 + 28 + 14 m, không phải 0,07 m

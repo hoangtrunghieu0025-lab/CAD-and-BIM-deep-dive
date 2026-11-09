@@ -85,6 +85,7 @@ def iter_prims(
     flatten_m: float = 0.005,
     max_prims: int | None = None,
     stats: Counter | None = None,
+    skip_kinds: tuple[str, ...] = ("annotation", "unknown"),
 ) -> Iterator[Prim]:
     """Duyệt modelspace, mở khối INSERT. `stats` đếm: entities, skipped:<kind>, errors, truncated."""
     st = stats if stats is not None else Counter()
@@ -118,7 +119,7 @@ def iter_prims(
                 except Exception:       # khối hỏng/thiếu định nghĩa
                     st["errors"] += 1
             return
-        if kind in ("annotation", "unknown") and et not in ("TEXT", "MTEXT"):
+        if kind in skip_kinds and et not in ("TEXT", "MTEXT"):
             st[f"skipped:{kind}"] += 1
             st[f"layer:{kind}:{layer}"] += 1
             return
@@ -147,6 +148,32 @@ def iter_prims(
 
     for e in msp:
         yield from walk(e, 0, None, None)
+
+
+def robust_span(points: list[Pt]) -> float:
+    """Cạnh lớn nhất của đám điểm (đơn vị bản vẽ); ít điểm dùng toàn dải, nhiều điểm bỏ 1% hai đầu để tránh điểm rác."""
+    if len(points) < 2:
+        return 0.0
+
+    def span(v: list[float]) -> float:
+        v = sorted(v)
+        if len(v) < 200:
+            return v[-1] - v[0]
+        return v[int(0.99 * (len(v) - 1))] - v[int(0.01 * (len(v) - 1))]
+
+    return max(span([p[0] for p in points]), span([p[1] for p in points]))
+
+
+def probe_span(msp: Any, max_depth: int = 3, probe_prims: int = 4000) -> float:
+    """Kích thước bản vẽ theo đơn vị bản vẽ, đo trên HÌNH HỌC ĐÃ MỞ KHỐI của vài nghìn nguyên thủy đầu tiên
+    (mọi loại layer). Tránh sai khi mọi INSERT cấp cao nhất đặt tại gốc và chứa toạ độ thật."""
+    pts: list[Pt] = []
+    for pr in iter_prims(msp, 1.0, lambda _l: "probe", max_depth=max_depth, flatten_m=0.01, max_prims=probe_prims,
+                         skip_kinds=()):
+        if pr.etype == "INSERT" or pr.etype in ("TEXT", "MTEXT"):
+            continue                                   # điểm chèn không đại diện cho kích thước
+        pts.extend(pr.pts)
+    return robust_span(pts)
 
 
 def guess_extent_m(msp: Any, unit: str, sample: int = 20000) -> float:
