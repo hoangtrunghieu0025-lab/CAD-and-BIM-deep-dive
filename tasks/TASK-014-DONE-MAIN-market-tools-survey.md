@@ -1,17 +1,17 @@
 ---
 id: TASK-014
-title: "[IN_REVIEW][MAIN] Khảo sát công cụ có sẵn trên thị trường cho bài toán CAD/BIM → GPKG (OSM + IMDF) và chi phí"
+title: "[DONE][MAIN] Khảo sát công cụ có sẵn trên thị trường cho bài toán CAD/BIM → GPKG (OSM + IMDF) và chi phí"
 category: MAIN
 assignees: [claude-laptop, claude-mobile]
 created_by: claude-laptop
 created_at: 2026-11-06T11:38:51+07:00
-updated_at: 2026-11-06T12:00:39+07:00
-status: in_review
+updated_at: 2026-11-09T07:00:37+07:00
+status: done
 priority: high
 depends_on: []
 ---
 
-# [IN_REVIEW][MAIN] TASK-014 — Khảo sát công cụ có sẵn trên thị trường cho bài toán CAD/BIM → GPKG (OSM + IMDF) và chi phí
+# [DONE][MAIN] TASK-014 — Khảo sát công cụ có sẵn trên thị trường cho bài toán CAD/BIM → GPKG (OSM + IMDF) và chi phí
 
 ## Mô tả
 Trước khi xây pipeline (TASK-010) cần biết **đã có công cụ sẵn cho đúng bài toán này chưa**, chi phí bao nhiêu, để quyết định *tự xây / mua / dùng kết hợp* và để **đối chiếu** với thiết kế của dự án. Yêu cầu của chủ dự án: làm **sớm** và **cho phép chạy multi-agent, nhiều phiên song song** để tăng tốc.
@@ -93,12 +93,13 @@ Chia theo **chủ đề độc lập**, mỗi phiên/agent một chủ đề, gh
 ## Tổng quan
 | Bên | Trạng thái | Cập nhật lúc | Ghi chú ngắn |
 |---|---|---|---|
-| claude-laptop | in_review | 2026-11-06T12:00:39+07:00 | A–F xong; chờ chủ dự án/mobile xem khuyến nghị |
-| claude-mobile | todo | 2026-11-06T11:38:51+07:00 | chưa nhận; có thể nhận một số phiên A–E |
+| claude-laptop | done | 2026-11-09T07:00:37+07:00 | A–F xong; đóng theo yêu cầu chủ dự án |
+| claude-mobile | done | 2026-11-09T07:00:37+07:00 | không cần nhận phần nào; đóng cùng task theo yêu cầu chủ dự án |
 
 ## Nhật ký — claude-mobile
 | Thời điểm (GMT+7) | Trạng thái | Nội dung |
 |---|---|---|
+| 2026-11-09 07:00 | done | Đóng task theo yêu cầu của chủ dự án (ghi bởi claude-mobile). Khuyến nghị đã được xem; mọi tiêu chí đã tích. Việc xin báo giá FME / dùng thử Archilogic không còn chặn task. |
 
 ## Nhật ký — claude-laptop
 | Thời điểm (GMT+7) | Trạng thái | Nội dung |
@@ -106,6 +107,7 @@ Chia theo **chủ đề độc lập**, mỗi phiên/agent một chủ đề, gh
 | 2026-11-06T11:42:13+07:00 | todo | Đăng ký task. Chủ dự án trả lời: (1) cho phép tạo `research/05-market-tools/` (đã tạo, có `.gitkeep`); (2) chấp nhận cả công cụ mã nguồn mở lẫn thương mại, **ưu tiên mã nguồn mở xếp lên đầu**. Chưa bắt đầu khảo sát. |
 | 2026-11-06T11:47:59+07:00 | in_progress | Chủ dự án ra lệnh chạy. Mở 5 subagent (A thương mại ETL/GIS, B CAD/BIM vendor, C mã nguồn mở, D dịch vụ indoor, E học thuật/cộng đồng) ghi vào `research/05-market-tools/`; phiên F tự làm sau khi A–E xong. Không commit. |
 | 2026-11-06T12:00:39+07:00 | in_review | Phiên A–E xong (5 subagent, mỗi bên một file). Phiên F: kiểm chéo bằng nguồn gốc (FME IMDF Reader/Writer, giá Archilogic, GitHub API các repo, GDAL 3.13.3, chạy lại ogr2ogr DXF→GPKG); phát hiện và sửa 1 sai sót của phiên C (3 repo IMDF tồn tại); viết `comparison-and-recommendation.md`; gộp nguồn vào `research/sources.md`. Chưa commit. |
+| 2026-11-09 07:00 | done | Đóng task theo yêu cầu của chủ dự án (ghi bởi claude-mobile). Khuyến nghị đã được xem; mọi tiêu chí đã tích. Việc xin báo giá FME / dùng thử Archilogic không còn chặn task. |
 
 ## Kết quả
 Ngày 2026-11-06. Khảo sát 5 phiên (subagent song song) + phiên F tổng hợp; file trong `research/05-market-tools/`.
